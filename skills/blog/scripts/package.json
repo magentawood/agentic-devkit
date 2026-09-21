@@ -1,0 +1,17 @@
+{
+  "name": "blog-publisher",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Cross-posts a markdown blog post to dev.to, Reddit, Medium, Substack, LinkedIn and Quora.",
+  "scripts": {
+    "setup": "node setup.mjs",
+    "doctor": "node doctor.mjs",
+    "publish": "node publish.mjs"
+  },
+  "dependencies": {
+    "gray-matter": "^4.0.3",
+    "marked": "^15.0.0",
+    "playwright": "^1.50.0"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "name": "agentic-devkit",
+  "owner": { "name": "magentawood" },
+  "metadata": { "description": "magentawood's Claude Code plugins" },
+  "plugins": [
+    {
+      "name": "agentic-devkit",
+      "source": "./",
+      "description": "Skills for building and shipping products: blog cross-posting and more.",
+      "version": "0.1.0"
+    }
+  ]
+}

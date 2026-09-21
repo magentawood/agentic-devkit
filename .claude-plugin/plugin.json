@@ -1,0 +1,7 @@
+{
+  "name": "agentic-devkit",
+  "version": "0.1.0",
+  "description": "Skills for building and shipping products: blog cross-posting and more.",
+  "author": { "name": "magentawood" },
+  "keywords": ["blog", "publishing", "medium", "substack", "devto", "reddit", "quora", "linkedin"]
+}
