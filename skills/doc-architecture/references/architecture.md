@@ -92,7 +92,9 @@ A record is at most 1,200 words. Write a record only for a decision with three p
 | All other Markdown | 1,200 words |
 | Journal and archive | no limit (excluded) |
 
-An entry in `docBudget.overrides` is a ceiling for one file that is above its rule. It can only shrink. A reviewer sees it in the PR.
+An entry in `docBudget.overrides` is a ceiling for one file that is above its rule. It can only shrink: `doc-budget --staged` in the hook fails when an override grows. A reviewer sees it in the PR.
+
+If a project changes `indexFile`, it also changes the glob of the index rule in `docBudget.rules`.
 
 When a file is above its limit, do one of these: divide it by topic, move the reasoning into its record, or remove replaced text.
 
