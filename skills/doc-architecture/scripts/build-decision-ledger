@@ -92,7 +92,7 @@ def table(rows, ledger):
     return "\n".join(lines)
 
 
-def index_block(rows, index, ledgers, settled):
+def index_block(rows, index, ledgers, settled, dec):
     """Only the decisions that are not settled: the full lists are in the ledgers."""
     items = []
     for r in rows:
@@ -101,8 +101,8 @@ def index_block(rows, index, ledgers, settled):
             items.append(f"[{r['id']}]({rel(r['path'], index)}) {r['title']} ({state.lower() or 'no status'})")
     names = {"product": "product", "tech": "architecture"}
     where = [f"{names[k]} in [{posixpath.basename(p)}]({rel(p, index)})" for k, p in ledgers]
-    return ("**Not settled yet:** " + ("; ".join(items) if items else "none") + ".\n\n"
-            "**All decisions:** " + ", ".join(where) + ". Each links its record.")
+    every = (", ".join(where) + ". Each links its record.") if where else f"the records in [{dec}]({rel(dec, index)})."
+    return "**Not settled yet:** " + ("; ".join(items) if items else "none") + ".\n\n**All decisions:** " + every
 
 
 def fill(root, path, markers, body, title):
@@ -125,18 +125,19 @@ def main(argv):
     root = subprocess.run(["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True).stdout.strip() or os.getcwd()
     cfg = config(root)
     parts = cfg.get("parts", {})
-    if not parts.get("records", True) or not parts.get("ledgers", True):
-        print("build-decision-ledger: the records or the ledgers are off in devkit.config.json")
+    if not parts.get("records", True) or not (parts.get("ledgers", True) or parts.get("index", True)):
+        print("build-decision-ledger: the records, or both the ledgers and the index, are off in devkit.config.json")
         return 0
     product = parts.get("productRecords", True)
     rows = records(root, cfg["decisionsPath"], product)
     ledgers = [(k, p) for k, p in sorted(cfg.get("ledgers", {}).items(), key=lambda kv: kv[0] != "product")
-               if p and k in LEDGER_TITLES and (k == "tech" or product)]
+               if p and k in LEDGER_TITLES and (k == "tech" or product) and parts.get("ledgers", True)]
     jobs = [(p, LEDGER_MARKERS, table([r for r in rows if r["kind"] == k], p), LEDGER_TITLES.get(k))
             for k, p in ledgers]
     if parts.get("index", True):
         index = cfg.get("indexFile", "CONTEXT.md")
-        jobs.insert(0, (index, INDEX_MARKERS, index_block(rows, index, ledgers, cfg.get("settledStatuses", ["Settled", "Accepted", "Superseded"])), None))
+        settled = cfg.get("settledStatuses", ["Settled", "Accepted", "Superseded"])
+        jobs.insert(0, (index, INDEX_MARKERS, index_block(rows, index, ledgers, settled, cfg["decisionsPath"]), None))
     check = "--check" in argv
     stale = []
     results = [(path,) + fill(root, path, markers, body, title) for path, markers, body, title in jobs]
