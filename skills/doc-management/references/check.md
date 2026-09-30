@@ -13,8 +13,11 @@ The hook and CI run only these checks. Run them first:
 | Ledger drift | `python3 tools/build-decision-ledger.py --check` | 0 stale ledgers |
 | Render drift | `python3 tools/render-docs.py --check` | 0 stale pages |
 | Tool copies | `${CLAUDE_SKILL_DIR}/scripts/sync-tools --check <project root>` | Each copy is the same as the master |
+| Hook activation | `git config core.hooksPath` | It gives `.githooks` in this clone |
+| Hook on install | `scripts.prepare` in the root `package.json`, if there is one | It runs `git config core.hooksPath .githooks` |
+| Hook on session | `hooks.SessionStart` in `.claude/settings.json` | It runs `git config core.hooksPath .githooks` |
 
-The hook compares each copy with the hash that `sync-tools` recorded. Only `sync-tools --check` compares the copies with the master, because the hook and CI do not have the plugin.
+The hook compares each copy with the hash that `sync-tools` recorded. Only `sync-tools --check` compares the copies with the master, because the hook and CI do not have the plugin. With the `hook` part on, `sync-tools --check` also reports the three hook activation rows. A hook that is not on does not stop a bad commit, so report it first.
 
 ## The agent checks
 
