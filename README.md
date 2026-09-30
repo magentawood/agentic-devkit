@@ -6,6 +6,7 @@ A Claude Code plugin with skills for building and shipping products.
 
 | Skill | What it does |
 |---|---|
+| `ste-writing` | Writes and rewrites Markdown in ASD-STE100 Simplified Technical English. Claude uses it when it writes or edits a `.md` file. |
 | `/blog` | Draft a post with Claude, review it in the terminal, then cross-post to dev.to, Reddit, Medium, Substack, LinkedIn and Quora. |
 
 ## Install
@@ -22,6 +23,25 @@ For local development, run Claude Code with the repo as a plugin dir:
 ```
 claude --plugin-dir ~/Projects/agentic-devkit
 ```
+
+## `ste-writing` setup
+
+The skill needs your own copy of the ASD-STE100 specification. ASD owns it, so it is not in this repository.
+
+1. Get Issue 9 from <https://www.asd-ste100.org/STE_downloads.html>.
+2. Save it as `~/.config/agentic-devkit/ASD-STE100_ISSUE9.pdf`.
+3. Install poppler: `brew install poppler`.
+4. Make the local dictionary cache: `skills/ste-writing/scripts/ste-lint --build-dictionary`.
+
+The two scripts also work without Claude:
+
+```
+skills/ste-writing/scripts/ste-lint docs/*.md            # report STE problems
+skills/ste-writing/scripts/ste-verify diff git:HEAD:a.md a.md   # prove a rewrite kept links, ids, numbers
+skills/ste-writing/scripts/ste-verify links .            # find broken links in a repo
+```
+
+Shared rules for all skills are in `CONVENTIONS.md`. Credits are in `NOTICE.md`.
 
 ## `/blog` in one minute
 

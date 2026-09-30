@@ -1,7 +1,21 @@
 {
   "name": "agentic-devkit",
-  "version": "0.1.0",
-  "description": "Skills for building and shipping products: blog cross-posting and more.",
-  "author": { "name": "magentawood" },
-  "keywords": ["blog", "publishing", "medium", "substack", "devto", "reddit", "quora", "linkedin"]
+  "version": "0.2.0",
+  "description": "Skills for building and shipping products: STE writing and blog cross-posting.",
+  "author": {
+    "name": "magentawood"
+  },
+  "keywords": [
+    "blog",
+    "devto",
+    "documentation",
+    "linkedin",
+    "medium",
+    "publishing",
+    "quora",
+    "reddit",
+    "simplified-technical-english",
+    "ste",
+    "substack"
+  ]
 }

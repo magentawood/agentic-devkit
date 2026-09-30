@@ -1,0 +1,258 @@
+#!/usr/bin/env python3
+"""Report ASD-STE100 problems in Markdown files. Reports only; the agent fixes the text.
+
+Usage:
+  ste-lint FILE.md [FILE.md ...] [--json] [--strict] [--verbs]
+  ste-lint --build-dictionary [PATH_TO_ASD-STE100.pdf]
+
+Checks: sentence length (procedural 20, descriptive 25), paragraph length (6),
+passive voice, -ing forms, semicolons, contractions, British/American spelling,
+and words the STE dictionary marks as not approved.
+
+The dictionary comes from the user's own copy of the specification. It is parsed
+into ~/.config/agentic-devkit/ste-dictionary.json and never leaves this machine.
+"""
+import json, os, re, subprocess, sys
+
+USER_DIR = os.path.expanduser("~/.config/agentic-devkit")
+DICT_CACHE = os.path.join(USER_DIR, "ste-dictionary.json")
+USER_CONFIG = os.path.join(USER_DIR, "config.json")
+
+# -ing words that are not verb forms.
+ING_NOUNS = {
+    "anything", "bring", "ceiling", "during", "evening", "everything", "king", "morning",
+    "nothing", "ring", "sibling", "sing", "something", "spring", "sting", "string", "swing",
+    "thing", "wing", "wording", "heading", "headings", "building", "setting", "settings",
+    "meaning", "meanings", "listing", "listings", "warning", "warnings", "training",
+    "pricing", "billing", "routing", "logging", "rendering", "caching", "hosting",
+    "onboarding", "matching", "mapping", "seeding", "tracking", "staging", "testing",
+    "scaffolding", "linting", "parsing", "streaming", "booking", "spacing", "padding",
+    "timing", "thinking", "reasoning", "branding", "funding", "marketing", "writing",
+}
+AUX = r"(?:am|is|are|was|were|be|been|being|get|gets|got)"
+IRREGULAR_PP = (
+    "built|done|given|gone|kept|known|made|paid|put|read|run|said|seen|sent|set|shown|"
+    "sold|split|spent|taken|told|thought|understood|written|held|found|left|lost|meant|"
+    "brought|bought|caught|chosen|driven|eaten|fallen|forgotten|hidden|hit|hurt|led|"
+    "let|shut|sought|stolen|struck|torn|thrown|won|withdrawn|drawn|grown|shaken|broken|spoken"
+)
+PASSIVE = re.compile(rf"\b{AUX}\s+(?:\w+ly\s+)?(\w+ed|{IRREGULAR_PP})\b", re.I)
+CONTRACTION = re.compile(r"\b\w+(?:n't|'re|'ll|'ve|'d|'m)\b|\b(?:it's|that's|there's|here's|what's|who's|let's)\b", re.I)
+BR_TO_US = {"colour": "color", "behaviour": "behavior", "favour": "favor", "centre": "center",
+            "licence": "license", "defence": "defense", "organise": "organize", "analyse": "analyze",
+            "catalogue": "catalog", "programme": "program", "pseudonymise": "pseudonymize"}
+US_TO_BR = {v: k for k, v in BR_TO_US.items()}
+
+
+def load_json(path, default):
+    try:
+        with open(path) as f:
+            return json.load(f)
+    except (OSError, ValueError):
+        return default
+
+
+def config():
+    """Plugin defaults, then the project file, then the user file. A later level wins."""
+    plugin = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "devkit.config.json")
+    project, d = {}, os.getcwd()
+    while True:
+        if os.path.exists(os.path.join(d, "devkit.config.json")) and os.path.join(d, "devkit.config.json") != os.path.normpath(plugin):
+            project = load_json(os.path.join(d, "devkit.config.json"), {})
+            break
+        if os.path.dirname(d) == d:
+            break
+        d = os.path.dirname(d)
+    merged = {}
+    for level in (load_json(plugin, {}), project, load_json(USER_CONFIG, {})):
+        for key, value in level.items():
+            merged[key] = {**merged.get(key, {}), **value} if isinstance(value, dict) else value
+    return merged
+
+
+# ── dictionary ────────────────────────────────────────────────────────────
+POS = r"(?:n|v|adj|adv|prep|conj|pron|art|TN|TV)"
+ENTRY = re.compile(rf"^([A-Za-z][A-Za-z'\-\. ]*?) \(({POS})[^)]*\)\s*(\S.*)?$")
+ALT = re.compile(r"^([A-Z][A-Z'\-\.]*(?: [A-Z][A-Z'\-\.]*)*)(?= \(| {2,}|$)")
+
+
+def build_dictionary(pdf):
+    if not pdf:
+        pdf = os.path.expanduser(load_json(USER_CONFIG, {}).get("steSpecPdf") or os.path.join(USER_DIR, "ASD-STE100_ISSUE9.pdf"))
+    if not os.path.exists(pdf):
+        sys.exit(f"ste-lint: no specification at {pdf}. Get it from https://www.asd-ste100.org/STE_downloads.html")
+    text = subprocess.run(["pdftotext", "-layout", pdf, "-"], capture_output=True, text=True, check=True).stdout
+    lines = text.splitlines()
+    start = next(i for i, l in enumerate(lines) if re.match(r"^A \(art\)", l))
+    approved, rejected = set(), {}
+    for line in lines[start:]:
+        m = ENTRY.match(line)
+        if not m:
+            continue
+        word, pos, rest = m.group(1).strip(), m.group(2), (m.group(3) or "")
+        if word.isupper():
+            approved.add(word.lower())
+        elif word.islower():
+            entry = rejected.setdefault(word, {"pos": set(), "alt": set()})
+            entry["pos"].add(pos)
+            alt = ALT.match(rest)
+            if alt:
+                entry["alt"].add(alt.group(1).strip().lower())
+    # a word approved as one part of speech is not flagged as a whole word
+    rejected = {w: {"pos": sorted(e["pos"]), "alt": sorted(e["alt"])}
+                for w, e in rejected.items() if w not in approved}
+    os.makedirs(USER_DIR, exist_ok=True)
+    with open(DICT_CACHE, "w") as f:
+        json.dump({"source": pdf, "approved": sorted(approved), "notApproved": rejected}, f)
+    print(f"ste-lint: {len(approved)} approved, {len(rejected)} not approved → {DICT_CACHE}")
+
+
+# ── Markdown to checkable text ────────────────────────────────────────────
+def blocks(md):
+    """Yield (line_no, kind, text) for prose blocks. kind: 'para' or 'item'."""
+    lines = md.split("\n")
+    i, n = 0, len(lines)
+    if lines and lines[0].strip() == "---":  # frontmatter
+        i = next((j + 1 for j in range(1, n) if lines[j].strip() == "---"), 0)
+    para, para_start = [], 0
+    fence = None
+
+    def flush():
+        nonlocal para
+        if para:
+            yield_ = (para_start, "para", " ".join(para))
+            para = []
+            return yield_
+        return None
+
+    while i < n:
+        raw = lines[i]
+        s = raw.strip()
+        if fence:
+            if s.startswith(fence):
+                fence = None
+            i += 1
+            continue
+        m = re.match(r"^(```+|~~~+)", s)
+        if m:
+            b = flush()
+            if b: yield b
+            fence = m.group(1)
+            i += 1
+            continue
+        if not s or s.startswith(("#", ">", "|", "<!--", "<", "---", "^")) or re.match(r"^!\[\[", s):
+            b = flush()
+            if b: yield b
+            i += 1
+            continue
+        item = re.match(r"^(?:[-*+]|\d+[.)])\s+(?:\[.\]\s+)?(.*)$", s)
+        if item:
+            b = flush()
+            if b: yield b
+            yield (i + 1, "item", item.group(1))
+            i += 1
+            continue
+        if not para:
+            para_start = i + 1
+        para.append(s)
+        i += 1
+    b = flush()
+    if b: yield b
+
+
+def clean(text):
+    text = re.sub(r"`[^`]*`", " CODE ", text)
+    text = re.sub(r"!?\[\[[^\]]*\]\]", " LINK ", text)
+    text = re.sub(r"!?\[([^\]]*)\]\([^)]*\)", r"\1", text)
+    text = re.sub(r"https?://\S+", " URL ", text)
+    text = re.sub(r"\"[^\"]*\"|“[^”]*”", " QUOTE ", text)
+    text = re.sub(r"\([^()]*\)", " PAREN ", text)  # Rule 8.5: parentheses count as one word
+    text = re.sub(r"<[^>]+>", " ", text)
+    text = re.sub(r"[*_]{1,3}", "", text)
+    return text
+
+
+def sentences(text):
+    parts = re.split(r"(?<=[.!?])\s+(?=[A-Z0-9`\"“(\[])", text)
+    return [p.strip() for p in parts if p.strip()]
+
+
+def words(sentence):
+    # Rules 8.6 and 8.7: numbers, identifiers and hyphenated words count as one word.
+    return re.findall(r"[A-Za-z0-9₹$€£%][\w\-'.,/:₹%]*", sentence)
+
+
+def is_procedural(kind, sentence, approved):
+    first = (words(sentence) or [""])[0].lower()
+    return kind == "item" and first in approved and not first.endswith("s")
+
+
+# Nouns and verbs can be technical nouns (Rules 1.5, 1.6), so only --verbs flags them.
+FUNCTION_POS = {"adj", "adv", "prep", "conj", "pron", "art"}
+
+
+def lint(path, dictionary, cfg, verbs=False):
+    approved = set(dictionary.get("approved", []))
+    rejected = dictionary.get("notApproved", {})
+    allow = {w.lower() for w in cfg.get("allowWords", [])}
+    spelling = cfg.get("spelling", "american")
+    wrong = BR_TO_US if spelling == "american" else US_TO_BR
+    md = open(path, encoding="utf-8").read()
+    out = []
+
+    def report(line, rule, msg):
+        out.append({"file": path, "line": line, "rule": rule, "message": msg})
+
+    for line, kind, raw in blocks(md):
+        text = clean(raw)
+        sents = sentences(text)
+        if kind == "para" and len(sents) > 6:
+            report(line, "6.6", f"paragraph has {len(sents)} sentences (max 6)")
+        for s in sents:
+            count = len(words(s))
+            limit = 20 if is_procedural(kind, s, approved) else 25
+            if count > limit:
+                report(line, "5.1" if limit == 20 else "6.3", f"{count} words (max {limit}): {s[:70]}…")
+            if ";" in s:
+                report(line, "8.1", "semicolon: split into two sentences")
+            for m in PASSIVE.finditer(s):
+                report(line, "3.6", f"possible passive voice: '{m.group(0)}'")
+            for m in CONTRACTION.finditer(s):
+                report(line, "4.2", f"contraction: '{m.group(0)}'")
+            for w in re.findall(r"\b[a-z]+\b", s):
+                if w in allow:
+                    continue
+                if w.endswith("ing") and len(w) > 4 and w not in ING_NOUNS and w not in approved:
+                    report(line, "3.5", f"-ing form: '{w}' (allowed only in a technical noun)")
+                elif w in rejected and (verbs or FUNCTION_POS & set(rejected[w]["pos"])) \
+                        and "n" not in rejected[w]["pos"]:
+                    alts = ", ".join(a.upper() for a in rejected[w]["alt"]) or "a different construction"
+                    report(line, "1.1", f"'{w}' is not approved; use {alts}")
+                if w in wrong:
+                    report(line, "1.14", f"spelling: '{w}' → '{wrong[w]}' ({spelling} directive)")
+    return out
+
+
+def main(argv):
+    if "--build-dictionary" in argv:
+        rest = [a for a in argv if not a.startswith("--")]
+        return build_dictionary(rest[0] if rest else None)
+    files = [a for a in argv if not a.startswith("--")]
+    if not files:
+        sys.exit(__doc__)
+    dictionary = load_json(DICT_CACHE, {})
+    if not dictionary:
+        print("ste-lint: no dictionary cache; run ste-lint --build-dictionary for word checks", file=sys.stderr)
+    cfg = config().get("ste", {})
+    findings = [f for p in files for f in lint(p, dictionary, cfg, "--verbs" in argv)]
+    if "--json" in argv:
+        print(json.dumps(findings, indent=1))
+    else:
+        for f in findings:
+            print(f"{f['file']}:{f['line']}: [STE {f['rule']}] {f['message']}")
+        print(f"ste-lint: {len(findings)} finding(s) in {len(files)} file(s)", file=sys.stderr)
+    return 1 if findings and "--strict" in argv else 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))
