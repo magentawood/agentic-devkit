@@ -8,6 +8,8 @@ A Claude Code plugin with skills for building and shipping products.
 |---|---|
 | `/build-feature` | Takes a ticket or a new feature to a merged PR: grill, spec, ticket, implement, blind review, PR. Version 0.1.0 is a skeleton. The stage references are drafts until the POC on the first ticket. |
 | `ste-writing` | Writes and rewrites Markdown in ASD-STE100 Simplified Technical English. Claude uses it when it writes or edits a `.md` file. |
+| `doc-architecture` | Guards the docs architecture on each Markdown edit: one fact in one home, reasoning only in decision records, size limits, generated ledgers. Claude uses it with `ste-writing`. |
+| `/doc-management` | `setup` gives a project the docs architecture, its tools, the hook, and CI. `migrate` moves the docs of a project into it with stacked PRs. `check` gives the full report, and `check --sync` refreshes the tool copies. |
 | `/blog` | Draft a post with Claude, review it in the terminal, then cross-post to dev.to, Reddit, Medium, Substack, LinkedIn and Quora. |
 
 ## Install
@@ -39,9 +41,21 @@ The two scripts also work without Claude:
 ```
 skills/ste-writing/scripts/ste-lint docs/*.md            # report STE problems
 skills/ste-writing/scripts/ste-verify diff git:HEAD:a.md a.md   # prove a rewrite kept links, ids, numbers
-skills/ste-writing/scripts/ste-verify links .            # find broken links in a repo
-skills/doc-architecture/scripts/doc-budget --report       # size of each doc against its limit
 ```
+
+## `doc-architecture` and `/doc-management` scripts
+
+The plugin holds the master copy of each docs tool. `/doc-management setup` copies them into the project (`tools/`, `.githooks/`, `.github/workflows/`), so CI and developers without the plugin can run them.
+
+```
+skills/doc-architecture/scripts/doc-budget --report          # size of each doc against its limit
+skills/doc-architecture/scripts/doc-links .                  # find broken links and anchors in a repo
+skills/doc-architecture/scripts/build-decision-ledger --check  # ledgers match the decision records
+skills/doc-architecture/scripts/render-docs --check          # HTML pages match their Markdown
+skills/doc-management/scripts/sync-tools [--check] <project> # copy the tools, or compare the copies
+```
+
+`render-docs` needs Python-Markdown: `pip3 install markdown==3.9`.
 
 ## `/build-feature` scripts
 
