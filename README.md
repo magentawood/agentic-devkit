@@ -52,7 +52,7 @@ skills/doc-architecture/scripts/doc-budget --report          # size of each doc 
 skills/doc-architecture/scripts/doc-links .                  # find broken links and anchors in a repo
 skills/doc-architecture/scripts/build-decision-ledger --check  # ledgers match the decision records
 skills/doc-architecture/scripts/render-docs --check          # HTML pages match their Markdown
-skills/doc-management/scripts/sync-tools [--check] <project> # copy the tools, or compare the copies
+skills/doc-management/scripts/sync-tools [--check | --recommend-plugin] <project> # copy the tools, or compare the copies
 ```
 
 The default configuration is in `defaults/devkit.defaults.json`. A project `devkit.config.json` replaces its keys. `sync-tools` also turns on the hook: in the clone, in the `prepare` script of `package.json`, and in a `SessionStart` hook in `.claude/settings.json`. `--recommend-plugin` adds this plugin to `.claude/settings.json`.
