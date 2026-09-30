@@ -1,4 +1,12 @@
 {
+  "vaultPath": ".",
+  "standardsPath": "docs/standards",
+  "decisionsPath": "docs/decisions",
+  "journalPath": "docs/journal/{yyyy}-{mm}.md",
+  "plan": {
+    "tasksPath": "docs/plan/tasks",
+    "progressNote": "docs/plan/Progress.md"
+  },
   "approvalGates": [
     "spec",
     "pr"
