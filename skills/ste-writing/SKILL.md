@@ -2,7 +2,7 @@
 name: ste-writing
 description: Write and rewrite Markdown in ASD-STE100 Simplified Technical English (STE). Use when you create or edit any .md file (spec, ticket, task note, standards file, README, CONVENTIONS, SKILL.md body, PR description), or when the user asks to rewrite, compact, or clean up docs into STE.
 metadata:
-  version: 0.2.0
+  version: 0.3.0
 ---
 
 # STE writing
@@ -10,6 +10,8 @@ metadata:
 ## Purpose
 
 Make all Markdown files easy to read for all readers, human and agent. STE gives one word one meaning, short sentences, and clear steps.
+
+This skill owns the language: how you write a sentence. The `doc-architecture` skill owns the structure: where a fact lives, the size of a file, and the links. Both skills load on a Markdown edit.
 
 ## When to use / When NOT to use
 
@@ -42,8 +44,7 @@ Do not apply STE to these parts of a file:
 1. Read [references/ste-rules.md](references/ste-rules.md).
 2. Write the text.
 3. Run `${CLAUDE_SKILL_DIR}/scripts/ste-lint <file>`.
-4. Run `${CLAUDE_PLUGIN_ROOT}/skills/doc-architecture/scripts/doc-budget <file>`. If the file is above its limit, obey the context budget rules in CONVENTIONS.md.
-5. Fix each finding. If a finding is not correct, keep the text and give the reason in one line.
+4. Fix each finding. If a finding is not correct, keep the text and give the reason in one line.
 
 ### Rewrite existing text
 
@@ -52,8 +53,8 @@ Do not apply STE to these parts of a file:
 ## Exit conditions
 
 - `ste-lint` shows no finding without a reason.
-- `doc-budget` passes.
-- For a rewrite: `ste-verify diff` shows PASS, `ste-verify links` shows 0 broken links, and the claim check shows no missing claim.
+- For a rewrite: `ste-verify diff` shows PASS, and the claim check shows no missing claim.
+- The checks of `doc-architecture` pass.
 
 ## Conventions
 
