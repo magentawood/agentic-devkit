@@ -55,6 +55,8 @@ skills/doc-architecture/scripts/render-docs --check          # HTML pages match 
 skills/doc-management/scripts/sync-tools [--check] <project> # copy the tools, or compare the copies
 ```
 
+The default configuration is in `defaults/devkit.defaults.json`. A project `devkit.config.json` replaces its keys. `sync-tools` also turns on the hook: in the clone, in the `prepare` script of `package.json`, and in a `SessionStart` hook in `.claude/settings.json`. `--recommend-plugin` adds this plugin to `.claude/settings.json`.
+
 `render-docs` needs Python-Markdown: `pip3 install markdown==3.9`.
 
 ## `/build-feature` scripts
