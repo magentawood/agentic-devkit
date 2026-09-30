@@ -22,7 +22,7 @@ The spec tells what to build and which modules change. Adapted from `to-spec` an
 ## Entry points
 
 - **Ticket that exists:** write the short spec into the task note, below `## Read first`. Use [../templates/task-note-section.md](../templates/task-note-section.md). The `## Done when` list stays the acceptance criteria. Do not change or copy it. If an item is not correct, ask the user, then change `plan.source` and run `plan.build`.
-- **New feature:** write the full spec with [../templates/spec.md](../templates/spec.md). Put it at the location that the project gives. If the project gives no location, ask the user.
+- **New feature:** write the full spec with [../templates/spec.md](../templates/spec.md). Put it in `docArchitecture.specPath` (default `docs/specs/<feature>.md`). The spec is at most 1,200 words. After the merge of the feature, move the spec to `docArchitecture.archivePath`.
 
 ## Exit condition
 
