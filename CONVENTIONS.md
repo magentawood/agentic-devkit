@@ -13,9 +13,10 @@ These rules apply to all skills in this plugin. A skill links to this file. A sk
 
 - In a skill, refer to its own files with `${CLAUDE_SKILL_DIR}`. Refer to plugin root files with `${CLAUDE_PLUGIN_ROOT}`. Do not write an absolute path.
 - The configuration has three levels. Each level replaces the keys of the level before it:
-  1. `devkit.config.json` at the plugin root: the default values.
-  2. `devkit.config.json` at the project root: the project values (for example, `vaultPath`, `repo`, `standardsPath`).
-  3. `~/.config/agentic-devkit/config.json`: the values for the user (for example, `steSpecPdf`).
+  1. `defaults/devkit.defaults.json` in the plugin: the default values.
+  2. `devkit.config.json` at the project root: the project values (for example, `vaultPath`, `repo`, `standardsPath`). The plugin repo is also a project. Its root `devkit.config.json` holds only its project values.
+  3. `~/.config/agentic-devkit/config.json`: the values for the user (for example, `steSpecPdf`). `ste-lint`, `issue-status`, and `tick` read this level.
+- A tool copy in a project does not have the plugin. `sync-tools` copies the defaults file next to it, as `tools/devkit-defaults.json`.
 - Keep secrets and licensed files out of all repositories.
 
 ## Skill format
