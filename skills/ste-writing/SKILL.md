@@ -2,7 +2,7 @@
 name: ste-writing
 description: Write and rewrite Markdown in ASD-STE100 Simplified Technical English (STE). Use when you create or edit any .md file (spec, ticket, task note, standards file, README, CONVENTIONS, SKILL.md body, PR description), or when the user asks to rewrite, compact, or clean up docs into STE.
 metadata:
-  version: 0.1.1
+  version: 0.1.2
 ---
 
 # STE writing

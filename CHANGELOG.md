@@ -3,6 +3,7 @@
 ## 0.2.1 (2026-09-30)
 
 - `ste-writing` rewrite procedure: keep absolute and certainty words, keep words with no approved equivalent, set no target length, and compare with the file before the rewrite before you fix an `added` or `weakened` item. These rules come from the first three Roomsie rewrite batches.
+- `ste-lint` now checks table cells and the text in blockquotes and callouts. Before, it skipped all lines that start with `|` or `>`.
 
 ## 0.2.0 (2026-09-30)
 

@@ -109,7 +109,7 @@ def build_dictionary(pdf):
 
 # ── Markdown to checkable text ────────────────────────────────────────────
 def blocks(md):
-    """Yield (line_no, kind, text) for prose blocks. kind: 'para' or 'item'."""
+    """Yield (line_no, kind, text) for prose blocks. kind: 'para', 'item' or 'cell'."""
     lines = md.split("\n")
     i, n = 0, len(lines)
     if lines and lines[0].strip() == "---":  # frontmatter
@@ -140,7 +140,23 @@ def blocks(md):
             fence = m.group(1)
             i += 1
             continue
-        if not s or s.startswith(("#", ">", "|", "<!--", "<", "---", "^")) or re.match(r"^!\[\[", s):
+        if s.startswith("|"):
+            b = flush()
+            if b: yield b
+            if not re.match(r"^\|[\s:|-]+\|?$", s):  # skip the separator row
+                for c in s.strip("|").split("|"):
+                    if c.strip():
+                        yield (i + 1, "cell", c.strip())
+            i += 1
+            continue
+        if s.startswith(">") and not re.match(r"^>\s*\[!", s):
+            s = s.lstrip("> ").strip()
+            if not s:
+                b = flush()
+                if b: yield b
+                i += 1
+                continue
+        if not s or s.startswith(("#", ">", "<!--", "<", "---", "^")) or re.match(r"^!\[\[", s):
             b = flush()
             if b: yield b
             i += 1
