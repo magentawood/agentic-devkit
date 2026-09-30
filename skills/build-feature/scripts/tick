@@ -39,7 +39,7 @@ def config():
     here = os.path.dirname(os.path.abspath(__file__))
     root = subprocess.run(["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True).stdout.strip() or os.getcwd()
     merged = {}
-    for level in (load(os.path.join(here, "..", "..", "..", "devkit.config.json")),
+    for level in (load(os.path.join(here, "..", "..", "..", "defaults", "devkit.defaults.json")),
                   load(os.path.join(root, "devkit.config.json")),
                   load("~/.config/agentic-devkit/config.json")):
         for key, value in level.items():
