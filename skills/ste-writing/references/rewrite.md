@@ -32,7 +32,7 @@ Use this procedure to rewrite or compact a document that exists. The goal is few
    - Before you fix an `added` item, look for it in the file before the rewrite. The claim inventory can miss a statement. A statement that is in the file before the rewrite is not an addition.
    - A `weakened` result can come from a claim inventory that says more than the file. Compare with the file before the rewrite before you change the text.
 
-7. Run `${CLAUDE_SKILL_DIR}/scripts/ste-verify links <repo root>`. The result must be 0 broken links.
+7. Run the link check of the `doc-architecture` skill: `${CLAUDE_PLUGIN_ROOT}/skills/doc-architecture/scripts/doc-links <repo root>`. The result must be 0 broken links.
 
 8. Make the regenerated files current. If you edited a generator source, run the generator. Then run all sync scripts that the project gives (for example, `tools/sync-issues.py` for GitHub issues).
 
