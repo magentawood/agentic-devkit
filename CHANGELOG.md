@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.5.0 (2026-09-30)
+
+- Add the `doc-architecture` skill (0.1.0). It loads on each Markdown edit and guards the docs architecture. The architecture has an index, decision records, rules with `Why:` links, generated ledgers, specs, history, HTML, and size limits. On each change that breaks the architecture, it fixes the break in the same change.
+- Add the `doc-management` skill (0.1.0). `/doc-management setup` gives a project the architecture. `migrate` runs the Roomsie pipeline with stacked PRs and three approval stops. `check` gives the full report, and `check --sync` refreshes the tool copies. Its references carry the lessons of the Roomsie cleanup.
+- Move `doc-budget` from `ste-writing` to `doc-architecture`. Move the `links` subcommand of `ste-verify` to the new `doc-links` script. `ste-verify` keeps only `diff`.
+- Add `build-decision-ledger` and `render-docs`, from Roomsie. They read their paths from `devkit.config.json`.
+- Add the hook template and the CI template. They run the cheap checks: limits, links, ledger drift, render drift, and tool copies.
+- Add `sync-tools`. It copies the master tools into a project and records the plugin version. `--check` reports each copy that is older than the master or not the same.
+- `devkit.config.json`: add `docArchitecture` (all parts on), a 1,200-word limit for specs, and exclude the journal from the limits.
+- `ste-writing` 0.3.0: it keeps only the language. `build-feature` 0.1.1: the docs duties point at `doc-architecture`, and a new spec goes to `specPath`.
+- `CONVENTIONS.md`: the "Context budget" section keeps a summary and links `doc-architecture`.
+
 ## 0.4.0 (2026-09-30)
 
 - Add the `build-feature` skill (0.1.0, skeleton). It takes a ticket that exists, or a new feature, through grill, spec, ticket, implement, and review to a PR. The stage references and the templates are drafts. The POC on the first ticket finalizes them. `lean-code.md` and `code-comments.md` are complete.
