@@ -1,0 +1,10 @@
+{
+  "approvalGates": ["spec", "pr"],
+  "mergeMode": "ask",
+  "reviewRounds": 2,
+  "statusLabels": ["status:spec", "status:in-progress", "status:in-review", "status:done"],
+  "ste": {
+    "spelling": "american",
+    "allowWords": ["finding", "findings", "spelling"]
+  }
+}

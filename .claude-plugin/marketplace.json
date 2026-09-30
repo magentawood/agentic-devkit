@@ -6,8 +6,8 @@
     {
       "name": "agentic-devkit",
       "source": "./",
-      "description": "Skills for building and shipping products: blog cross-posting and more.",
-      "version": "0.1.0"
+      "description": "Skills for building and shipping products: STE writing and blog cross-posting.",
+      "version": "0.2.0"
     }
   ]
 }
