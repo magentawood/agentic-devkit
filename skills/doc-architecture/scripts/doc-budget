@@ -7,13 +7,15 @@ Usage:
   doc-budget --staged                Check only the staged Markdown files (for a pre-commit hook).
   doc-budget --report                Show every file with its size and its limit.
 
-The limits come from "docBudget" in devkit.config.json (plugin defaults, then
-the project file). A rule gives a glob and maxWords or maxTokens. The first
+The limits come from "docBudget" in devkit.config.json: the defaults (the plugin
+file, or devkit-defaults.json next to a project copy), then the project file. A rule gives a glob and maxWords or maxTokens. The first
 rule that matches a file applies. "overrides" sets the limit for one file: use
 it for a file that is already over its rule, as a ceiling that stops growth.
 Exit code 1 means at least one checked file is over its limit.
 """
 import fnmatch, json, os, re, subprocess, sys
+
+TOOL_VERSION = "0.1.0"  # master: agentic-devkit skills/doc-architecture/scripts; sync-tools copies it to tools/
 
 
 def load(path):
@@ -25,9 +27,12 @@ def load(path):
 
 
 def config(root):
-    plugin = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "devkit.config.json")
+    here = os.path.dirname(os.path.abspath(__file__))
+    defaults = os.path.join(here, "devkit-defaults.json")
+    if not os.path.exists(defaults):
+        defaults = os.path.join(here, "..", "..", "..", "devkit.config.json")
     merged = {}
-    for level in (load(plugin), load(os.path.join(root, "devkit.config.json"))):
+    for level in (load(defaults), load(os.path.join(root, "devkit.config.json"))):
         for key, value in level.get("docBudget", {}).items():
             merged[key] = {**merged.get(key, {}), **value} if isinstance(value, dict) else value
     return merged
