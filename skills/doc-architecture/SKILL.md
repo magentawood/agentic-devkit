@@ -48,6 +48,7 @@ The same change, with each architecture fix in its diff.
    - `doc-links .`
    - `build-decision-ledger --check`
    - `render-docs --check`
+   - With the `hook` part on: `git config core.hooksPath` gives `.githooks`, and the root `package.json` (if there is one) has `git config core.hooksPath .githooks` in `scripts.prepare`. If not, run `git config core.hooksPath .githooks`, and tell the user to run `/doc-management check --sync`.
 
 ## Exit conditions
 
