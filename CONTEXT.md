@@ -32,3 +32,16 @@ These are the terms that the skills in this plugin use. Use each term only with 
 | Claim | One fact, rule, case, decision, or reason in a document. |
 | Claim inventory | The numbered list of claims in a document before a rewrite. |
 | STE | ASD-STE100 Simplified Technical English. |
+| Docs architecture | Where each fact lives in the docs of a project, and the size limit of each file. The `doc-architecture` skill guards it. `docArchitecture` in the configuration gives its parts and paths. |
+| Index | The always-loaded file, `CONTEXT.md` of the project. It has what the project is, the decisions that are not settled, a routing table, where things live, and the conventions. `indexFile` in the configuration gives it. |
+| Routing table | The table in the index that tells which file to read before a task in an area. |
+| Decision record | The only home of the reasoning for a decision: an architecture record (ADR, `NNNN-slug.md`) or a product record (PD, `pd-NN[a]-slug.md`). |
+| In one line | The one-sentence summary at the start of the Decision section of a record. The ledgers show it. |
+| Working doc | A doc that holds rules only, with a `Why:` link to the record of each rule. |
+| Ledger | A generated list of the decision records. `build-decision-ledger` writes it. |
+| Superseded | The mark that the most recent record puts on an older statement that it replaces. |
+| Master copy | The copy of a docs tool in the plugin. |
+| Tool copy | The copy of a docs tool in a project (`tools/`, `.githooks/`, `.github/workflows/`). `sync-tools` makes it and records its plugin version. |
+| Cheap checks | The script checks that the hook and CI run: limits, links, ledger drift, render drift, and tool copies. |
+| CORE claim | A decision, rule, number, owner, condition, or open question. It stays in the body of a doc during compaction. |
+| SUPPORT claim | A rationale, example, background, or restatement. It moves to a decision record during compaction. |
