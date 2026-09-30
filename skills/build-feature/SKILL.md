@@ -4,7 +4,7 @@ description: Take a feature or a ticket from an idea to a merged PR through gril
 disable-model-invocation: true
 argument-hint: "[T-nn | feature idea]"
 metadata:
-  version: 0.1.0
+  version: 0.1.1
 ---
 
 # Build feature
@@ -25,7 +25,7 @@ Do not use this skill for a change to documents only. For that change, use `ste-
 ## Inputs
 
 - The argument: a ticket ID, or a description of the feature.
-- The configuration: the plugin `devkit.config.json`, then the project `devkit.config.json`. Use `approvalGates`, `mergeMode`, `reviewRounds`, `statusLabels`, `repo`, `standardsPath`, `decisionsPath`, `journalPath`, and `plan`.
+- The configuration: the plugin `devkit.config.json`, then the project `devkit.config.json`. Use `approvalGates`, `mergeMode`, `reviewRounds`, `statusLabels`, `repo`, `standardsPath`, `decisionsPath`, `journalPath`, `plan`, and `docArchitecture`.
 - The task note (`<plan.tasksPath>/<ID> *.md`) and the files in its `## Read first` section.
 - The project `CONTEXT.md`, the decision records, and all files in `standardsPath`.
 
@@ -50,12 +50,13 @@ Before each stage, read its reference file. At each stage change, run `${CLAUDE_
 
 For each stage in `approvalGates` (default: `spec` and `pr`), stop and get the approval of the user before the next stage.
 
-Context budget duties, at each stage (see CONVENTIONS.md):
+Docs duties, at each stage. The `doc-architecture` skill guards each Markdown change. Its tools are in `tools/` of the project, or in `${CLAUDE_PLUGIN_ROOT}/skills/doc-architecture/scripts/` if the project has no copy.
 
-- Put the reasoning for a decision only in its decision record. Give each new record an "In one line:" summary, then run the decision ledger script of the project.
+- Put the reasoning for a decision only in its decision record. Give each new record an "In one line:" summary, then run `build-decision-ledger`.
 - Keep `CONTEXT.md` an index. When a new area occurs, add a line to its routing table.
 - Update or remove the text that a new decision replaces. Do not append.
 - Run `doc-budget` on each document that you change.
+- Put the spec of a new feature in `docArchitecture.specPath`. After the merge, move it to `docArchitecture.archivePath`.
 
 ## Exit conditions
 
