@@ -41,7 +41,7 @@ Do not use this skill for a change to documents only. For that change, use `ste-
 Before each stage, read its reference file. At each stage change, run `${CLAUDE_SKILL_DIR}/scripts/issue-status <N> <status> --note "<one line>"`.
 
 1. **Grill.** Read [references/grill.md](references/grill.md). For a ticket that exists, ask only implementation questions.
-2. **Spec.** Read [references/spec.md](references/spec.md). For a ticket, write the short spec into the task note with [templates/task-note-section.md](templates/task-note-section.md). For a new feature, use [templates/spec.md](templates/spec.md). Set `status:spec`.
+2. **Spec.** Read [references/spec.md](references/spec.md). For a ticket, write the short spec into the task note with [templates/task-note-section.md](templates/task-note-section.md). For a new feature, use `${CLAUDE_PLUGIN_ROOT}/skills/doc-architecture/templates/spec.md`. Set `status:spec`.
 3. **Ticket** (new feature only). Read [references/tickets.md](references/tickets.md).
 4. **Implement.** Read [references/implement.md](references/implement.md), [references/lean-code.md](references/lean-code.md), [references/code-comments.md](references/code-comments.md), and the applicable files in `standardsPath`. Set `status:in-progress`.
 5. **Review.** Read [references/review.md](references/review.md). Do the review before you open the PR. Use three blind sub-agents and a maximum of `reviewRounds` rounds.
