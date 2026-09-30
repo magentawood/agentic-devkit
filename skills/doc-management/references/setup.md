@@ -22,7 +22,7 @@
 
 7. **Journal.** Make the file of this month from [../templates/journal-month.md](../templates/journal-month.md).
 
-8. **Limits and tools.** Add `"docBudget": {"overrides": {}}` to the project config. The limits come from the plugin defaults, which `sync-tools` copies to `tools/devkit-defaults.json`. A project rule replaces the default list. Run `${CLAUDE_SKILL_DIR}/scripts/sync-tools <project root>`. It copies the tools, the hook, and CI. It writes the plugin version and the hash of each copy to `docArchitecture` in the project config. With the hook on, it sets `git config core.hooksPath .githooks`. Tell the user that each clone needs this command one time.
+8. **Limits and tools.** Add `"docBudget": {"overrides": {}}` to the project config. The limits come from the plugin defaults, which `sync-tools` copies to `tools/devkit-defaults.json`. A project `rules` list replaces the full default list. Run `${CLAUDE_SKILL_DIR}/scripts/sync-tools <project root>`. It copies the tools, the hook, and CI. It writes the plugin version and the hash of each copy to `docArchitecture` in the project config. With the hook on, it sets `git config core.hooksPath .githooks`. Tell the user that each clone needs this command one time.
 
 9. **Ledgers.** Run `python3 tools/build-decision-ledger.py`. It makes the ledger files and fills the index block.
 
