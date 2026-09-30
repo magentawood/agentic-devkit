@@ -6,6 +6,7 @@ A Claude Code plugin with skills for building and shipping products.
 
 | Skill | What it does |
 |---|---|
+| `/build-feature` | Takes a ticket or a new feature to a merged PR: grill, spec, ticket, implement, blind review, PR. Version 0.1.0 is a skeleton. The stage references are drafts until the POC on the first ticket. |
 | `ste-writing` | Writes and rewrites Markdown in ASD-STE100 Simplified Technical English. Claude uses it when it writes or edits a `.md` file. |
 | `/blog` | Draft a post with Claude, review it in the terminal, then cross-post to dev.to, Reddit, Medium, Substack, LinkedIn and Quora. |
 
@@ -40,6 +41,15 @@ skills/ste-writing/scripts/ste-lint docs/*.md            # report STE problems
 skills/ste-writing/scripts/ste-verify diff git:HEAD:a.md a.md   # prove a rewrite kept links, ids, numbers
 skills/ste-writing/scripts/ste-verify links .            # find broken links in a repo
 skills/ste-writing/scripts/doc-budget --report           # size of each doc against its limit
+```
+
+## `/build-feature` scripts
+
+The skill uses two scripts. They also work without Claude:
+
+```
+skills/build-feature/scripts/issue-status 33 in-review --note "Review is clean." [--dry-run]
+skills/build-feature/scripts/tick "docs/plan/tasks/T-13 Reply writer.md" "<exact item text>" 91 [--dry-run]
 ```
 
 Shared rules for all skills are in `CONVENTIONS.md`. Credits are in `NOTICE.md`.
