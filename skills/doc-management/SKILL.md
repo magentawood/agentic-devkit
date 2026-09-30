@@ -42,7 +42,7 @@ Do not use it for one doc change. The `doc-architecture` skill guards each chang
    - `setup`: [references/setup.md](references/setup.md)
    - `migrate`: [references/migrate.md](references/migrate.md) and [references/lessons.md](references/lessons.md)
    - `check`: [references/check.md](references/check.md)
-2. `setup` and `check --sync` copy the tools with `${CLAUDE_SKILL_DIR}/scripts/sync-tools`. `check` only compares the copies, with `sync-tools --check`.
+2. `setup`, `migrate`, and `check --sync` copy the tools with `${CLAUDE_SKILL_DIR}/scripts/sync-tools`. `check` only compares the copies, with `sync-tools --check`.
 3. Use the templates in `${CLAUDE_SKILL_DIR}/templates/` for new files.
 4. Ask each question with `AskUserQuestion`, one question at a time.
 5. When a run teaches a new lesson about the architecture, add it to [references/lessons.md](references/lessons.md) in a plugin PR.
