@@ -1,6 +1,6 @@
 # Lessons
 
-These lessons come from the Roomsie cleanup (PRs #74–#88). Read them before a `migrate` run, and before a large change to the docs.
+These lessons come from the Roomsie cleanup (2026-09-30, PRs #74–#88). Read them before a `migrate` run, and before a large change to the docs.
 
 ## Size and compression
 
