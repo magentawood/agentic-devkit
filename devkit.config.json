@@ -78,7 +78,8 @@
     },
     "settledStatuses": [
       "Settled",
-      "Accepted"
+      "Accepted",
+      "Superseded"
     ],
     "renderPages": [],
     "toolsVersion": null
