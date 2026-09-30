@@ -45,15 +45,13 @@ These rules apply to all skills in this plugin. A skill links to this file. A sk
 
 ## Context budget
 
-Documents share the context window of the agent with the code. Keep them small, and keep them from growing.
+Documents share the context window of the agent with the code. Keep them small, and stop their growth. The [`doc-architecture`](skills/doc-architecture/SKILL.md) skill owns these rules and their checks. The summary:
 
-- The always-loaded file (`CLAUDE.md` and the files that it imports) is an index. It gives the product in a few lines, one line for each decision with a link, the conventions, and a routing table. The routing table tells the agent which file to read before each type of task.
-- When a task touches an area in the routing table, read the linked file before you act.
-- The reasoning for a decision is only in its decision record (an ADR or a product decision record). A working document gives the rule and a link, for example "(why: PD7a)".
+- The always-loaded file is an index with a routing table. Before a task, read the files that the routing table gives for its area.
+- The reasoning for a decision is only in its decision record. A working doc gives the rule and a `Why:` link.
 - Each fact has one home. Other documents link to it. They do not copy it.
-- When a subsequent decision replaces an earlier one, update or remove the replaced text. Do not append.
-- `doc-budget` checks the size limits in `devkit.config.json`. Run it before each commit on the documents that changed. A file that is above its limit fails the check. To fix it, divide the file, link to the decision record, or remove the text that a subsequent decision replaced.
-- To raise the limit of one file, add an entry in `docBudget.overrides`. A reviewer sees it in the PR.
+- When a subsequent decision replaces text, update or remove the replaced text. Do not append.
+- Each file stays inside its limit in `docBudget`. An override is a ceiling for one file, and a reviewer sees it in the PR.
 
 ## Questions to the user
 
