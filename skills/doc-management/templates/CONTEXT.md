@@ -40,4 +40,4 @@ Each decision has one record in `docs/decisions/`: ADRs (architecture, `NNNN-slu
 - **Never push to the default branch.** Each change goes in through a pull request.
 - Write all Markdown in STE with the `ste-writing` skill. The `doc-architecture` skill guards each doc change.
 - One fact, one home. Link to it. Do not copy it. When a decision changes, update its record and remove the replaced text.
-- Keep each doc inside its limit. Turn on the hook one time for each clone: `git config core.hooksPath .githooks`.
+- Keep each doc inside its limit. The hook turns on in each Claude Code session, and at each package install. If the hook does not run, run `git config core.hooksPath .githooks` one time.
