@@ -31,7 +31,7 @@ The grill asks the user questions until each branch of the decision tree has a d
   - A subsequent reader cannot understand it without the reason.
   - It comes from a trade-off between alternatives.
 
-  Put the reasoning only in the record. Give it an "In one line:" summary. Then run the decision ledger script of the project.
+  Put the reasoning only in the record. Give it an "In one line:" summary. Then run `build-decision-ledger` (see the `doc-architecture` skill).
 - **Replaced text:** when a new decision replaces a previous decision, update or remove the text of the previous decision. Do not append.
 - **Contradictions:** when the user says something that the code does not do, tell the user. Ask which one is correct.
 
