@@ -7,8 +7,9 @@ Usage:
   doc-budget --staged                Check only the staged Markdown files (for a pre-commit hook).
   doc-budget --report                Show every file with its size and its limit.
 
-The limits come from "docBudget" in devkit.config.json: the defaults (the plugin
-file, or devkit-defaults.json next to a project copy), then the project file.
+The limits come from "docBudget": the defaults (defaults/devkit.defaults.json of
+the plugin, or devkit-defaults.json next to a project copy), then the project
+devkit.config.json.
 A rule gives a glob and maxWords or maxTokens. The first rule that matches a
 file applies. "overrides" sets the limit for one file: use it for a file that
 is already over its rule, as a ceiling that stops growth. With --staged or
@@ -32,7 +33,7 @@ def config(root):
     here = os.path.dirname(os.path.abspath(__file__))
     defaults = os.path.join(here, "devkit-defaults.json")
     if os.path.basename(here) == "scripts":  # the master copy in the plugin
-        defaults = os.path.join(here, "..", "..", "..", "devkit.config.json")
+        defaults = os.path.join(here, "..", "..", "..", "defaults", "devkit.defaults.json")
     merged = {}
     for level in (load(defaults), load(os.path.join(root, "devkit.config.json"))):
         for key, value in level.get("docBudget", {}).items():
