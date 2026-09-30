@@ -9,14 +9,14 @@ Usage:
 PROJECT defaults to the git root of the current folder. The copies (the parts
 come from "docArchitecture.parts" in devkit.config.json):
   tools/doc-budget.py, tools/doc-links.py        always
-  tools/build-decision-ledger.py                 parts.ledgers
+  tools/build-decision-ledger.py                 parts.records, and parts.ledgers or parts.index
   tools/render-docs.py                           parts.html
   .githooks/pre-commit                           parts.hook or parts.ci
   .github/workflows/docs-check.yml               parts.ci
   tools/devkit-defaults.json                     the plugin defaults for the copies
 A sync writes the plugin version to docArchitecture.toolsVersion and the hash of
 each copy to docArchitecture.toolCopies in the project devkit.config.json, and
-removes the copy of a part that is off. With parts.hook on, it also runs:
+removes a copy that it wrote for a part that is now off. With parts.hook on, it also runs:
 git config core.hooksPath .githooks. --check gives a note, not a failure, when
 the copies match but toolsVersion is not the plugin version.
 """
@@ -61,7 +61,7 @@ def copies(project):
     plugin_cfg = load(os.path.join(PLUGIN, "devkit.config.json"))
     on = parts(project)
     plan = [("tools/doc-budget.py", "scripts/doc-budget"), ("tools/doc-links.py", "scripts/doc-links")]
-    if on.get("ledgers", True) and on.get("records", True):
+    if on.get("records", True) and (on.get("ledgers", True) or on.get("index", True)):
         plan.append(("tools/build-decision-ledger.py", "scripts/build-decision-ledger"))
     if on.get("html", True):
         plan.append(("tools/render-docs.py", "scripts/render-docs"))
@@ -72,8 +72,9 @@ def copies(project):
     out = [(dest, open(os.path.join(MASTER, src), "rb").read()) for dest, src in plan]
     defaults = OrderedDict((k, plugin_cfg[k]) for k in ("decisionsPath", "docBudget", "docArchitecture") if k in plugin_cfg)
     arch = defaults.get("docArchitecture", {})
-    arch.pop("toolsVersion", None)
-    arch.pop("toolCopies", None)
+    for key in ("toolsVersion", "toolCopies", "renderPages"):  # values of the plugin repo, not defaults
+        arch.pop(key, None)
+    defaults.get("docBudget", {}).pop("overrides", None)
     out.append(("tools/devkit-defaults.json", (json.dumps(defaults, indent=2, ensure_ascii=False) + "\n").encode()))
     return out
 
@@ -125,10 +126,16 @@ def sync(project):
     cfg = project_config(project)
     hashes = OrderedDict()
     plan = copies(project)
+    recorded = cfg.get("docArchitecture", {}).get("toolCopies", {})
     for dest in sorted(set(ALL) - {d for d, _ in plan}):  # a part that is off loses its old copy
-        if os.path.exists(os.path.join(project, dest)):
-            os.remove(os.path.join(project, dest))
+        path = os.path.join(project, dest)
+        if not os.path.exists(path):
+            continue
+        if recorded.get(dest) == digest(open(path, "rb").read()):
+            os.remove(path)
             print(f"removed    {dest}")
+        else:
+            print(f"kept       {dest}: sync-tools did not write it, or it changed")
     for dest, master in plan:
         path = os.path.join(project, dest)
         os.makedirs(os.path.dirname(path), exist_ok=True)
