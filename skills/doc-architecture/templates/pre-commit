@@ -8,6 +8,8 @@ cd "$(git rev-parse --show-toplevel)" || exit 1
 
 if [ -n "$DOCS_CHECK_ALL" ]; then
   python3 tools/doc-budget.py || exit 1
+  # In a pull request, also fail on an override that grew since the base branch.
+  if [ -n "$GITHUB_BASE_REF" ]; then python3 tools/doc-budget.py --changed "origin/$GITHUB_BASE_REF" || exit 1; fi
 else
   python3 tools/doc-budget.py --staged || exit 1
 fi
