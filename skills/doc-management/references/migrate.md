@@ -42,8 +42,8 @@
 Ask the user if they want the rewrite. For each file, obey the rewrite procedure of `ste-writing`:
 
 1. A first sub-agent writes the claim inventory of the file.
-2. A second sub-agent rewrites the file.
-3. A third, blind sub-agent gets only the claims and the new file. For each claim it gives `present`, `weakened`, or `missing`. It lists each `added` statement.
+2. You rewrite the file. The claim check is blind, so it does not need a different writer.
+3. A second, blind sub-agent gets only the claims and the new file. For each claim it gives `present`, `weakened`, or `missing`. It lists each `added` statement.
 4. Fix each item. Then do a second blind check of the fixed claims.
 
 ### 5. Compaction
@@ -51,7 +51,7 @@ Ask the user if they want the rewrite. For each file, obey the rewrite procedure
 1. A sub-agent tags each claim **CORE** or **SUPPORT**.
    - CORE: a decision, a rule, a number, an owner, a condition, or an open question.
    - SUPPORT: a rationale, an example, background, or a restatement.
-2. CORE stays in the body of the doc. SUPPORT moves to a log with one section for each decision. Stage 6 puts it into the records.
+2. CORE stays in the body of the doc. SUPPORT moves to `<archivePath>/migrate-support-log.md`, with one section for each decision. Commit the log in the stage 5 PR. The limits do not apply to it. Stage 6 puts its content into the records, and stage 7 deletes it.
 3. A human skims each list of SUPPORT claims that moves. The tagger can tag a rule as reasoning.
 4. A blind sub-agent confirms that each CORE claim is in the body of the doc.
 5. Collect each contradiction between docs that the tags show. Also collect each contradiction that stages 6 and 7 find, and ask about it in the same way.
@@ -68,15 +68,17 @@ Ask the user if they want the rewrite. For each file, obey the rewrite procedure
 
 1. In each working doc, replace the reasoning with `Why: [ID](link)`.
 2. Log each reason that the record does not have. Merge it into the record. Remove the duplicates. If it conflicts with the decision of the record, ask the user as in stop 2. Recommend the record.
+3. Delete `<archivePath>/migrate-support-log.md` when each of its sections is in a record.
 
 ### 8. Splits, ledgers and limits
 
 1. Divide each file that is above its limit, by topic.
-2. Run `sync-tools`, then `build-decision-ledger`.
-3. Cut the index to 1,500 tokens or less. It keeps the routing table and links, not the text.
-4. Move the history to the journal and the archive.
-5. Set the limits. Add an override only for a file that you cannot divide in this run. An override is a ceiling.
-6. Turn on the hook.
+2. Do steps 2–8 of [setup.md](setup.md). They set the parts, the paths, the plan, the folders, the templates, the limits, and the tools. Add the `<!-- decisions:start -->` and `<!-- decisions:end -->` markers to the index.
+3. Run `build-decision-ledger`.
+4. Cut the index to 1,500 tokens or less. It keeps the routing table and links, not the text.
+5. Move the history to the journal and the archive.
+6. Add an override only for a file that you cannot divide in this run. An override is a ceiling.
+7. Run the hook on all files: `DOCS_CHECK_ALL=1 sh .githooks/pre-commit`.
 
 ## Report
 
