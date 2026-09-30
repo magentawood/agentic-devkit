@@ -71,8 +71,23 @@ def raised_overrides(root, old_ref, new_ref):
             return json.loads(out.stdout).get("docBudget", {}).get("overrides", {}) if out.returncode == 0 else {}
         except ValueError:
             return {}
-    old, new = overrides(old_ref), overrides(new_ref)
-    return [f"{k}: {old[k]} -> {v}" for k, v in sorted(new.items()) if k in old and v > old[k]]
+    def cap(value):  # an override is a number of words, or a rule such as {"maxTokens": N}
+        rule = {"maxWords": value} if isinstance(value, int) else value
+        return ("tokens", rule["maxTokens"]) if "maxTokens" in rule else ("words", rule["maxWords"])
+
+    old, new, raised = overrides(old_ref), overrides(new_ref), []
+    for rel, value in sorted(new.items()):
+        unit, limit = cap(value)
+        if rel in old:
+            old_unit, old_limit = cap(old[rel])
+            if unit != old_unit or limit > old_limit:
+                raised.append(f"{rel}: {old[rel]} -> {value}")
+        elif os.path.exists(os.path.join(root, rel)):  # a new override is at most the size of the file now
+            words, tokens = size(os.path.join(root, rel))
+            now = tokens if unit == "tokens" else words
+            if limit > now:
+                raised.append(f"{rel}: new override {limit} {unit}, but the file has {now}")
+    return raised
 
 
 def main(argv):
