@@ -6,10 +6,11 @@ Usage:
 
 Fails on a relative link to a missing file, a missing #heading, or a missing
 ^block, and on a wikilink that matches no note. A #heading matches the heading
-text or its GitHub-style slug. Folders that start with "." and node_modules are
-skipped. Exit code 0 means no broken link.
+text or its GitHub-style slug. A link that starts with "/" starts at ROOT. In a
+git repo, only the files that git tracks or does not ignore are checked. Exit
+code 0 means no broken link.
 """
-import html, os, re, sys
+import html, os, re, subprocess, sys
 from urllib.parse import unquote
 
 TOOL_VERSION = "0.1.0"  # master: agentic-devkit skills/doc-architecture/scripts; sync-tools copies it to tools/
@@ -24,8 +25,8 @@ INLINE = re.compile(r"`[^`\n]+`")
 
 
 def slug(heading):
-    h = re.sub(r"[`*_\[\]]", "", heading.strip().lower())
-    return re.sub(r"\s", "-", re.sub(r"[^\w\s-]", "", h))
+    """GitHub-style anchor, the same as render-docs: keep word characters, "-" and "_"."""
+    return re.sub(r" ", "-", re.sub(r"[^\w\- ]", "", heading.strip().lower()))
 
 
 def targets(path, cache={}):
@@ -41,19 +42,30 @@ def targets(path, cache={}):
     return cache[path]
 
 
+def repo_files(root):
+    """The files git knows (tracked, or new and not ignored). Outside git: a walk that skips dot folders."""
+    out = subprocess.run(["git", "ls-files", "-z", "--cached", "--others", "--exclude-standard"],
+                         capture_output=True, text=True, cwd=root)
+    if out.returncode == 0:
+        return sorted({os.path.join(root, f) for f in out.stdout.split("\0") if f and os.path.isfile(os.path.join(root, f))})
+    files = []
+    for d, dirs, names in os.walk(root):
+        dirs[:] = [x for x in dirs if not x.startswith(".") and x != "node_modules"]
+        files += [os.path.join(d, n) for n in names]
+    return files
+
+
 def check(root):
     root = os.path.abspath(root)
     files, notes = [], {}
-    for d, dirs, names in os.walk(root):
-        dirs[:] = [x for x in dirs if not x.startswith(".") and x != "node_modules"]
-        for n in names:
-            p = os.path.join(d, n)
-            if n.endswith((".md", ".html")):
-                files.append(p)
-            notes.setdefault(os.path.splitext(n)[0].lower(), []).append(p)
-            notes.setdefault(n.lower(), []).append(p)
-            rel = os.path.relpath(p, root)
-            notes.setdefault(os.path.splitext(rel)[0].lower(), []).append(p)
+    for p in repo_files(root):
+        n = os.path.basename(p)
+        if n.endswith((".md", ".html")):
+            files.append(p)
+        notes.setdefault(os.path.splitext(n)[0].lower(), []).append(p)
+        notes.setdefault(n.lower(), []).append(p)
+        rel = os.path.relpath(p, root)
+        notes.setdefault(os.path.splitext(rel)[0].lower(), []).append(p)
     bad = 0
 
     def check_anchor(target_file, anchor, where, raw):
@@ -74,13 +86,14 @@ def check(root):
             if re.match(r"^[a-z][a-z0-9+.-]*:", raw, re.I) or raw.startswith("//"):
                 continue
             path, _, frag = unquote(html.unescape(raw)).partition("#")
-            tgt = f if not path else os.path.normpath(os.path.join(os.path.dirname(f), path))
+            base = root if path.startswith("/") else os.path.dirname(f)  # "/x.md" starts at the repo root, as on GitHub
+            tgt = f if not path else os.path.normpath(os.path.join(base, path.lstrip("/")))
             where = os.path.relpath(f, root)
             if not os.path.exists(tgt):
                 bad += 1
                 print(f"{where}: missing file: {raw}")
                 continue
-            check_anchor(tgt, "#" + frag if frag and not frag.startswith("^") else frag, where, raw)
+            check_anchor(tgt, frag, where, raw)
         if f.endswith(".md"):
             for raw in WIKI.findall(body):
                 name, _, frag = raw.partition("#")
