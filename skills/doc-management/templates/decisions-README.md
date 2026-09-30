@@ -8,8 +8,8 @@ Each decision has one record in this folder. The record is the only home of the 
 
 | Kind | File | Cited as | Template |
 |---|---|---|---|
-| Architecture record (ADR) | `NNNN-slug.md` | `ADR-0006` | `adr.md` of the `doc-management` skill |
-| Product record (PD) | `pd-NN[a]-slug.md` | `PD7a` | `pd.md` of the `doc-management` skill |
+| Architecture record (ADR) | `NNNN-slug.md` | `ADR-0006` | `templates/adr.md` in this folder |
+| Product record (PD) | `pd-NN[a]-slug.md` | `PD7a` | `templates/pd.md` in this folder |
 
 ## Format
 
