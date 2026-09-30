@@ -37,7 +37,7 @@ def config(root):
     """The defaults (plugin file, or devkit-defaults.json next to a project copy), then the project file."""
     here = os.path.dirname(os.path.abspath(__file__))
     defaults = os.path.join(here, "devkit-defaults.json")
-    if not os.path.exists(defaults):
+    if os.path.basename(here) == "scripts":  # the master copy in the plugin
         defaults = os.path.join(here, "..", "..", "..", "devkit.config.json")
     arch, top = {}, {}
     for level in (load(defaults), load(os.path.join(root, "devkit.config.json"))):
@@ -51,7 +51,9 @@ def config(root):
 def records(root, dec, product):
     out = []
     folder = os.path.join(root, dec)
-    for name in os.listdir(folder) if os.path.isdir(folder) else []:
+    if not os.path.isdir(folder):
+        sys.exit(f"build-decision-ledger: the decisions folder {dec} does not exist")
+    for name in os.listdir(folder):
         m = re.match(r"^(?:(\d{4})|pd-(\d{2})([a-z]?))-.*\.md$", name)
         if not m or (m.group(2) and not product):
             continue
@@ -129,20 +131,22 @@ def main(argv):
     product = parts.get("productRecords", True)
     rows = records(root, cfg["decisionsPath"], product)
     ledgers = [(k, p) for k, p in sorted(cfg.get("ledgers", {}).items(), key=lambda kv: kv[0] != "product")
-               if p and (k == "tech" or product)]
+               if p and k in LEDGER_TITLES and (k == "tech" or product)]
     jobs = [(p, LEDGER_MARKERS, table([r for r in rows if r["kind"] == k], p), LEDGER_TITLES.get(k))
             for k, p in ledgers]
     if parts.get("index", True):
         index = cfg.get("indexFile", "CONTEXT.md")
-        jobs.insert(0, (index, INDEX_MARKERS, index_block(rows, index, ledgers, cfg.get("settledStatuses", ["Settled", "Accepted"])), None))
+        jobs.insert(0, (index, INDEX_MARKERS, index_block(rows, index, ledgers, cfg.get("settledStatuses", ["Settled", "Accepted", "Superseded"])), None))
     check = "--check" in argv
     stale = []
-    for path, markers, body, title in jobs:
-        old, new = fill(root, path, markers, body, title)
+    results = [(path,) + fill(root, path, markers, body, title) for path, markers, body, title in jobs]
+    for path, old, new in results:  # all ledgers are computed before the first write
         if old != new:
             stale.append(path)
             if not check:
-                with open(os.path.join(root, path), "w", encoding="utf-8") as f:
+                full = os.path.join(root, path)
+                os.makedirs(os.path.dirname(full), exist_ok=True)
+                with open(full, "w", encoding="utf-8") as f:
                     f.write(new)
     if check and stale:
         print("out of date, run python3 tools/build-decision-ledger.py:", *stale, sep="\n  ")
