@@ -30,7 +30,7 @@ A decision record is the only home of the reasoning for a decision.
 
 Both kinds use one format, in this order:
 
-1. `# NNNN — <title>` (ADR) or `# PDNa — <title>` (PD), then `**Status:** <status> · **Date:** <date>`. The ledger reads the first word of the status. The statuses in `settledStatuses` (default "Settled" and "Accepted") show a settled decision.
+1. `# NNNN — <title>` (ADR) or `# PDNa — <title>` (PD), then `**Status:** <status> · **Date:** <date>`. The ledger reads the first word of the status. The statuses in `settledStatuses` (default "Settled", "Accepted", and "Superseded") show a settled decision.
 2. `## Context`
 3. `## Decision`. Its first line is `**In one line:** <summary>`. The ledgers show this line.
 4. `## Rationale`
@@ -94,7 +94,7 @@ A record is at most 1,200 words. Write a record only for a decision with three p
 
 An entry in `docBudget.overrides` is a ceiling for one file that is above its rule. It can only shrink: `doc-budget --staged` in the hook fails when an override grows. A reviewer sees it in the PR.
 
-If a project changes `indexFile`, it also changes the glob of the index rule in `docBudget.rules`.
+A project `docBudget.rules` list replaces the full default list. If a project changes `indexFile`, copy the full default list and change only the glob of the index rule.
 
 When a file is above its limit, do one of these: divide it by topic, move the reasoning into its record, or remove replaced text.
 
