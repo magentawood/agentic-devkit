@@ -2,9 +2,12 @@
 """Copy the master docs tools of the plugin into a project, or compare the copies.
 
 Usage:
-  sync-tools [PROJECT]          copy the tools, the hook and the CI step into PROJECT
+  sync-tools [--recommend-plugin] [PROJECT]
+                                copy the tools, the hook and the CI step into PROJECT,
+                                and turn on the hook
   sync-tools --check [PROJECT]  report each copy that is missing, older than the
-                                master, or not the same as the master; exit 1 if any
+                                master, or not the same as the master, and each
+                                missing hook activation; exit 1 if any
 
 PROJECT defaults to the git root of the current folder. The copies (the parts
 come from "docArchitecture.parts" in devkit.config.json):
@@ -13,18 +16,30 @@ come from "docArchitecture.parts" in devkit.config.json):
   tools/render-docs.py                           parts.html
   .githooks/pre-commit                           parts.hook or parts.ci
   .github/workflows/docs-check.yml               parts.ci
-  tools/devkit-defaults.json                     the plugin defaults for the copies
+  tools/devkit-defaults.json                     a copy of defaults/devkit.defaults.json
 A sync writes the plugin version to docArchitecture.toolsVersion and the hash of
 each copy to docArchitecture.toolCopies in the project devkit.config.json, and
-removes a copy that it wrote for a part that is now off. With parts.hook on, it also runs:
-git config core.hooksPath .githooks. --check gives a note, not a failure, when
-the copies match but toolsVersion is not the plugin version.
+removes a copy that it wrote for a part that is now off. --check gives a note,
+not a failure, when the copies match but toolsVersion is not the plugin version.
+
+Git never runs the hooks of a clone by itself. With parts.hook on, a sync turns
+the hook on in three ways, and merges each one with the values that are there:
+  git config core.hooksPath .githooks            this clone
+  package.json "scripts.prepare"                 each npm, pnpm or yarn install
+                                                 (only if the project has a root package.json)
+  .claude/settings.json hooks.SessionStart       each Claude Code session
+--recommend-plugin also adds this plugin to extraKnownMarketplaces and
+enabledPlugins in .claude/settings.json, so that Claude Code offers the plugin.
 """
 import hashlib, json, os, re, stat, subprocess, sys
 from collections import OrderedDict
 
 PLUGIN = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", ".."))
 MASTER = os.path.join(PLUGIN, "skills", "doc-architecture")
+DEFAULTS = os.path.join(PLUGIN, "defaults", "devkit.defaults.json")
+MARKETPLACE_REPO = "magentawood/agentic-devkit"
+HOOKS_CMD = "git config core.hooksPath .githooks"
+SESSION_CMD = 'cd "$CLAUDE_PROJECT_DIR" && ' + HOOKS_CMD
 ALL = ("tools/doc-budget.py", "tools/doc-links.py", "tools/build-decision-ledger.py", "tools/render-docs.py",
        ".githooks/pre-commit", ".github/workflows/docs-check.yml", "tools/devkit-defaults.json")
 VERSION = re.compile(r"TOOL_VERSION\s*=\s*\"(\d+(?:\.\d+)*)\"")
@@ -38,27 +53,44 @@ def load(path):
         return OrderedDict()
 
 
-def project_config(project):
-    """The project config. A file that is not valid JSON stops the run, so that a sync cannot erase it."""
-    path = os.path.join(project, "devkit.config.json")
+def strict_load(path):
+    """A project JSON file, or {} if it does not exist. A file that is not valid JSON stops the run, so that a sync cannot erase it."""
     if not os.path.exists(path):
         return OrderedDict()
     try:
         with open(path) as f:
-            return json.load(f, object_pairs_hook=OrderedDict)
+            data = json.load(f, object_pairs_hook=OrderedDict)
     except ValueError as e:
         sys.exit(f"sync-tools: {path} is not valid JSON: {e}")
+    if not isinstance(data, dict):
+        sys.exit(f"sync-tools: {path} is not a JSON object")
+    return data
+
+
+def write_json(path, data):
+    """Write data with the indent that the file has (default 2), and a final newline."""
+    indent = 2
+    if os.path.exists(path):
+        m = re.search(r"\n([ \t]+)\S", open(path).read())
+        if m:
+            indent = m.group(1) if "\t" in m.group(1) else len(m.group(1))
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "w") as f:
+        f.write(json.dumps(data, indent=indent, ensure_ascii=False) + "\n")
+
+
+def project_config(project):
+    return strict_load(os.path.join(project, "devkit.config.json"))
 
 
 def parts(project):
-    on = dict(load(os.path.join(PLUGIN, "devkit.config.json")).get("docArchitecture", {}).get("parts", {}))
+    on = dict(load(DEFAULTS).get("docArchitecture", {}).get("parts", {}))
     on.update(project_config(project).get("docArchitecture", {}).get("parts", {}))
     return on
 
 
 def copies(project):
     """(destination, master bytes) for each copy that the project gets."""
-    plugin_cfg = load(os.path.join(PLUGIN, "devkit.config.json"))
     on = parts(project)
     plan = [("tools/doc-budget.py", "scripts/doc-budget"), ("tools/doc-links.py", "scripts/doc-links")]
     if on.get("records", True) and (on.get("ledgers", True) or on.get("index", True)):
@@ -70,13 +102,81 @@ def copies(project):
     if on.get("ci", True):
         plan.append((".github/workflows/docs-check.yml", "templates/docs-check.yml"))
     out = [(dest, open(os.path.join(MASTER, src), "rb").read()) for dest, src in plan]
-    defaults = OrderedDict((k, plugin_cfg[k]) for k in ("decisionsPath", "docBudget", "docArchitecture") if k in plugin_cfg)
-    arch = defaults.get("docArchitecture", {})
-    for key in ("toolsVersion", "toolCopies", "renderPages"):  # values of the plugin repo, not defaults
-        arch.pop(key, None)
-    defaults.get("docBudget", {}).pop("overrides", None)
-    out.append(("tools/devkit-defaults.json", (json.dumps(defaults, indent=2, ensure_ascii=False) + "\n").encode()))
+    out.append(("tools/devkit-defaults.json", open(DEFAULTS, "rb").read()))
     return out
+
+
+def hooks_path(project):
+    """The core.hooksPath of the clone, or None if the project is not a git clone."""
+    if not os.path.exists(os.path.join(project, ".git")):
+        return None
+    return subprocess.run(["git", "-C", project, "config", "core.hooksPath"], capture_output=True, text=True).stdout.strip()
+
+
+def session_hooks(settings):
+    return [h.get("command") for group in settings.get("hooks", {}).get("SessionStart", [])
+            for h in group.get("hooks", []) if isinstance(h, dict)]
+
+
+def activation_problems(project):
+    """Each way to turn on the hook that the project does not have."""
+    problems = []
+    path = hooks_path(project)
+    if path is not None and path != ".githooks":
+        problems.append(f"hook-off   this clone: core.hooksPath is '{path or 'not set'}', not '.githooks'. Fix: {HOOKS_CMD}")
+    pkg = os.path.join(project, "package.json")
+    if os.path.exists(pkg) and HOOKS_CMD not in strict_load(pkg).get("scripts", {}).get("prepare", ""):
+        problems.append(f'hook-off   package.json: "scripts.prepare" does not run {HOOKS_CMD}')
+    if SESSION_CMD not in session_hooks(strict_load(os.path.join(project, ".claude", "settings.json"))):
+        problems.append("hook-off   .claude/settings.json: no SessionStart hook that runs " + HOOKS_CMD)
+    return problems
+
+
+def activate(project):
+    """Turn on the hook for the clone, for each install, and for each Claude Code session. Merge; never overwrite."""
+    if hooks_path(project) is not None:
+        subprocess.run(["git", "-C", project, "config", "core.hooksPath", ".githooks"], check=True)
+        print(HOOKS_CMD)
+    pkg_path = os.path.join(project, "package.json")
+    if os.path.exists(pkg_path):
+        pkg = strict_load(pkg_path)
+        scripts = pkg.setdefault("scripts", OrderedDict())
+        prepare = scripts.get("prepare", "")
+        if HOOKS_CMD not in prepare:
+            if re.search(r"husky|hooksPath", prepare):
+                print(f'warning    package.json: "prepare" also sets the hooks path: {prepare}')
+            scripts["prepare"] = f"{prepare} && {HOOKS_CMD}" if prepare.strip() else HOOKS_CMD
+            write_json(pkg_path, pkg)
+            print(f'updated    package.json: "scripts.prepare" = "{scripts["prepare"]}"')
+    settings_path = os.path.join(project, ".claude", "settings.json")
+    settings = strict_load(settings_path)
+    if SESSION_CMD not in session_hooks(settings):
+        hooks = settings.setdefault("hooks", OrderedDict())
+        hooks.setdefault("SessionStart", []).append(
+            OrderedDict([("hooks", [OrderedDict([("type", "command"), ("command", SESSION_CMD)])])]))
+        write_json(settings_path, settings)
+        print("updated    .claude/settings.json: SessionStart hook")
+
+
+def recommend_plugin(project):
+    """Add this plugin to extraKnownMarketplaces and enabledPlugins in .claude/settings.json. Merge; never overwrite."""
+    settings_path = os.path.join(project, ".claude", "settings.json")
+    settings = strict_load(settings_path)
+    changed = False
+    market = load(os.path.join(PLUGIN, ".claude-plugin", "marketplace.json")).get("name", "agentic-devkit")
+    name = load(os.path.join(PLUGIN, ".claude-plugin", "plugin.json")).get("name", "agentic-devkit")
+    known = settings.setdefault("extraKnownMarketplaces", OrderedDict())
+    if market not in known:
+        known[market] = OrderedDict([("source", OrderedDict([("source", "github"), ("repo", MARKETPLACE_REPO)]))])
+        changed = True
+        print(f"updated    .claude/settings.json: extraKnownMarketplaces.{market}")
+    enabled = settings.setdefault("enabledPlugins", OrderedDict())
+    if f"{name}@{market}" not in enabled:  # a value that is there, true or false, is the choice of the project
+        enabled[f"{name}@{market}"] = True
+        changed = True
+        print(f"updated    .claude/settings.json: enabledPlugins.{name}@{market}")
+    if changed:
+        write_json(settings_path, settings)
 
 
 def version(data):
@@ -113,6 +213,8 @@ def check(project):
             problems.append(f"older      {dest}: {fmt(have)} < master {fmt(want)}")
         else:
             problems.append(f"differs    {dest}: version {fmt(have)}, content not the same as the master")
+    if parts(project).get("hook", True):
+        problems += activation_problems(project)
     for line in problems:
         print(line)
     recorded = project_config(project).get("docArchitecture", {}).get("toolsVersion")
@@ -122,8 +224,10 @@ def check(project):
     return 1 if problems else 0
 
 
-def sync(project):
+def sync(project, recommend=False):
     cfg = project_config(project)
+    for name in ("package.json", os.path.join(".claude", "settings.json")):  # stop before a copy, not half way
+        strict_load(os.path.join(project, name))
     hashes = OrderedDict()
     plan = copies(project)
     recorded = cfg.get("docArchitecture", {}).get("toolCopies", {})
@@ -151,23 +255,25 @@ def sync(project):
     arch["toolCopies"] = hashes
     with open(cfg_path, "w") as f:
         f.write(json.dumps(cfg, indent=2, ensure_ascii=False) + "\n")
-    if parts(project).get("hook", True) and os.path.exists(os.path.join(project, ".git")):
-        subprocess.run(["git", "-C", project, "config", "core.hooksPath", ".githooks"], check=True)
-        print("git config core.hooksPath .githooks")
+    if parts(project).get("hook", True):
+        activate(project)
+    if recommend:
+        recommend_plugin(project)
     print(f"sync-tools: {len(hashes)} file(s) at plugin version {arch['toolsVersion']}")
     return 0
 
 
 def main(argv):
     args = [a for a in argv if not a.startswith("-")]
-    if len(args) > 1 or any(a != "--check" for a in argv if a.startswith("-")):
+    flags = [a for a in argv if a.startswith("-")]
+    if len(args) > 1 or any(a not in ("--check", "--recommend-plugin") for a in flags) or len(flags) > 1:
         sys.exit(__doc__)
     project = args[0] if args else (subprocess.run(["git", "rev-parse", "--show-toplevel"], capture_output=True,
                                                    text=True).stdout.strip() or os.getcwd())
     project = os.path.abspath(project)
     if not os.path.isdir(project):
         sys.exit(f"sync-tools: {project} is not a folder")
-    return check(project) if "--check" in argv else sync(project)
+    return check(project) if "--check" in argv else sync(project, "--recommend-plugin" in argv)
 
 
 if __name__ == "__main__":
