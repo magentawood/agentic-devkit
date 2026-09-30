@@ -42,8 +42,8 @@
 Ask the user if they want the rewrite. For each file, obey the rewrite procedure of `ste-writing`:
 
 1. A first sub-agent writes the claim inventory of the file.
-2. You rewrite the file.
-3. A second, blind sub-agent gets only the claims and the new file. For each claim it gives `present`, `weakened`, or `missing`. It lists each `added` statement.
+2. A second sub-agent rewrites the file.
+3. A third, blind sub-agent gets only the claims and the new file. For each claim it gives `present`, `weakened`, or `missing`. It lists each `added` statement.
 4. Fix each item. Then do a second blind check of the fixed claims.
 
 ### 5. Compaction
@@ -51,23 +51,23 @@ Ask the user if they want the rewrite. For each file, obey the rewrite procedure
 1. A sub-agent tags each claim **CORE** or **SUPPORT**.
    - CORE: a decision, a rule, a number, an owner, a condition, or an open question.
    - SUPPORT: a rationale, an example, background, or a restatement.
-2. CORE stays in the body of the doc. SUPPORT moves to the record of its decision.
+2. CORE stays in the body of the doc. SUPPORT moves to a log with one section for each decision. Stage 6 puts it into the records.
 3. A human skims each list of SUPPORT claims that moves. The tagger can tag a rule as reasoning.
 4. A blind sub-agent confirms that each CORE claim is in the body of the doc.
-5. Collect each contradiction between docs that the tags show.
+5. Collect each contradiction between docs that the tags show. Also collect each contradiction that stages 6 and 7 find, and ask about it in the same way.
 
 **Stop 2:** ask the user about each contradiction, one at a time, with `AskUserQuestion`. Give the two statements, their sources and dates. Put the most recent record first as "(Recommended)". The record that wins marks the older statement "Superseded:".
 
 ### 6. Records
 
-1. Make one record for each decision from all sources. Use [../templates/adr.md](../templates/adr.md) or [../templates/pd.md](../templates/pd.md). Each record gets its `**In one line:**` summary.
+1. Make one record for each decision from all sources and from the SUPPORT log of stage 5. Use [../templates/adr.md](../templates/adr.md) or [../templates/pd.md](../templates/pd.md). Each record gets its `**In one line:**` summary.
 2. Two fact-check sub-agents trace each statement in each record back to a source. In Roomsie they found 9 problems in 22 records: an invented detail, an incorrect owner, stale numbers, and incorrect statuses.
 3. Fix each problem. Remove each statement with no source.
 
 ### 7. Why → links
 
 1. In each working doc, replace the reasoning with `Why: [ID](link)`.
-2. Log each reason that the record does not have. Merge it into the record. Remove the duplicates. If it conflicts with the decision of the record, the record wins.
+2. Log each reason that the record does not have. Merge it into the record. Remove the duplicates. If it conflicts with the decision of the record, ask the user as in stop 2. Recommend the record.
 
 ### 8. Splits, ledgers and limits
 
