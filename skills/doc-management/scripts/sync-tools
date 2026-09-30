@@ -15,16 +15,18 @@ come from "docArchitecture.parts" in devkit.config.json):
   .github/workflows/docs-check.yml               parts.ci
   tools/devkit-defaults.json                     the plugin defaults for the copies
 A sync writes the plugin version to docArchitecture.toolsVersion and the hash of
-each copy to docArchitecture.toolCopies in the project devkit.config.json. With
-parts.hook on, it also runs: git config core.hooksPath .githooks
+each copy to docArchitecture.toolCopies in the project devkit.config.json, and
+removes the copy of a part that is off. With parts.hook on, it also runs:
+git config core.hooksPath .githooks. --check gives a note, not a failure, when
+the copies match but toolsVersion is not the plugin version.
 """
 import hashlib, json, os, re, stat, subprocess, sys
 from collections import OrderedDict
 
-TOOL_VERSION = "0.1.0"
-
 PLUGIN = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", ".."))
 MASTER = os.path.join(PLUGIN, "skills", "doc-architecture")
+ALL = ("tools/doc-budget.py", "tools/doc-links.py", "tools/build-decision-ledger.py", "tools/render-docs.py",
+       ".githooks/pre-commit", ".github/workflows/docs-check.yml", "tools/devkit-defaults.json")
 VERSION = re.compile(r"TOOL_VERSION\s*=\s*\"(\d+(?:\.\d+)*)\"")
 
 
@@ -36,15 +38,27 @@ def load(path):
         return OrderedDict()
 
 
+def project_config(project):
+    """The project config. A file that is not valid JSON stops the run, so that a sync cannot erase it."""
+    path = os.path.join(project, "devkit.config.json")
+    if not os.path.exists(path):
+        return OrderedDict()
+    try:
+        with open(path) as f:
+            return json.load(f, object_pairs_hook=OrderedDict)
+    except ValueError as e:
+        sys.exit(f"sync-tools: {path} is not valid JSON: {e}")
+
+
 def parts(project):
-    merged = {}
-    for level in (load(os.path.join(PLUGIN, "devkit.config.json")), load(os.path.join(project, "devkit.config.json"))):
-        merged.update(level.get("docArchitecture", {}).get("parts", {}))
-    return merged
+    on = dict(load(os.path.join(PLUGIN, "devkit.config.json")).get("docArchitecture", {}).get("parts", {}))
+    on.update(project_config(project).get("docArchitecture", {}).get("parts", {}))
+    return on
 
 
 def copies(project):
     """(destination, master bytes) for each copy that the project gets."""
+    plugin_cfg = load(os.path.join(PLUGIN, "devkit.config.json"))
     on = parts(project)
     plan = [("tools/doc-budget.py", "scripts/doc-budget"), ("tools/doc-links.py", "scripts/doc-links")]
     if on.get("ledgers", True) and on.get("records", True):
@@ -56,8 +70,7 @@ def copies(project):
     if on.get("ci", True):
         plan.append((".github/workflows/docs-check.yml", "templates/docs-check.yml"))
     out = [(dest, open(os.path.join(MASTER, src), "rb").read()) for dest, src in plan]
-    cfg = load(os.path.join(PLUGIN, "devkit.config.json"))
-    defaults = OrderedDict((k, cfg[k]) for k in ("decisionsPath", "journalPath", "docBudget", "docArchitecture") if k in cfg)
+    defaults = OrderedDict((k, plugin_cfg[k]) for k in ("decisionsPath", "docBudget", "docArchitecture") if k in plugin_cfg)
     arch = defaults.get("docArchitecture", {})
     arch.pop("toolsVersion", None)
     arch.pop("toolCopies", None)
@@ -99,18 +112,24 @@ def check(project):
             problems.append(f"older      {dest}: {fmt(have)} < master {fmt(want)}")
         else:
             problems.append(f"differs    {dest}: version {fmt(have)}, content not the same as the master")
-    recorded = load(os.path.join(project, "devkit.config.json")).get("docArchitecture", {}).get("toolsVersion")
-    if recorded != plugin_version():
-        problems.append(f"version    devkit.config.json docArchitecture.toolsVersion is {recorded}, plugin is {plugin_version()}")
     for line in problems:
         print(line)
+    recorded = project_config(project).get("docArchitecture", {}).get("toolsVersion")
+    if recorded != plugin_version():  # a note only: a plugin release can leave all copies the same
+        print(f"note       the copies were synced from plugin {recorded}; the plugin is {plugin_version()}")
     print(f"sync-tools: {len(problems)} problem(s). Fix: /doc-management check --sync" if problems else "sync-tools: all copies match the master")
     return 1 if problems else 0
 
 
 def sync(project):
+    cfg = project_config(project)
     hashes = OrderedDict()
-    for dest, master in copies(project):
+    plan = copies(project)
+    for dest in sorted(set(ALL) - {d for d, _ in plan}):  # a part that is off loses its old copy
+        if os.path.exists(os.path.join(project, dest)):
+            os.remove(os.path.join(project, dest))
+            print(f"removed    {dest}")
+    for dest, master in plan:
         path = os.path.join(project, dest)
         os.makedirs(os.path.dirname(path), exist_ok=True)
         with open(path, "wb") as f:
@@ -120,7 +139,6 @@ def sync(project):
         hashes[dest] = digest(master)
         print(f"copied     {dest}")
     cfg_path = os.path.join(project, "devkit.config.json")
-    cfg = load(cfg_path)
     arch = cfg.setdefault("docArchitecture", OrderedDict())
     arch["toolsVersion"] = plugin_version()
     arch["toolCopies"] = hashes
@@ -134,12 +152,14 @@ def sync(project):
 
 
 def main(argv):
-    args = [a for a in argv if not a.startswith("--")]
-    if len(args) > 1 or any(a not in ("--check",) for a in argv if a.startswith("--")):
+    args = [a for a in argv if not a.startswith("-")]
+    if len(args) > 1 or any(a != "--check" for a in argv if a.startswith("-")):
         sys.exit(__doc__)
     project = args[0] if args else (subprocess.run(["git", "rev-parse", "--show-toplevel"], capture_output=True,
                                                    text=True).stdout.strip() or os.getcwd())
     project = os.path.abspath(project)
+    if not os.path.isdir(project):
+        sys.exit(f"sync-tools: {project} is not a folder")
     return check(project) if "--check" in argv else sync(project)
 
 
