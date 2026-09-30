@@ -1,0 +1,114 @@
+#!/usr/bin/env python3
+"""Set the status label of a GitHub issue and post a stage-change comment.
+
+Usage:
+  issue-status ISSUE STATUS [--note TEXT] [--repo OWNER/NAME] [--dry-run]
+
+ISSUE is the issue number. STATUS is one of "statusLabels" in
+devkit.config.json, with or without the "status:" prefix (for example
+"in-review"). The script adds that label, removes every other status:* label,
+and posts one comment that names the old and the new status. --note adds one
+line to the comment. The script does not touch labels without the status:
+prefix, so lane and role labels stay.
+
+The repo comes from --repo, else from "repo" in the project devkit.config.json.
+--dry-run reads the issue, then prints the gh commands and makes no change.
+Exit code 1 means a bad argument or a gh failure.
+"""
+import json, os, shlex, subprocess, sys
+
+PREFIX = "status:"
+
+
+def load(path):
+    try:
+        with open(os.path.expanduser(path)) as f:
+            return json.load(f)
+    except (OSError, ValueError):
+        return {}
+
+
+def config():
+    """Plugin defaults, then the project file, then the user file. One level of dict merge."""
+    here = os.path.dirname(os.path.abspath(__file__))
+    root = subprocess.run(["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True).stdout.strip() or os.getcwd()
+    merged = {}
+    for level in (load(os.path.join(here, "..", "..", "..", "devkit.config.json")),
+                  load(os.path.join(root, "devkit.config.json")),
+                  load("~/.config/agentic-devkit/config.json")):
+        for key, value in level.items():
+            merged[key] = {**merged.get(key, {}), **value} if isinstance(value, dict) and isinstance(merged.get(key), dict) else value
+    return merged
+
+
+def option(argv, name):
+    if name not in argv:
+        return None
+    i = argv.index(name)
+    if i + 1 >= len(argv):
+        sys.exit(f"issue-status: {name} needs a value")
+    value = argv[i + 1]
+    del argv[i:i + 2]
+    return value
+
+
+def gh(args, dry):
+    print("$ gh " + " ".join(shlex.quote(a) for a in args))
+    if dry:
+        return
+    result = subprocess.run(["gh"] + args, capture_output=True, text=True)
+    if result.returncode:
+        sys.exit(f"issue-status: gh failed: {result.stderr.strip()}")
+
+
+def main(argv):
+    argv = list(argv)
+    dry = "--dry-run" in argv
+    if dry:
+        argv.remove("--dry-run")
+    cfg = config()
+    note = option(argv, "--note")
+    repo = option(argv, "--repo") or cfg.get("repo")
+    if len(argv) != 2 or not argv[0].lstrip("#").isdigit():
+        sys.exit(__doc__)
+    issue = argv[0].lstrip("#")
+    target = argv[1] if argv[1].startswith(PREFIX) else PREFIX + argv[1]
+    allowed = cfg.get("statusLabels", [])
+    if target not in allowed:
+        sys.exit(f"issue-status: {target} is not in statusLabels: {', '.join(allowed)}")
+    if not repo:
+        sys.exit("issue-status: no repo. Give --repo OWNER/NAME or set \"repo\" in devkit.config.json.")
+
+    view = subprocess.run(["gh", "issue", "view", issue, "--repo", repo, "--json", "labels,state"],
+                          capture_output=True, text=True)
+    if view.returncode:
+        sys.exit(f"issue-status: cannot read issue #{issue} in {repo}: {view.stderr.strip()}")
+    current = [l["name"] for l in json.loads(view.stdout)["labels"]]
+    old = [l for l in current if l.startswith(PREFIX) and l != target]
+    if target in current and not old:
+        print(f"issue-status: #{issue} already has {target}. No change.")
+        return 0
+
+    have = subprocess.run(["gh", "label", "list", "--repo", repo, "--limit", "500", "--json", "name"],
+                          capture_output=True, text=True)
+    if have.returncode == 0 and target not in {l["name"] for l in json.loads(have.stdout)}:
+        gh(["label", "create", target, "--repo", repo, "--color", "C5DEF5",
+            "--description", "Pipeline stage, set by build-feature"], dry)
+
+    edit = ["issue", "edit", issue, "--repo", repo, "--add-label", target]
+    if old:
+        edit += ["--remove-label", ",".join(old)]
+    gh(edit, dry)
+
+    before = ", ".join(f"`{l}`" for l in old) or "no status"
+    body = f"Stage change: {before} → `{target}`."
+    if note:
+        body += f"\n\n{note}"
+    gh(["issue", "comment", issue, "--repo", repo, "--body", body], dry)
+    if dry:
+        print("issue-status: dry run. No change made.")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))
