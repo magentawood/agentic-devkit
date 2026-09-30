@@ -25,7 +25,7 @@ Do not use this skill for a change to documents only. For that change, use `ste-
 ## Inputs
 
 - The argument: a ticket ID, or a description of the feature.
-- The configuration: the plugin `devkit.config.json`, then the project `devkit.config.json`. Use `approvalGates`, `mergeMode`, `reviewRounds`, `statusLabels`, `repo`, `standardsPath`, `decisionsPath`, `journalPath`, `plan`, and `docArchitecture`.
+- The configuration: the plugin defaults (`${CLAUDE_PLUGIN_ROOT}/defaults/devkit.defaults.json`), then the project `devkit.config.json`. Use `approvalGates`, `mergeMode`, `reviewRounds`, `statusLabels`, `repo`, `standardsPath`, `decisionsPath`, `journalPath`, `plan`, and `docArchitecture`.
 - The task note (`<plan.tasksPath>/<ID> *.md`) and the files in its `## Read first` section.
 - The project `CONTEXT.md`, the decision records, and all files in `standardsPath`.
 
