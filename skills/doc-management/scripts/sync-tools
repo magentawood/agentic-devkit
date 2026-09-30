@@ -1,0 +1,147 @@
+#!/usr/bin/env python3
+"""Copy the master docs tools of the plugin into a project, or compare the copies.
+
+Usage:
+  sync-tools [PROJECT]          copy the tools, the hook and the CI step into PROJECT
+  sync-tools --check [PROJECT]  report each copy that is missing, older than the
+                                master, or not the same as the master; exit 1 if any
+
+PROJECT defaults to the git root of the current folder. The copies (the parts
+come from "docArchitecture.parts" in devkit.config.json):
+  tools/doc-budget.py, tools/doc-links.py        always
+  tools/build-decision-ledger.py                 parts.ledgers
+  tools/render-docs.py                           parts.html
+  .githooks/pre-commit                           parts.hook or parts.ci
+  .github/workflows/docs-check.yml               parts.ci
+  tools/devkit-defaults.json                     the plugin defaults for the copies
+A sync writes the plugin version to docArchitecture.toolsVersion and the hash of
+each copy to docArchitecture.toolCopies in the project devkit.config.json. With
+parts.hook on, it also runs: git config core.hooksPath .githooks
+"""
+import hashlib, json, os, re, stat, subprocess, sys
+from collections import OrderedDict
+
+TOOL_VERSION = "0.1.0"
+
+PLUGIN = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", ".."))
+MASTER = os.path.join(PLUGIN, "skills", "doc-architecture")
+VERSION = re.compile(r"TOOL_VERSION\s*=\s*\"(\d+(?:\.\d+)*)\"")
+
+
+def load(path):
+    try:
+        with open(path) as f:
+            return json.load(f, object_pairs_hook=OrderedDict)
+    except (OSError, ValueError):
+        return OrderedDict()
+
+
+def parts(project):
+    merged = {}
+    for level in (load(os.path.join(PLUGIN, "devkit.config.json")), load(os.path.join(project, "devkit.config.json"))):
+        merged.update(level.get("docArchitecture", {}).get("parts", {}))
+    return merged
+
+
+def copies(project):
+    """(destination, master bytes) for each copy that the project gets."""
+    on = parts(project)
+    plan = [("tools/doc-budget.py", "scripts/doc-budget"), ("tools/doc-links.py", "scripts/doc-links")]
+    if on.get("ledgers", True) and on.get("records", True):
+        plan.append(("tools/build-decision-ledger.py", "scripts/build-decision-ledger"))
+    if on.get("html", True):
+        plan.append(("tools/render-docs.py", "scripts/render-docs"))
+    if on.get("hook", True) or on.get("ci", True):
+        plan.append((".githooks/pre-commit", "templates/pre-commit"))
+    if on.get("ci", True):
+        plan.append((".github/workflows/docs-check.yml", "templates/docs-check.yml"))
+    out = [(dest, open(os.path.join(MASTER, src), "rb").read()) for dest, src in plan]
+    cfg = load(os.path.join(PLUGIN, "devkit.config.json"))
+    defaults = OrderedDict((k, cfg[k]) for k in ("decisionsPath", "journalPath", "docBudget", "docArchitecture") if k in cfg)
+    arch = defaults.get("docArchitecture", {})
+    arch.pop("toolsVersion", None)
+    arch.pop("toolCopies", None)
+    out.append(("tools/devkit-defaults.json", (json.dumps(defaults, indent=2, ensure_ascii=False) + "\n").encode()))
+    return out
+
+
+def version(data):
+    m = VERSION.search(data.decode("utf-8", "replace"))
+    return tuple(int(x) for x in m.group(1).split(".")) if m else None
+
+
+def fmt(v):
+    return ".".join(map(str, v)) if v else "none"
+
+
+def digest(data):
+    return hashlib.sha256(data).hexdigest()[:12]
+
+
+def plugin_version():
+    return load(os.path.join(PLUGIN, ".claude-plugin", "plugin.json")).get("version", "unknown")
+
+
+def check(project):
+    problems = []
+    for dest, master in copies(project):
+        path = os.path.join(project, dest)
+        if not os.path.exists(path):
+            problems.append(f"missing    {dest}")
+            continue
+        data = open(path, "rb").read()
+        if data == master:
+            continue
+        have, want = version(data), version(master)
+        if have is None:
+            problems.append(f"differs    {dest}: no version line (master {fmt(want)})")
+        elif want and have < want:
+            problems.append(f"older      {dest}: {fmt(have)} < master {fmt(want)}")
+        else:
+            problems.append(f"differs    {dest}: version {fmt(have)}, content not the same as the master")
+    recorded = load(os.path.join(project, "devkit.config.json")).get("docArchitecture", {}).get("toolsVersion")
+    if recorded != plugin_version():
+        problems.append(f"version    devkit.config.json docArchitecture.toolsVersion is {recorded}, plugin is {plugin_version()}")
+    for line in problems:
+        print(line)
+    print(f"sync-tools: {len(problems)} problem(s). Fix: /doc-management check --sync" if problems else "sync-tools: all copies match the master")
+    return 1 if problems else 0
+
+
+def sync(project):
+    hashes = OrderedDict()
+    for dest, master in copies(project):
+        path = os.path.join(project, dest)
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        with open(path, "wb") as f:
+            f.write(master)
+        if master.startswith(b"#!"):
+            os.chmod(path, os.stat(path).st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
+        hashes[dest] = digest(master)
+        print(f"copied     {dest}")
+    cfg_path = os.path.join(project, "devkit.config.json")
+    cfg = load(cfg_path)
+    arch = cfg.setdefault("docArchitecture", OrderedDict())
+    arch["toolsVersion"] = plugin_version()
+    arch["toolCopies"] = hashes
+    with open(cfg_path, "w") as f:
+        f.write(json.dumps(cfg, indent=2, ensure_ascii=False) + "\n")
+    if parts(project).get("hook", True) and os.path.exists(os.path.join(project, ".git")):
+        subprocess.run(["git", "-C", project, "config", "core.hooksPath", ".githooks"], check=True)
+        print("git config core.hooksPath .githooks")
+    print(f"sync-tools: {len(hashes)} file(s) at plugin version {arch['toolsVersion']}")
+    return 0
+
+
+def main(argv):
+    args = [a for a in argv if not a.startswith("--")]
+    if len(args) > 1 or any(a not in ("--check",) for a in argv if a.startswith("--")):
+        sys.exit(__doc__)
+    project = args[0] if args else (subprocess.run(["git", "rev-parse", "--show-toplevel"], capture_output=True,
+                                                   text=True).stdout.strip() or os.getcwd())
+    project = os.path.abspath(project)
+    return check(project) if "--check" in argv else sync(project)
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))
