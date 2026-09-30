@@ -66,11 +66,11 @@ def load(path):
 
 
 def config(root):
-    """The defaults (plugin file, or devkit-defaults.json next to a project copy), then the project file."""
+    """The defaults (the plugin defaults file, or devkit-defaults.json next to a project copy), then the project file."""
     here = os.path.dirname(os.path.abspath(__file__))
     defaults = os.path.join(here, "devkit-defaults.json")
     if os.path.basename(here) == "scripts":  # the master copy in the plugin
-        defaults = os.path.join(here, "..", "..", "..", "devkit.config.json")
+        defaults = os.path.join(here, "..", "..", "..", "defaults", "devkit.defaults.json")
     arch = {}
     for level in (load(defaults), load(os.path.join(root, "devkit.config.json"))):
         for key, value in level.get("docArchitecture", {}).items():
