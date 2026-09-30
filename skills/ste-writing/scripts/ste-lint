@@ -54,10 +54,10 @@ def load_json(path, default):
 
 def config():
     """Plugin defaults, then the project file, then the user file. A later level wins."""
-    plugin = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "devkit.config.json")
+    plugin = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "defaults", "devkit.defaults.json")
     project, d = {}, os.getcwd()
     while True:
-        if os.path.exists(os.path.join(d, "devkit.config.json")) and os.path.join(d, "devkit.config.json") != os.path.normpath(plugin):
+        if os.path.exists(os.path.join(d, "devkit.config.json")):
             project = load_json(os.path.join(d, "devkit.config.json"), {})
             break
         if os.path.dirname(d) == d:
