@@ -18,6 +18,9 @@ Use this procedure to rewrite or compact a document that exists. The goal is few
    - Keep tables as tables. Rewrite the text in the cells.
    - Remove statements that occur two times, filler words, and text that tells the reader what the text will tell them.
    - Do not add a claim that is not in the file before the rewrite.
+   - Keep the strength of each claim. Keep absolute words ("never", "always", "only", "at most", "the easiest") and certainty words ("is moving to", "would", "if at all possible"). STE prefers "do not" to "never", but "do not" makes a statement of fact weaker. Meaning is more important than a lint finding.
+   - Keep a word that carries meaning when STE has no approved word with the same meaning (for example, "genuine", "real", "already"). Give the reason in one line.
+   - Do not set a target length. STE adds articles and short sentences, so dense text frequently becomes longer.
 
 3. Run `${CLAUDE_SKILL_DIR}/scripts/ste-lint <file>`. Fix each finding, or give the reason in one line.
 
@@ -25,7 +28,9 @@ Use this procedure to rewrite or compact a document that exists. The goal is few
 
 5. Do the blind claim check. Start a new sub-agent that gets only the claim list and the new file. It must not see the file before the rewrite or your reasoning. For each claim, it gives one result: `present`, `weakened`, or `missing`. It also lists each statement in the new file that no claim covers. These are `added` statements.
 
-6. Fix each `weakened`, `missing`, and `added` item. Then do step 5 again one time. If an item stays open, tell the user.
+6. Fix each `weakened`, `missing`, and `added` item. Then do step 5 again one time, for the fixed claims only. If an item stays open, tell the user.
+   - Before you fix an `added` item, look for it in the file before the rewrite. The claim inventory can miss a statement. A statement that is in the file before the rewrite is not an addition.
+   - A `weakened` result can come from a claim inventory that says more than the file. Compare with the file before the rewrite before you change the text.
 
 7. Run `${CLAUDE_SKILL_DIR}/scripts/ste-verify links <repo root>`. The result must be 0 broken links.
 
