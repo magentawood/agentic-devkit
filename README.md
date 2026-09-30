@@ -40,7 +40,7 @@ The two scripts also work without Claude:
 skills/ste-writing/scripts/ste-lint docs/*.md            # report STE problems
 skills/ste-writing/scripts/ste-verify diff git:HEAD:a.md a.md   # prove a rewrite kept links, ids, numbers
 skills/ste-writing/scripts/ste-verify links .            # find broken links in a repo
-skills/ste-writing/scripts/doc-budget --report           # size of each doc against its limit
+skills/doc-architecture/scripts/doc-budget --report       # size of each doc against its limit
 ```
 
 ## `/build-feature` scripts
