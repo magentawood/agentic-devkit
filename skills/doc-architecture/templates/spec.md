@@ -1,4 +1,4 @@
-<!-- Spec of one feature. File: <specPath>/<feature>.md. At most 1,200 words. Rules and acceptance criteria only: the reasons are in the decision records. Do not write file paths or code. When the feature is complete, move this file to <archivePath>. Write it in STE. Replace each <...>. -->
+<!-- Spec of one feature. File: <specPath>/<feature>.md. At most 1,200 words. Rules and acceptance criteria only: the reasons are in the decision records. Do not write file paths or code, but you can name the model test. When the feature is complete, move this file to <archivePath>. Write it in STE. Replace each <...>. -->
 
 # Spec: <feature name>
 
