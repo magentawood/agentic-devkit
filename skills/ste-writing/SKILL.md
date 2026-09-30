@@ -2,7 +2,7 @@
 name: ste-writing
 description: Write and rewrite Markdown in ASD-STE100 Simplified Technical English (STE). Use when you create or edit any .md file (spec, ticket, task note, standards file, README, CONVENTIONS, SKILL.md body, PR description), or when the user asks to rewrite, compact, or clean up docs into STE.
 metadata:
-  version: 0.1.2
+  version: 0.2.0
 ---
 
 # STE writing
@@ -42,7 +42,8 @@ Do not apply STE to these parts of a file:
 1. Read [references/ste-rules.md](references/ste-rules.md).
 2. Write the text.
 3. Run `${CLAUDE_SKILL_DIR}/scripts/ste-lint <file>`.
-4. Fix each finding. If a finding is not correct, keep the text and give the reason in one line.
+4. Run `${CLAUDE_SKILL_DIR}/scripts/doc-budget <file>`. If the file is above its limit, obey the context budget rules in CONVENTIONS.md.
+5. Fix each finding. If a finding is not correct, keep the text and give the reason in one line.
 
 ### Rewrite existing text
 
@@ -51,6 +52,7 @@ Do not apply STE to these parts of a file:
 ## Exit conditions
 
 - `ste-lint` shows no finding without a reason.
+- `doc-budget` passes.
 - For a rewrite: `ste-verify diff` shows PASS, `ste-verify links` shows 0 broken links, and the claim check shows no missing claim.
 
 ## Conventions

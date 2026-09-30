@@ -43,6 +43,18 @@ These rules apply to all skills in this plugin. A skill links to this file. A sk
 - Use the terms in `CONTEXT.md` with no change.
 - Use the terms of the code host in all templates. For GitHub, write "pull request" or "PR".
 
+## Context budget
+
+Documents share the context window of the agent with the code. Keep them small, and keep them from growing.
+
+- The always-loaded file (`CLAUDE.md` and the files that it imports) is an index. It gives the product in a few lines, one line for each decision with a link, the conventions, and a routing table. The routing table tells the agent which file to read before each type of task.
+- When a task touches an area in the routing table, read the linked file before you act.
+- The reasoning for a decision is only in its decision record (an ADR or a product decision record). A working document gives the rule and a link, for example "(why: PD7a)".
+- Each fact has one home. Other documents link to it. They do not copy it.
+- When a subsequent decision replaces an earlier one, update or remove the replaced text. Do not append.
+- `doc-budget` checks the size limits in `devkit.config.json`. Run it before each commit on the documents that changed. A file that is above its limit fails the check. To fix it, divide the file, link to the decision record, or remove the text that a subsequent decision replaced.
+- To raise the limit of one file, add an entry in `docBudget.overrides`. A reviewer sees it in the PR.
+
 ## Questions to the user
 
 - Ask one question at a time. Use the `AskUserQuestion` tool.

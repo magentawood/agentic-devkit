@@ -1,10 +1,46 @@
 {
-  "approvalGates": ["spec", "pr"],
+  "approvalGates": [
+    "spec",
+    "pr"
+  ],
   "mergeMode": "ask",
   "reviewRounds": 2,
-  "statusLabels": ["status:spec", "status:in-progress", "status:in-review", "status:done"],
+  "statusLabels": [
+    "status:spec",
+    "status:in-progress",
+    "status:in-review",
+    "status:done"
+  ],
   "ste": {
     "spelling": "american",
-    "allowWords": ["finding", "findings", "spelling"]
+    "allowWords": [
+      "finding",
+      "findings",
+      "spelling"
+    ]
+  },
+  "docBudget": {
+    "exclude": [
+      "**/archive/**"
+    ],
+    "rules": [
+      {
+        "glob": "CONTEXT.md",
+        "maxTokens": 1500
+      },
+      {
+        "glob": "**/decisions/*.md",
+        "maxWords": 1200
+      },
+      {
+        "glob": "**/research/*.md",
+        "maxWords": 1500
+      },
+      {
+        "glob": "*.md",
+        "maxWords": 1200
+      }
+    ],
+    "overrides": {}
   }
 }
