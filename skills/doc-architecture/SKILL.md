@@ -29,7 +29,15 @@ The same change, with each architecture fix in its diff.
 
 ## Steps
 
-1. Obey the rules below. For the full architecture, read [references/architecture.md](references/architecture.md) when you add a doc, a record, a spec, or a routing row.
+1. Obey these rules. For the full architecture, read [references/architecture.md](references/architecture.md) when you add a doc, a record, a spec, or a routing row.
+   - One fact, one home. Other docs link to it. They do not copy it.
+   - Reasoning lives only in a decision record. A working doc gives the rule and a link: `Why: [PD7a](…)`.
+   - Update or remove the text that a new decision replaces. Do not append.
+   - When two sources conflict, the most recent record wins. The record marks the older statement "Superseded:".
+   - The index holds no reasoning. It stays at or below its token limit.
+   - Edit the source of a generated file, never the output.
+   - Docs link to the plan. They never copy task lists.
+   - The index never links the journal or the archive.
 2. On each change that breaks a rule, **fix it in the same change**:
    - Move the reasoning into its decision record. Replace each copied fact with a link.
    - Divide a file that goes above its limit.
@@ -40,17 +48,6 @@ The same change, with each architecture fix in its diff.
    - `doc-links .`
    - `build-decision-ledger --check`
    - `render-docs --check`
-
-## Rules
-
-- One fact, one home. Other docs link to it. They do not copy it.
-- Reasoning lives only in a decision record. A working doc gives the rule and a link: `Why: [PD7a](…)`.
-- Update or remove the text that a new decision replaces. Do not append.
-- When two sources conflict, the most recent record wins. The record marks the older statement "Superseded:".
-- The index holds no reasoning. It stays at or below its token limit.
-- Edit the source of a generated file, never the output.
-- Docs link to the plan. They never copy task lists.
-- The index never links the journal or the archive.
 
 ## Exit conditions
 
