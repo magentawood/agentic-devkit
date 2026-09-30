@@ -8,7 +8,9 @@
 - Add `build-decision-ledger` and `render-docs`, from Roomsie. They read their paths from `devkit.config.json`.
 - Add the hook template and the CI template. They run the cheap checks: limits, links, ledger drift, render drift, and tool copies.
 - Add `sync-tools`. It copies the master tools into a project and records the plugin version. `--check` reports each copy that is older than the master or not the same.
-- `devkit.config.json`: add `docArchitecture` (all parts on), a 1,200-word limit for specs, and exclude the journal from the limits.
+- `sync-tools` turns on the hook automatically, because git never runs the hooks of a clone by itself. It merges `git config core.hooksPath .githooks` into the `prepare` script of a root `package.json` and into a `SessionStart` hook in `.claude/settings.json`. `--recommend-plugin` adds this plugin to `extraKnownMarketplaces` and `enabledPlugins`. `--check` and `doc-architecture` report a hook that is not on.
+- Move the generic defaults from the root `devkit.config.json` to `defaults/devkit.defaults.json`. All scripts read this file first. The root `devkit.config.json` keeps only the values of the plugin repo. The defaults add `docArchitecture` (all parts on), a 1,200-word limit for specs, and exclude the journal from the limits.
+- One spec template, `doc-architecture/templates/spec.md`. It merges the two spec templates of `build-feature` and `doc-management`, and it replaces them.
 - `ste-writing` 0.3.0: it keeps only the language. `build-feature` 0.1.1: the docs duties point at `doc-architecture`, and a new spec goes to `specPath`.
 - `CONVENTIONS.md`: the "Context budget" section keeps a summary and links `doc-architecture`.
 
