@@ -75,6 +75,10 @@ The plugin holds the master copy of each tool: `doc-budget`, the link check, the
 3. Dogfood: run `/doc-management migrate` on the plugin repo. The PRD decisions become ADRs, and `CONVENTIONS.md` keeps only rules with `Why:` links. The hook and CI run on the plugin.
 4. Then run the `/build-feature` POC on a Roomsie ticket, with the guard active.
 
+## Feedback loop
+
+A later grill on a project can change records, standards and docs. An example is the Roomsie design-system grill, which comes when the designs arrive. That grill updates the project docs through `doc-architecture`. It also adds each new lesson about the architecture to `doc-management`'s references, so the next project gets the lesson.
+
 ## Lessons the skills must carry
 
 These are in [doc-management-notes.md](doc-management-notes.md#lessons-put-these-in-the-skill). Put them in `doc-management`'s references, not in `SKILL.md`.
