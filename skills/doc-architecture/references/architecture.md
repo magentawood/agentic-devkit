@@ -57,7 +57,7 @@ A record is at most 1,200 words. Write a record only for a decision with three p
 
 ## Specs
 
-- A spec is `<specPath>/<feature>.md` (default `docs/specs/`).
+- A spec is `<specPath>/<feature>.md` (default `docs/specs/`). Make it from the one spec template, [../templates/spec.md](../templates/spec.md).
 - It holds the rules and the acceptance criteria. It links the records for the reasons. It does not copy them.
 - Limit: 1,200 words.
 - When the feature is complete, move the spec to `archivePath` (default `docs/archive/`).
@@ -81,7 +81,7 @@ A record is at most 1,200 words. Write a record only for a decision with three p
 
 ## Limits
 
-`doc-budget` reads `docBudget` in `devkit.config.json`. The first rule that matches a file applies.
+`doc-budget` reads `docBudget`: first the plugin defaults (`defaults/devkit.defaults.json`), then the project `devkit.config.json`. The first rule that matches a file applies.
 
 | Files | Limit |
 |---|---|
@@ -118,5 +118,6 @@ The plugin holds the master copy of each tool in `scripts/` and `templates/` of 
 | `render-docs` | `tools/render-docs.py` | Render drift (`--check`) |
 | `templates/pre-commit` | `.githooks/pre-commit` | Runs all checks above, and the hashes of the tool copies |
 | `templates/docs-check.yml` | `.github/workflows/docs-check.yml` | Runs the hook in CI |
+| `defaults/devkit.defaults.json` of the plugin | `tools/devkit-defaults.json` | The defaults for the tool copies |
 
-Each tool has a `TOOL_VERSION` line. Never edit a project copy. Change the master, then run `/doc-management check --sync`.
+Git never runs the hooks of a clone by itself. `sync-tools` turns on the hook in the clone, in the `prepare` script of `package.json`, and in a `SessionStart` hook in `.claude/settings.json`. Each tool has a `TOOL_VERSION` line. Never edit a project copy. Change the master, then run `/doc-management check --sync`.
