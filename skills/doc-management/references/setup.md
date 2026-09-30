@@ -26,7 +26,7 @@
 
 9. **Hook activation.** Git never runs the hooks of a clone by itself. With the `hook` part on, `sync-tools` turns on the hook in three ways. It merges each change with the values that are there. It never overwrites them.
    - It runs `git config core.hooksPath .githooks` for this clone.
-   - It adds `git config core.hooksPath .githooks` to `scripts.prepare` of the root `package.json`, if the project has one. Each install with npm, pnpm, or yarn runs `prepare`. If `prepare` exists, `sync-tools` adds the command after it with `&&`. If `prepare` uses husky, tell the user: the two hook folders are in conflict.
+   - It adds `git config core.hooksPath .githooks` to `scripts.prepare` of the root `package.json`, if the project has one. Each install with npm, pnpm, or yarn runs `prepare`. If `prepare` exists, `sync-tools` adds the command after it with `&&`. If `prepare` uses husky or sets `core.hooksPath`, `sync-tools` does not change it. The two hook folders are in conflict. Ask the user which folder to keep.
    - It adds a Claude Code `SessionStart` hook to `.claude/settings.json`: `cd "$CLAUDE_PROJECT_DIR" && git config core.hooksPath .githooks`. Commit this file, so that each session of each clone turns on the hook.
 
    Keep the fallback line in the conventions of the index: "If the hook does not run, run `git config core.hooksPath .githooks` one time."
@@ -54,4 +54,4 @@
 
 ## Exit condition
 
-The hook passes on all files, `sync-tools --check` passes, and the PR is open. `sync-tools --check` also fails when a way to turn on the hook is missing.
+The hook passes on all files, `sync-tools --check` passes, and the PR is open. `sync-tools --check` also fails when a way to turn on the hook is missing. It checks `core.hooksPath` only in a git clone.
