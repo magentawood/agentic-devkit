@@ -42,7 +42,7 @@ Do not apply STE to these parts of a file:
 1. Read [references/ste-rules.md](references/ste-rules.md).
 2. Write the text.
 3. Run `${CLAUDE_SKILL_DIR}/scripts/ste-lint <file>`.
-4. Run `${CLAUDE_SKILL_DIR}/scripts/doc-budget <file>`. If the file is above its limit, obey the context budget rules in CONVENTIONS.md.
+4. Run `${CLAUDE_PLUGIN_ROOT}/skills/doc-architecture/scripts/doc-budget <file>`. If the file is above its limit, obey the context budget rules in CONVENTIONS.md.
 5. Fix each finding. If a finding is not correct, keep the text and give the reason in one line.
 
 ### Rewrite existing text
