@@ -58,7 +58,7 @@ def strict_load(path):
     if not os.path.exists(path):
         return OrderedDict()
     try:
-        with open(path) as f:
+        with open(path, encoding="utf-8") as f:
             data = json.load(f, object_pairs_hook=OrderedDict)
     except ValueError as e:
         sys.exit(f"sync-tools: {path} is not valid JSON: {e}")
@@ -71,12 +71,22 @@ def write_json(path, data):
     """Write data with the indent that the file has (default 2), and a final newline."""
     indent = 2
     if os.path.exists(path):
-        m = re.search(r"\n([ \t]+)\S", open(path).read())
+        m = re.search(r"\n([ \t]+)\S", open(path, encoding="utf-8").read())
         if m:
             indent = m.group(1) if "\t" in m.group(1) else len(m.group(1))
     os.makedirs(os.path.dirname(path), exist_ok=True)
-    with open(path, "w") as f:
+    with open(path, "w", encoding="utf-8") as f:
         f.write(json.dumps(data, indent=indent, ensure_ascii=False) + "\n")
+
+
+def shape(path, data, key, kind):
+    """data[key] if it has the type kind, else a new value. A value of a different type stops the run."""
+    value = data.get(key)
+    if value is None:
+        return kind()
+    if not isinstance(value, kind):
+        sys.exit(f"sync-tools: {path}: \"{key}\" is not a JSON { {OrderedDict: 'object', list: 'list', str: 'string'}[kind] }")
+    return value
 
 
 def project_config(project):
@@ -113,9 +123,14 @@ def hooks_path(project):
     return subprocess.run(["git", "-C", project, "config", "core.hooksPath"], capture_output=True, text=True).stdout.strip()
 
 
-def session_hooks(settings):
-    return [h.get("command") for group in settings.get("hooks", {}).get("SessionStart", [])
-            for h in group.get("hooks", []) if isinstance(h, dict)]
+def session_hooks(settings, path):
+    groups = shape(path, shape(path, settings, "hooks", OrderedDict), "SessionStart", list)
+    return [h.get("command") for g in groups if isinstance(g, dict)
+            for h in (g.get("hooks") if isinstance(g.get("hooks"), list) else []) if isinstance(h, dict)]
+
+
+def prepare_of(pkg, path):
+    return shape(path, shape(path, pkg, "scripts", OrderedDict), "prepare", str)
 
 
 def activation_problems(project):
@@ -125,9 +140,10 @@ def activation_problems(project):
     if path is not None and path != ".githooks":
         problems.append(f"hook-off   this clone: core.hooksPath is '{path or 'not set'}', not '.githooks'. Fix: {HOOKS_CMD}")
     pkg = os.path.join(project, "package.json")
-    if os.path.exists(pkg) and HOOKS_CMD not in strict_load(pkg).get("scripts", {}).get("prepare", ""):
+    if os.path.exists(pkg) and HOOKS_CMD not in prepare_of(strict_load(pkg), pkg):
         problems.append(f'hook-off   package.json: "scripts.prepare" does not run {HOOKS_CMD}')
-    if SESSION_CMD not in session_hooks(strict_load(os.path.join(project, ".claude", "settings.json"))):
+    settings = os.path.join(project, ".claude", "settings.json")
+    if SESSION_CMD not in session_hooks(strict_load(settings), settings):
         problems.append("hook-off   .claude/settings.json: no SessionStart hook that runs " + HOOKS_CMD)
     return problems
 
@@ -140,17 +156,19 @@ def activate(project):
     pkg_path = os.path.join(project, "package.json")
     if os.path.exists(pkg_path):
         pkg = strict_load(pkg_path)
-        scripts = pkg.setdefault("scripts", OrderedDict())
-        prepare = scripts.get("prepare", "")
-        if HOOKS_CMD not in prepare:
-            if re.search(r"husky|hooksPath", prepare):
-                print(f'warning    package.json: "prepare" also sets the hooks path: {prepare}')
+        prepare = prepare_of(pkg, pkg_path)
+        if HOOKS_CMD in prepare:
+            pass
+        elif re.search(r"husky|hooksPath", prepare):  # a different hook manager: the user selects one
+            print(f'skipped    package.json: "prepare" sets a different hooks path: {prepare}. Ask the user.')
+        else:
+            pkg["scripts"] = scripts = shape(pkg_path, pkg, "scripts", OrderedDict)
             scripts["prepare"] = f"{prepare} && {HOOKS_CMD}" if prepare.strip() else HOOKS_CMD
             write_json(pkg_path, pkg)
             print(f'updated    package.json: "scripts.prepare" = "{scripts["prepare"]}"')
     settings_path = os.path.join(project, ".claude", "settings.json")
     settings = strict_load(settings_path)
-    if SESSION_CMD not in session_hooks(settings):
+    if SESSION_CMD not in session_hooks(settings, settings_path):
         hooks = settings.setdefault("hooks", OrderedDict())
         hooks.setdefault("SessionStart", []).append(
             OrderedDict([("hooks", [OrderedDict([("type", "command"), ("command", SESSION_CMD)])])]))
@@ -165,12 +183,12 @@ def recommend_plugin(project):
     changed = False
     market = load(os.path.join(PLUGIN, ".claude-plugin", "marketplace.json")).get("name", "agentic-devkit")
     name = load(os.path.join(PLUGIN, ".claude-plugin", "plugin.json")).get("name", "agentic-devkit")
-    known = settings.setdefault("extraKnownMarketplaces", OrderedDict())
+    known = settings["extraKnownMarketplaces"] = shape(settings_path, settings, "extraKnownMarketplaces", OrderedDict)
     if market not in known:
         known[market] = OrderedDict([("source", OrderedDict([("source", "github"), ("repo", MARKETPLACE_REPO)]))])
         changed = True
         print(f"updated    .claude/settings.json: extraKnownMarketplaces.{market}")
-    enabled = settings.setdefault("enabledPlugins", OrderedDict())
+    enabled = settings["enabledPlugins"] = shape(settings_path, settings, "enabledPlugins", OrderedDict)
     if f"{name}@{market}" not in enabled:  # a value that is there, true or false, is the choice of the project
         enabled[f"{name}@{market}"] = True
         changed = True
@@ -228,6 +246,12 @@ def sync(project, recommend=False):
     cfg = project_config(project)
     for name in ("package.json", os.path.join(".claude", "settings.json")):  # stop before a copy, not half way
         strict_load(os.path.join(project, name))
+    if parts(project).get("hook", True):
+        activation_problems(project)  # it stops on a value of the wrong type
+    if recommend:
+        settings_path = os.path.join(project, ".claude", "settings.json")
+        for key in ("extraKnownMarketplaces", "enabledPlugins"):
+            shape(settings_path, strict_load(settings_path), key, OrderedDict)
     hashes = OrderedDict()
     plan = copies(project)
     recorded = cfg.get("docArchitecture", {}).get("toolCopies", {})
