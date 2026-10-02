@@ -22,7 +22,7 @@ These explanations stayed in the session of one person. The decision records hol
 - It is for a teammate who was not in the grill, in plain language. It tells what the concept is, how it fits the project, the choice we made, and the gotchas.
 - When a subsequent ticket adds to a topic, it updates the page. It does not make a second page.
 - A learn page links the decision record, or the PR of the ticket, for each choice. It does not give the reasons as a decision. The record stays the only home of the reasons.
-- Each page has a `**In one line:**` line. `build-decision-ledger` writes the Learn index between `<!-- learn:start -->` and `<!-- learn:end -->` in `docArchitecture.learnIndex`. The default is the file of `ledgers.tech`. `--check` fails when the index is out of date.
+- Each page has a `**In one line:**` line. `build-decision-ledger` writes the Learn index between `<!-- learn:start -->` and `<!-- learn:end -->` in `docArchitecture.learnIndex`. The default is the file of `ledgers.tech`. If the run writes no tech ledger, the default is the index. `--check` fails when the index is out of date.
 - `render-docs` accepts a glob in `renderPages`, for example `docs/learn/*.md`.
 - `/build-feature` writes or updates the learn pages at the PR stage. The `## Log` entry and the PR link them.
 - The part `learn` in `docArchitecture.parts` is on by default.
