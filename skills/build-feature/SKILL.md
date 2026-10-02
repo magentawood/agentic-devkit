@@ -4,7 +4,7 @@ description: Take a feature or a ticket from an idea to a merged PR through gril
 disable-model-invocation: true
 argument-hint: "[T-nn | feature idea]"
 metadata:
-  version: 0.1.3
+  version: 0.2.0
 ---
 
 # Build feature
@@ -34,18 +34,19 @@ Do not use this skill for a change to documents only. For that change, use `ste-
 - Code on a branch, with tests at the agreed seams.
 - A PR that uses [templates/pr-template.md](templates/pr-template.md). It closes the issue with `Closes #N`.
 - In the same PR: the ticks, a `## Log` entry in the task note, and a build journal entry (`journalPath`).
+- In the same PR: a learn page for each concept that you explained or researched (`docArchitecture.learnPath`), and the Learn index.
 - New or changed decision records, and the glossary terms, from the grill.
 
 ## Steps
 
 Before each stage, read its reference file. At each stage change, run `${CLAUDE_SKILL_DIR}/scripts/issue-status <N> <status> --note "<one line>"`.
 
-1. **Grill.** Read [references/grill.md](references/grill.md). For a ticket that exists, ask only implementation questions.
+1. **Grill.** Read [references/grill.md](references/grill.md). For a ticket that exists, ask only implementation questions. First, check the Read-first files and the done items against the current docs.
 2. **Spec.** Read [references/spec.md](references/spec.md). For a ticket, write the short spec into the task note with [templates/task-note-section.md](templates/task-note-section.md). For a new feature, use `${CLAUDE_PLUGIN_ROOT}/skills/doc-architecture/templates/spec.md`. Set `status:spec`.
 3. **Ticket** (new feature only). Read [references/tickets.md](references/tickets.md).
-4. **Implement.** Read [references/implement.md](references/implement.md), [references/lean-code.md](references/lean-code.md), [references/code-comments.md](references/code-comments.md), and the applicable files in `standardsPath`. Set `status:in-progress`.
-5. **Review.** Read [references/review.md](references/review.md). Do the review before you open the PR. Use three blind sub-agents and a maximum of `reviewRounds` rounds.
-6. **PR.** Tick the done items with `${CLAUDE_SKILL_DIR}/scripts/tick`. Add the `## Log` entry and the journal entry. Print the complete text of the PR draft in your reply, in one fenced Markdown block, then open the PR. Set `status:in-review`.
+4. **Implement.** Read [references/implement.md](references/implement.md), [references/lean-code.md](references/lean-code.md), [references/code-comments.md](references/code-comments.md), and the applicable files in `standardsPath`. Do the environment preflight before the first line of code. Set `status:in-progress`.
+5. **Review.** Read [references/review.md](references/review.md). Do the review before you open the PR. Use three blind sub-agents and a maximum of `reviewRounds` rounds. Give all three the `Decisions` and `Out of scope` lists of the spec.
+6. **PR.** Read [references/pr.md](references/pr.md). Write or update the learn pages, and run `build-decision-ledger`. Tick the done items with `${CLAUDE_SKILL_DIR}/scripts/tick`. Add the `## Log` entry and the journal entry. Print the complete text of the PR draft in your reply, in one fenced Markdown block, then open the PR. Set `status:in-review`.
 7. **Merge.** Obey `mergeMode`. For `ask`, give the user three options: the user merges, you merge after approval, or auto-merge on a clean review. Use rebase-merge. After the merge, set `status:done`.
 
 For each stage in `approvalGates` (default: `spec` and `pr`), stop and get the approval of the user before the next stage. At the spec gate, print the complete text of the spec first, in one fenced Markdown block, word for word from the file. Do not give a summary.
@@ -53,6 +54,7 @@ For each stage in `approvalGates` (default: `spec` and `pr`), stop and get the a
 Docs duties, at each stage. The `doc-architecture` skill guards each Markdown change. Its tools are in `tools/` of the project, or in `${CLAUDE_PLUGIN_ROOT}/skills/doc-architecture/scripts/` if the project has no copy.
 
 - Put the reasoning for a decision only in its decision record. Give each new record an "In one line:" summary, then run `build-decision-ledger`.
+- Put the explanation of a concept only in its learn page. The page links the record of the decision. It does not copy the reasons.
 - Keep `CONTEXT.md` an index. When a new area occurs, add a line to its routing table.
 - Update or remove the text that a new decision replaces. Do not append.
 - Run `doc-budget` on each document that you change.
@@ -78,3 +80,4 @@ Obey [CONVENTIONS.md](../../CONVENTIONS.md). The terms are in [docs/glossary.md]
 3. Red-green-refactor at the seam of the reply writer. The issue gets `status:in-progress`.
 4. Round 1 of the review gives two Lean findings and one Spec finding. You fix them. Round 2 is clean.
 5. Three of four items get a tick with ` · [#91](https://github.com/magentawood/roomsie/pull/91)`. The Progress section of the PR says: "Off-topic replies: not done. Blocked by T-34."
+6. The grill explained the reply queue. `docs/learn/reply-queue.md` gets a new section, and the `## Log` entry links it.
