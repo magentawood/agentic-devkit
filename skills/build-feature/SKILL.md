@@ -4,7 +4,7 @@ description: Take a feature or a ticket from an idea to a merged PR through gril
 disable-model-invocation: true
 argument-hint: "[T-nn | feature idea]"
 metadata:
-  version: 0.1.1
+  version: 0.1.2
 ---
 
 # Build feature
@@ -27,14 +27,14 @@ Do not use this skill for a change to documents only. For that change, use `ste-
 - The argument: a ticket ID, or a description of the feature.
 - The configuration: the plugin defaults (`${CLAUDE_PLUGIN_ROOT}/defaults/devkit.defaults.json`), then the project `devkit.config.json`. Use `approvalGates`, `mergeMode`, `reviewRounds`, `statusLabels`, `repo`, `standardsPath`, `decisionsPath`, `journalPath`, `plan`, and `docArchitecture`.
 - The task note (`<plan.tasksPath>/<ID> *.md`) and the files in its `## Read first` section.
-- The project `CONTEXT.md`, the decision records, and all files in `standardsPath`.
+- The project `CONTEXT.md`, the project glossary that its routing table gives, the decision records, and all files in `standardsPath`.
 
 ## Outputs
 
 - Code on a branch, with tests at the agreed seams.
 - A PR that uses [templates/pr-template.md](templates/pr-template.md). It closes the issue with `Closes #N`.
 - In the same PR: the ticks, a `## Log` entry in the task note, and a build journal entry (`journalPath`).
-- New or changed decision records, and the `CONTEXT.md` terms, from the grill.
+- New or changed decision records, and the glossary terms, from the grill.
 
 ## Steps
 
