@@ -4,7 +4,7 @@ description: Set up, migrate, or check the docs architecture of a project. Use w
 disable-model-invocation: true
 argument-hint: "setup | migrate | check [--sync]"
 metadata:
-  version: 0.1.1
+  version: 0.2.0
 ---
 
 # Doc management
@@ -32,7 +32,7 @@ Do not use it for one doc change. The `doc-architecture` skill guards each chang
 
 ## Outputs
 
-- **`setup`:** one PR with the index, the record templates, the folders, the config, the tool copies, the hook, and CI. `package.json` and `.claude/settings.json` turn on the hook.
+- **`setup`:** one PR with the index, the record templates, the folders, the config, the tool copies, the hook, and CI. The folders include `docs/learn/`. `package.json` and `.claude/settings.json` turn on the hook.
 - **`migrate`:** stacked PRs, one commit for each file. The user approves them before merge.
 - **`check`:** a report in the terminal. With `--sync`, a PR that refreshes the tool copies.
 
@@ -44,7 +44,7 @@ Do not use it for one doc change. The `doc-architecture` skill guards each chang
    - `check`: [references/check.md](references/check.md)
 2. `setup`, `migrate`, and `check --sync` copy the tools with `${CLAUDE_SKILL_DIR}/scripts/sync-tools`. `check` only compares the copies, with `sync-tools --check`.
 3. Use the templates in `${CLAUDE_SKILL_DIR}/templates/` for new files. The spec template is `${CLAUDE_PLUGIN_ROOT}/skills/doc-architecture/templates/spec.md`.
-4. Ask each question with `AskUserQuestion`, one question at a time.
+4. Ask each question with `AskUserQuestion`, one question at a time. Obey "Questions to the user" in [CONVENTIONS.md](../../CONVENTIONS.md#questions-to-the-user): at most three options, then "Explain this question".
 5. When a run teaches a new lesson about the architecture, add it to [references/lessons.md](references/lessons.md) in a plugin PR.
 
 ## Exit conditions
