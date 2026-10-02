@@ -1,9 +1,25 @@
 {
+  "decisionsPath": "docs/decisions",
+  "journalPath": "docs/journal/{yyyy}-{mm}.md",
+  "plan": null,
   "ste": {
     "allowWords": [
       "finding",
       "findings",
-      "spelling"
+      "spelling",
+      "working"
     ]
+  },
+  "docArchitecture": {
+    "parts": {
+      "productRecords": false,
+      "html": false
+    },
+    "indexFile": "CONTEXT.md",
+    "specPath": "docs/specs",
+    "archivePath": "docs/archive",
+    "ledgers": {
+      "tech": "docs/tech-ledger.md"
+    }
   }
 }
