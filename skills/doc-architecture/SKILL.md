@@ -58,7 +58,7 @@ The same change, with each architecture fix in its diff.
 
 ## Conventions
 
-Obey [CONVENTIONS.md](../../CONVENTIONS.md). The terms are in [CONTEXT.md](../../CONTEXT.md).
+Obey [CONVENTIONS.md](../../CONVENTIONS.md). The terms are in [docs/glossary.md](../../docs/glossary.md).
 
 ## Example
 
