@@ -54,7 +54,10 @@
 
     Claude Code reads `extraKnownMarketplaces` only after the person trusts the folder. Each person installs the plugin one time. If `enabledPlugins` has the plugin, `sync-tools` keeps its value.
 
-11. **Ledgers.** Run `python3 tools/build-decision-ledger.py`. It makes the ledger files and fills the index block. With the `learn` part on, it also writes the Learn index between the `<!-- learn:start -->` and `<!-- learn:end -->` markers. They go at the end of `learnIndex` (default the tech ledger). You can move the markers to a different place in that file.
+11. **Ledgers.** Run `python3 tools/build-decision-ledger.py`. It makes the ledger files and fills the index block. With the `learn` part on, it also writes two Learn blocks:
+   - The Learn index lists each learn page with its "In one line" line. It goes between `<!-- learn:start -->` and `<!-- learn:end -->` in `learnIndex` (default `<learnPath>/README.md`). If the file does not exist, the script makes it with a heading.
+   - The teaser links the Learn index and gives the titles of the `count` newest pages. It goes between `<!-- learn-newest:start -->` and `<!-- learn-newest:end -->` in `learnTeaser.file` (default `{ledgers.tech}`, the tech ledger). `learnTeaser.count` is 5 by default. The newest page has the most recent date in its `## Tickets` section. Pages with the same date sort by title. Pages with no date go after the dated pages, by title. A count of 0 or a file of `null` turns off the teaser. In the teaser file, the teaser markers replace a Learn index block of version 0.2.0.
+   - The script always fills the markers that are in a file. If the markers or the file are missing, it adds them at the end of the file. It does this only when `learnPath` has a learn page. You can move the markers to a different place in that file.
 
 12. **HTML.** If the user wants browser pages, add each page to `docArchitecture.renderPages`. For the learn pages, add the glob `<learnPath>/*.md`. Then run `python3 tools/render-docs.py`. It needs `pip3 install markdown==3.9`.
 
