@@ -26,6 +26,7 @@ These lessons come from the Roomsie cleanup (2026-09-30, PRs #74–#88). Read th
 - **Edit the source, never the output.**
 - **The tick state uses the exact text as its key.** When you rewrite checklist text, apply the same before → after map to the notes before you run the generator. If you do not, the ticks disappear and duplicates appear.
 - **Duplicated summaries drift.** Roomsie had drift between `product-base.md`, `tech-base.md`, and the records, and between `how-to-work.md` and the plan. Generate each summary from its source.
+- **A generated list that grows must not live in a file with a fixed limit.** The size limit counts the generated block. In Roomsie, the Learn index grew in `tech-base.md` with each topic. It moved to `docs/learn/README.md`, and the tech ledger keeps a teaser of fixed length (Roomsie, 2026-10-03, plugin PR #12).
 
 ## Git
 
