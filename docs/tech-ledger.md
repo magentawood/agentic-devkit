@@ -30,4 +30,5 @@ Generated from the decision records in [decisions/](decisions/README.md). Edit t
 | [ADR-0023](decisions/0023-print-the-complete-text-at-a-gate.md) | Print the complete text at a gate | Accepted | At the spec and PR gates, print the complete text word for word in a fenced block, then ask for approval. |
 | [ADR-0024](decisions/0024-explain-this-question.md) | An "Explain this question" option on each question | Accepted | Each question to the user has at most three real options, then the last option "Explain this question". |
 | [ADR-0025](decisions/0025-learn-pages.md) | Learn pages: one page for each concept, with a generated index | Accepted | Each concept that a ticket explains gets one learn page, and the ledger generator lists the pages in a Learn index. |
+| [ADR-0026](decisions/0026-rebuild-the-plan-in-the-pr.md) | Rebuild the plan in the PR, and check that the plan is fresh | Accepted | `/build-feature` runs `plan.build` after the ticks in the PR, and the hook fails when `<plan.build> --check` fails. |
 <!-- ledger:end -->
