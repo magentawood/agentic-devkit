@@ -7,7 +7,7 @@ The spec tells what to build and which modules change. Adapted from `to-spec` an
 ## Rules
 
 - Do not ask the user new questions. Use only the decisions of the grill. If a decision is missing, go back to the grill.
-- Use the terms of `CONTEXT.md` with no change. Obey the decision records of the area.
+- Use the terms of the project glossary with no change. Obey the decision records of the area.
 - Write the spec in STE. Use the `ste-writing` skill.
 - Do not copy reasoning into the spec. Link the decision record, for example "(why: ADR-0012)".
 - Do not write file paths or code in the spec, because they quickly become out of date. You can include a type or a schema from a prototype when it tells a decision better than words.
