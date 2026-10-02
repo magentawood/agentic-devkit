@@ -41,7 +41,7 @@ These rules apply to all skills in this plugin. A skill links to this file. A sk
 ## Writing
 
 - Write all Markdown in STE. Use the `ste-writing` skill.
-- Use the terms in `CONTEXT.md` with no change.
+- Use the terms in [docs/glossary.md](docs/glossary.md) with no change.
 - Use the terms of the code host in all templates. For GitHub, write "pull request" or "PR".
 
 ## Context budget

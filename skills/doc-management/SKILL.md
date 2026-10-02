@@ -55,7 +55,7 @@ Do not use it for one doc change. The `doc-architecture` skill guards each chang
 
 ## Conventions
 
-Obey [CONVENTIONS.md](../../CONVENTIONS.md). The terms are in [CONTEXT.md](../../CONTEXT.md). This skill uses the `doc-architecture` and `ste-writing` skills. It does not use a different user-invoked skill.
+Obey [CONVENTIONS.md](../../CONVENTIONS.md). The terms are in [docs/glossary.md](../../docs/glossary.md). This skill uses the `doc-architecture` and `ste-writing` skills. It does not use a different user-invoked skill.
 
 ## Example
 

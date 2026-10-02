@@ -67,7 +67,7 @@ Docs duties, at each stage. The `doc-architecture` skill guards each Markdown ch
 
 ## Conventions
 
-Obey [CONVENTIONS.md](../../CONVENTIONS.md). The terms are in [CONTEXT.md](../../CONTEXT.md).
+Obey [CONVENTIONS.md](../../CONVENTIONS.md). The terms are in [docs/glossary.md](../../docs/glossary.md).
 
 ## Example
 
