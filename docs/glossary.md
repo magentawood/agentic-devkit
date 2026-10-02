@@ -42,7 +42,8 @@ These are the terms that the skills in this plugin use. Use each term only with 
 | Working doc | A doc that holds rules only, with a `Why:` link to the record of each rule. |
 | Ledger | A generated list of the decision records. `build-decision-ledger` writes it. |
 | Learn page | A page that explains one concept to a teammate who was not in the grill. It is in `docArchitecture.learnPath`. |
-| Learn index | The generated list of the learn pages, with the "In one line" of each page. `build-decision-ledger` writes it in `docArchitecture.learnIndex`. |
+| Learn index | The generated list of the learn pages, with the "In one line" of each page. `build-decision-ledger` writes it in `docArchitecture.learnIndex` (default `<learnPath>/README.md`). |
+| Learn teaser | The generated link to the Learn index and the titles of the newest learn pages. `build-decision-ledger` writes it in `docArchitecture.learnTeaser.file` (default the tech ledger). |
 | Explain this question | The last option of each question to the user. It gives a plain-language explanation, then the same question again. |
 | Superseded | The mark that the most recent record puts on an older statement that it replaces. |
 | Master copy | The copy of a docs tool in the plugin. |
