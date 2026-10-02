@@ -68,9 +68,11 @@ Why: [ADR-0016](docs/decisions/0016-two-docs-skills.md), [ADR-0017](docs/decisio
 
 - Ask one question at a time. Use the `AskUserQuestion` tool.
 - Put your recommended option first, and add "(Recommended)" to its label.
+- Give at most three real options. The last option is always "Explain this question", with the description "Explain the options in more detail before I decide".
+- When the user selects "Explain this question", give a plain-language explanation. Tell what the concept is, how it fits the project, and what each option changes. Then ask the same question again.
 - Before you ask, look for the answer in the code and the documents. Ask the user only for a decision.
 
-Why: [ADR-0004](docs/decisions/0004-questions-to-the-user.md)
+Why: [ADR-0004](docs/decisions/0004-questions-to-the-user.md), [ADR-0024](docs/decisions/0024-explain-this-question.md)
 
 ## Sub-agents
 
