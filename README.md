@@ -59,6 +59,8 @@ The default configuration is in `defaults/devkit.defaults.json`. A project `devk
 
 `render-docs` needs Python-Markdown: `pip3 install markdown==3.9`.
 
+If the project config has `plan.build`, the hook also runs `<plan.build> --check`. The plan generator of the project must accept `--check`.
+
 ## `/build-feature` scripts
 
 The skill uses two scripts. They also work without Claude:
