@@ -6,7 +6,7 @@
 
 1. **Read the project.** Read `CLAUDE.md`, `README.md`, `devkit.config.json`, and the list of Markdown files. If the project has docs that do not obey the architecture, stop and tell the user to run `migrate`.
 
-2. **Parts.** All parts are on by default: `index`, `records`, `productRecords`, `ledgers`, `specs`, `journal`, `archive`, `html`, `hook`, `ci`. Ask the user one question with `AskUserQuestion`: "Which parts do you want off?" Put "Keep all parts on (Recommended)" first. Write each part that the user turns off to `docArchitecture.parts` in the project `devkit.config.json`. Do not write the parts that stay on.
+2. **Parts.** All parts are on by default: `index`, `records`, `productRecords`, `ledgers`, `specs`, `journal`, `archive`, `html`, `learn`, `hook`, `ci`. Ask the user one question with `AskUserQuestion`: "Which parts do you want off?" Put "Keep all parts on (Recommended)" first. End with "Explain this question", as "Questions to the user" in [CONVENTIONS.md](../../../CONVENTIONS.md#questions-to-the-user) tells. If the user selects it, tell what each part does, then ask again. Write each part that the user turns off to `docArchitecture.parts` in the project `devkit.config.json`. Do not write the parts that stay on.
 
 3. **Paths and plan.** Use the default paths. If the project already uses a different path, write it to the project config, for example `decisionsPath`. Find the one home of the plan. If you cannot find it, ask the user. Write it to `plan` in the project config. If the project has no plan system, write `"plan": null`.
 
@@ -15,6 +15,7 @@
    - `specPath` (default `docs/specs/`)
    - `archivePath` (default `docs/archive/`)
    - The folder of `journalPath` (default `docs/journal/`)
+   - `learnPath` (default `docs/learn/`), for the learn pages
 
 5. **Index.** Make `indexFile` from [../templates/CONTEXT.md](../templates/CONTEXT.md). Fill in what the project is, the routing table, and where things live. Add `@CONTEXT.md` to `CLAUDE.md` if it is not there.
 
@@ -53,9 +54,9 @@
 
     Claude Code reads `extraKnownMarketplaces` only after the person trusts the folder. Each person installs the plugin one time. If `enabledPlugins` has the plugin, `sync-tools` keeps its value.
 
-11. **Ledgers.** Run `python3 tools/build-decision-ledger.py`. It makes the ledger files and fills the index block.
+11. **Ledgers.** Run `python3 tools/build-decision-ledger.py`. It makes the ledger files and fills the index block. With the `learn` part on, it also writes the Learn index between the `<!-- learn:start -->` and `<!-- learn:end -->` markers. They go at the end of `learnIndex` (default the tech ledger). You can move the markers to a different place in that file.
 
-12. **HTML.** If the user wants browser pages, add each page to `docArchitecture.renderPages`. Then run `python3 tools/render-docs.py`. It needs `pip3 install markdown==3.9`.
+12. **HTML.** If the user wants browser pages, add each page to `docArchitecture.renderPages`. For the learn pages, add the glob `<learnPath>/*.md`. Then run `python3 tools/render-docs.py`. It needs `pip3 install markdown==3.9`.
 
 13. **Checks.** Run the hook with `DOCS_CHECK_ALL=1 sh .githooks/pre-commit`. All checks must pass.
 
