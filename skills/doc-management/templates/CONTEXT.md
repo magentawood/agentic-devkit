@@ -33,7 +33,7 @@ Each decision has one record in `docs/decisions/`: ADRs (architecture, `NNNN-slu
 - **The plan:** <the one file where you edit the plan, and its generator>.
 - **Decision ledgers:** `python3 tools/build-decision-ledger.py` writes the list in this file and the ledgers from the records.
 - **Specs:** `docs/specs/`. A spec moves to `docs/archive/` when its feature is complete.
-- **Learn pages:** `docs/learn/`, one page for each concept. The Learn index is in <the tech ledger>.
+- **Learn pages:** `docs/learn/`, one page for each concept. The Learn index is `docs/learn/README.md`.
 - **Browser pages:** `python3 tools/render-docs.py` writes each `.html` from its `.md`.
 - **History:** `docs/journal/` (one file for each month, append only) and `docs/archive/`.
 
