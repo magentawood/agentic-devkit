@@ -22,7 +22,8 @@ These explanations stayed in the session of one person. The decision records hol
 - It is for a teammate who was not in the grill, in plain language. It tells what the concept is, how it fits the project, the choice we made, and the gotchas.
 - When a subsequent ticket adds to a topic, it updates the page. It does not make a second page.
 - A learn page links the decision record, or the PR of the ticket, for each choice. It does not give the reasons as a decision. The record stays the only home of the reasons.
-- Each page has a `**In one line:**` line. `build-decision-ledger` writes the Learn index between `<!-- learn:start -->` and `<!-- learn:end -->` in `docArchitecture.learnIndex`. The default is the file of `ledgers.tech`. If the run writes no tech ledger, the default is the index. `--check` fails when the index is out of date.
+- Each page has a `**In one line:**` line. `build-decision-ledger` writes the Learn index between `<!-- learn:start -->` and `<!-- learn:end -->` in `docArchitecture.learnIndex`. The default is `<learnPath>/README.md`, an index page in the learn folder. `--check` fails when the index is out of date.
+- `build-decision-ledger` also writes a teaser between `<!-- learn-newest:start -->` and `<!-- learn-newest:end -->` in `learnTeaser.file` (default the tech ledger). It links the Learn index and gives the titles of the `learnTeaser.count` newest pages (default 5), with no summaries. The newest page has the most recent date in its `## Tickets` section.
 - `render-docs` accepts a glob in `renderPages`, for example `docs/learn/*.md`.
 - `/build-feature` writes or updates the learn pages at the PR stage. The `## Log` entry and the PR link them.
 - The part `learn` in `docArchitecture.parts` is on by default.
@@ -30,6 +31,7 @@ These explanations stayed in the session of one person. The decision records hol
 ## Rationale
 
 - The user decided this design on 2026-10-03, after the T-02 POC.
+- 2026-10-03, after the seed of the Roomsie learn pages: the Learn index moved out of the tech ledger to `<learnPath>/README.md`. The size limit of the tech ledger counts the generated block, and the list grows with each topic. The teaser has a fixed length, so it can stay in the tech ledger. `build-decision-ledger` 0.3.0.
 - A teammate can read the concepts of each ticket without the session of the implementer.
 - With one page for each topic, two pages cannot give different explanations of one concept.
 - The index comes from the pages, so it cannot drift. The ledger generator already writes generated lists. `sync-tools` already copies it, and the hook and CI already run it. One more block in that script is smaller than a new tool.
@@ -42,13 +44,14 @@ These explanations stayed in the session of one person. The decision records hol
 | Put the explanations in the decision records | A record holds the reasons for one decision. A concept can relate to many records, and the records become long. |
 | One learn page for each ticket | The same concept appears in many tickets, so the pages repeat and drift. |
 | A new generator script for the index | It needs a new copy in `sync-tools`, the hook, and CI. The ledger generator already does all three. |
+| Keep the full Learn index in the tech ledger | The tech ledger has a fixed size limit, and the index grows with each topic. |
 | `render-docs` renders each page in `learnPath` automatically | It changes the pages of a project that does not want them. A glob is opt-in. |
 
 ## Consequences
 
-- Each project gets `docs/learn/` and a Learn section at the end of its tech ledger.
+- Each project gets `docs/learn/` with a `README.md` index page, and a teaser at the end of its tech ledger.
 - A PR of `/build-feature` has more docs. The learn pages obey the size limits.
-- `build-decision-ledger` 0.2.0 and `render-docs` 0.2.0. Each project runs `/doc-management check --sync`.
+- `build-decision-ledger` 0.2.0 (0.3.0 for the index page and the teaser) and `render-docs` 0.2.0. Each project runs `/doc-management check --sync`.
 
 ## Revisit when
 
