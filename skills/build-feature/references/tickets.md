@@ -1,6 +1,6 @@
 # Tickets
 
-> **Draft.** Finalize after the POC.
+> **Draft.** The Roomsie T-02 POC used a ticket that exists, so it did not test this stage. Finalize after the first `/build-feature` run on a new feature.
 
 This stage divides a new feature into tickets. For a ticket that exists, do not do this stage. Adapted from `to-tickets` (see NOTICE.md).
 
@@ -16,7 +16,7 @@ This stage divides a new feature into tickets. For a ticket that exists, do not 
 ## Steps
 
 1. Show the list of tickets to the user. For each ticket, give the title, the blockers, and the result from the view of the user.
-2. Ask the user about the size and the blockers, one question at a time. Change the list until the user approves it.
+2. Ask the user about the size and the blockers, one question at a time (see "Questions to the user" in CONVENTIONS.md). Change the list until the user approves it.
 3. Add the tickets to the plan source (`plan.source`). Do not edit the generated task notes. Obey the format of the tasks that exist in the plan source.
 4. Run the generator (`plan.build`). Then run the issue sync script (`plan.syncIssues`). The sync script makes one GitHub issue for each ticket.
 5. Set `status:spec` on each new issue with `issue-status`.
