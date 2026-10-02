@@ -2,7 +2,7 @@
 name: doc-architecture
 description: Guard the docs architecture of a project, so that the docs stay small and easy to read. It tells where a fact lives, the size limit of a file, and the checks that must pass. Use on any Markdown create or edit, on each new decision, and on each new doc, in the plugin repo and in each project. It loads together with ste-writing.
 metadata:
-  version: 0.2.1
+  version: 0.2.2
 ---
 
 # Doc architecture
