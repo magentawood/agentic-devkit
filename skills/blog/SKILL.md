@@ -12,7 +12,7 @@ You draft, the user reviews in the terminal, then a Node + Playwright publisher 
 - `SCRIPTS` = `${CLAUDE_PLUGIN_ROOT}/skills/blog/scripts`. If `CLAUDE_PLUGIN_ROOT` is unset, use the `scripts/` directory next to this file.
 - Config and secrets live outside the repo in `~/.config/blog-agent/` (`config.json`, `.env`, `chrome-profile/`).
 - Drafts go in `postsDir` from config (default `~/blog-posts`), named `YYYY-MM-DD-<slug>.md`.
-- Post format: read `reference/post-format.md` before writing a draft.
+- Post format: read `references/post-format.md` before writing a draft.
 
 ## Subcommands (from `$ARGUMENTS`)
 
@@ -48,7 +48,7 @@ Then:
 Ask one question at a time, only the ones not already answered by the user's message: topic → audience and angle → length and tone → which platforms (default: all configured). If they gave a topic and say "just write it", skip straight to drafting with sensible defaults.
 
 ### 2. Draft
-Write the post to `postsDir/YYYY-MM-DD-<slug>.md` in the format from `reference/post-format.md`. Keep the body in clean GitHub-flavored markdown (headings, lists, fenced code). No front-loaded title in the body; the title lives in frontmatter.
+Write the post to `postsDir/YYYY-MM-DD-<slug>.md` in the format from `references/post-format.md`. Keep the body in clean GitHub-flavored markdown (headings, lists, fenced code). No front-loaded title in the body; the title lives in frontmatter.
 
 Then print the **entire** file to the terminal with `cat` so the user reviews it there. Ask a single question: "What should change?" Edit the file in place and reprint the changed sections (or the whole thing if short) until they say it's good.
 
