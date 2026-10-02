@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.6.1 (2026-10-03)
+
+- `build-decision-ledger` 0.3.0 ([ADR-0025](docs/decisions/0025-learn-pages.md)): the full Learn index goes to `learnIndex` (default `<learnPath>/README.md`). The tech ledger gets a teaser with a link and the 5 newest titles (`learnTeaser`). The teaser replaces a 0.2.0 Learn block in its file. Remove a 0.2.0 Learn block in a different file by hand.
+- `doc-architecture` 0.2.1 and the `doc-management` references tell the new rules. Run `/doc-management check --sync` in each project.
+
 ## 0.6.0 (2026-10-03)
 
 - `build-feature` 0.2.0: the stage references and the templates come from the Roomsie T-02 POC, and lose the "Draft" mark. `tickets.md` stays a draft: the POC did not use the ticket stage. [ADR-0006](docs/decisions/0006-poc-first-stage-references-are-drafts.md) has the status Accepted.
