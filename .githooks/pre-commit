@@ -1,5 +1,5 @@
 #!/bin/sh
-# Keep the docs of the plugin repo inside their limits, the links whole, and the ledger current.
+# Keep the docs of the plugin repo inside their limits, the links whole, and the ledger and the plan current.
 # The plugin repo holds the master tools, so this hook calls them directly. It has no tool copies.
 # Adapted from skills/doc-architecture/templates/pre-commit. Keep the two files in step.
 # The SessionStart hook in .claude/settings.json turns it on. By hand: git config core.hooksPath .githooks
@@ -17,6 +17,18 @@ fi
 python3 "$T/doc-links" . || exit 1
 python3 "$T/build-decision-ledger" --check || exit 1
 python3 "$T/render-docs" --check || exit 1
+
+# Plan drift: with plan.build in the project config, "<plan.build> --check" must exit 0.
+if [ -f devkit.config.json ]; then
+  python3 - <<'PY' || exit 1
+import json, subprocess, sys
+plan = json.load(open("devkit.config.json")).get("plan")
+build = plan.get("build") if isinstance(plan, dict) else None
+if build and subprocess.call(build + " --check", shell=True) != 0:
+    print("plan files are stale. Run: " + build, file=sys.stderr)
+    sys.exit(1)
+PY
+fi
 
 # STE: ste-lint only reports. Its findings never block a commit.
 if [ -z "$DOCS_CHECK_ALL" ]; then
