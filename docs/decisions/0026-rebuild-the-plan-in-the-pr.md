@@ -1,4 +1,4 @@
-# 0026 — Rebuild the plan in the PR, and check that the plan is fresh
+# 0026 — Rebuild the plan in the PR, and check that the plan is current
 
 **Status:** Accepted · **Date:** 2026-10-03 · **Deciders:** Yash Mangal
 
