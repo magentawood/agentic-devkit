@@ -33,7 +33,7 @@ A project turns a part off in its own `devkit.config.json`. The skills do not de
 - **Plan:** in one place, set by config. The docs link to it and never copy task lists.
 - **History:** `docs/journal/YYYY-MM.md` (append only) and `docs/archive/`. The limits do not apply to them, and the index never links them.
 - **HTML:** generated from Markdown, with `--check`.
-- **Limits:** the plugin defaults are the Roomsie numbers. The index is 1,500 tokens. Working docs, records and specs are 1,200 words. Research is 1,500 words. The journal and archive are excluded. An override is a ceiling for one file, and it can only shrink.
+- **Limits:** the plugin defaults (`defaults/devkit.defaults.json`) are the Roomsie numbers. The index is 1,500 tokens. Working docs, records and specs are 1,200 words. Research is 1,500 words. The journal and archive are excluded. An override is a ceiling for one file, and it can only shrink.
 - **Rules:** one fact, one home. Update or remove replaced text. Do not append. When two sources conflict, the most recent record wins, and the record marks the older statement "Superseded:".
 
 ## doc-architecture (guard)
