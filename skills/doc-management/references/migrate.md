@@ -56,7 +56,7 @@ Ask the user if they want the rewrite. For each file, obey the rewrite procedure
 4. A blind sub-agent confirms that each CORE claim is in the body of the doc.
 5. Collect each contradiction between docs that the tags show. Also collect each contradiction that stages 6 and 7 find, and ask about it in the same way.
 
-**Stop 2:** ask the user about each contradiction, one at a time, with `AskUserQuestion`. Give the two statements, their sources and dates. Put the most recent record first as "(Recommended)". The record that wins marks the older statement "Superseded:".
+**Stop 2:** ask the user about each contradiction, one at a time, with `AskUserQuestion`. Give the two statements, their sources and dates. Put the most recent record first as "(Recommended)". End with "Explain this question", as "Questions to the user" in [CONVENTIONS.md](../../../CONVENTIONS.md#questions-to-the-user) tells. The record that wins marks the older statement "Superseded:".
 
 ### 6. Records
 
