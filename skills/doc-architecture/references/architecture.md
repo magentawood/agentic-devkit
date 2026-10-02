@@ -62,6 +62,16 @@ A record is at most 1,200 words. Write a record only for a decision with three p
 - Limit: 1,200 words.
 - When the feature is complete, move the spec to `archivePath` (default `docs/archive/`).
 
+## Learn pages
+
+- A learn page explains one concept, for example a database driver, for a teammate who was not in the grill. It is `<learnPath>/<topic>.md` (default `docs/learn/`), from [../templates/learn.md](../templates/learn.md). Limit: 1,200 words.
+- Concepts live in learn pages. Decisions and their reasons live in records. A learn page links the record of each choice. It never gives the reasons as a decision.
+- One topic, one page. When a subsequent ticket adds to a topic, update its page.
+- Each page has a `**In one line:**` line. The ledger generator writes the Learn index from these lines, between `<!-- learn:start -->` and `<!-- learn:end -->` in `learnIndex` (default the file of `ledgers.tech`). It runs when the `learnPath` folder exists, and adds missing markers at the end of the file.
+- To render the pages, add `<learnPath>/*.md` to `renderPages`.
+
+Why: [ADR-0025](../../../docs/decisions/0025-learn-pages.md)
+
 ## Plan
 
 - The plan has one home, which the project config gives (`plan`).
@@ -75,7 +85,7 @@ A record is at most 1,200 words. Write a record only for a decision with three p
 
 ## HTML
 
-- Markdown is the source. `render-docs` makes an `.html` page next to each Markdown file in `renderPages`.
+- Markdown is the source. `render-docs` makes an `.html` page next to each Markdown file in `renderPages`. An entry can be a glob, for example `docs/learn/*.md`.
 - Headings get GitHub-style anchors, so one link works on GitHub, in Obsidian, and in the HTML. A folded callout (`> [!note]- Why`) becomes a `<details>` box.
 - `--check` fails when a page is out of date. Edit the Markdown, never the HTML.
 
@@ -105,6 +115,7 @@ When a file is above its limit, do one of these: divide it by topic, move the re
 - **The most recent record wins.** When two sources conflict, the most recent decision record wins. That record marks the older statement "Superseded:" with a link.
 - **Keep headings with no change.** Links and anchors point at them.
 - **Generated files:** edit the source, then run the generator.
+- **Agent files that a tool writes** are a drift source: a second home for the agent rules. Turn them off, for example Turborepo `AGENTS.md` with `agentGuidance: false`.
 
 ## Tools
 
@@ -114,7 +125,7 @@ The plugin holds the master copy of each tool in `scripts/` and `templates/` of 
 |---|---|---|
 | `doc-budget` | `tools/doc-budget.py` | The size limits |
 | `doc-links` | `tools/doc-links.py` | 0 broken links and anchors |
-| `build-decision-ledger` | `tools/build-decision-ledger.py` | Ledger drift (`--check`) |
+| `build-decision-ledger` | `tools/build-decision-ledger.py` | Ledger and Learn index drift (`--check`) |
 | `render-docs` | `tools/render-docs.py` | Render drift (`--check`) |
 | `templates/pre-commit` | `.githooks/pre-commit` | Runs all checks above, and the hashes of the tool copies |
 | `templates/docs-check.yml` | `.github/workflows/docs-check.yml` | Runs the hook in CI |
