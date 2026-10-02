@@ -15,18 +15,14 @@ The grill asks the user questions until each branch of the decision tree has a d
 
 ## Ask
 
-- Obey "Questions to the user" in CONVENTIONS.md. Ask one question at a time with `AskUserQuestion`. Give at most three options, then "Explain this question".
+- Obey "Questions to the user" in [CONVENTIONS.md](../../../CONVENTIONS.md#questions-to-the-user). It includes the "Explain this question" option.
 - Above each technical question, give plain-language context in two to four sentences. Tell what the concept is, and the trade-off of the options. Write for a user who does not know the term. Give each option one line that tells its result.
 - Ask the user only for a decision. You must find each fact in the code and the documents. For a long search, start a sub-agent, and ask other frontier questions while it works.
 - After each answer, find the frontier again. An answer can close branches or open new branches.
 
 ## Explain this question
 
-When the user selects "Explain this question":
-
-1. Explain in plain language: what the concept is, how it fits this project, and what each option changes.
-2. Ask the same question again, with the same options.
-3. Keep the explanation in your notes. It is input for a learn page at the PR stage (see [pr.md](pr.md#learn-pages)).
+When the user selects "Explain this question", obey CONVENTIONS.md. Also keep the explanation in your notes. It is input for a learn page at the PR stage (see [pr.md](pr.md#learn-pages)).
 
 ## Entry points
 
