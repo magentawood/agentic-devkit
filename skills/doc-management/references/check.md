@@ -12,6 +12,7 @@ The hook and CI run only these checks. Run them first:
 | Links | `python3 tools/doc-links.py .` | 0 broken links |
 | Ledger drift | `python3 tools/build-decision-ledger.py --check` | 0 stale ledgers. The Learn index lists each learn page, and the teaser gives the newest pages |
 | Render drift | `python3 tools/render-docs.py --check` | 0 stale pages |
+| Plan drift | `<plan.build> --check`, only if the config has `plan.build` | Exit code 0 |
 | Tool copies | `${CLAUDE_SKILL_DIR}/scripts/sync-tools --check <project root>` | Each copy is the same as the master |
 | Hook activation | `git config core.hooksPath` | It gives `.githooks` in this clone |
 | Hook on install | `scripts.prepare` in the root `package.json`, if there is one | It runs `git config core.hooksPath .githooks` |
