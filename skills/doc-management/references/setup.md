@@ -24,12 +24,21 @@
 
 8. **Limits and tools.** Add `"docBudget": {"overrides": {}}` to the project config. The limits come from the plugin defaults file, `${CLAUDE_PLUGIN_ROOT}/defaults/devkit.defaults.json`. `sync-tools` copies this file to `tools/devkit-defaults.json`, so the tool copies work without the plugin. A project `rules` list replaces the full default list. Run `${CLAUDE_SKILL_DIR}/scripts/sync-tools --recommend-plugin <project root>`. It copies the tools, the hook, and CI. It writes the plugin version and the hash of each copy to `docArchitecture` in the project config.
 
-9. **Hook activation.** Git never runs the hooks of a clone by itself. With the `hook` part on, `sync-tools` turns on the hook in three ways. It merges each change with the values that are there. It never overwrites them.
+9. **Hook activation.** Git never runs the hooks of a clone by itself. With the `hook` part on, `sync-tools` turns on the hook. If the project uses husky, see "With husky" below. If not, `sync-tools` turns on the hook in three ways. It merges each change with the values that are there. It never overwrites them.
    - It runs `git config core.hooksPath .githooks` for this clone.
    - It adds `git config core.hooksPath .githooks` to `scripts.prepare` of the root `package.json`, if the project has one. Each install with npm, pnpm, or yarn runs `prepare`. If `prepare` exists, `sync-tools` adds the command after it with `&&`. If `prepare` uses husky or sets `core.hooksPath`, `sync-tools` does not change it. The two hook folders are in conflict. Ask the user which folder to keep.
    - It adds a Claude Code `SessionStart` hook to `.claude/settings.json`: `cd "$CLAUDE_PROJECT_DIR" && git config core.hooksPath .githooks`. Commit this file, so that each session of each clone turns on the hook.
 
    Keep the fallback line in the conventions of the index: "If the hook does not run, run `git config core.hooksPath .githooks` one time."
+
+   **With husky.** The project uses husky if it has one of these:
+   - A `.husky/` folder.
+   - `husky` in `devDependencies` or `dependencies` of the root `package.json`.
+   - A `core.hooksPath` in `.husky`.
+
+   Husky owns `core.hooksPath`. Thus `sync-tools` does not change `core.hooksPath`, `scripts.prepare`, or the `SessionStart` hook. It adds this line to `.husky/pre-commit` one time: `sh .githooks/pre-commit`. It keeps the text that is in the file.
+
+   If `.husky/pre-commit` does not exist, `sync-tools` makes it. It makes the file executable. `.githooks/pre-commit` stays the only home of the checks. Commit `.husky/pre-commit`. Do not add the fallback line to the index.
 
 10. **Plugin.** `--recommend-plugin` adds this plugin to `.claude/settings.json`, so that Claude Code offers it to each person who opens the project:
 
@@ -54,4 +63,4 @@
 
 ## Exit condition
 
-The hook passes on all files, `sync-tools --check` passes, and the PR is open. `sync-tools --check` also fails when a way to turn on the hook is missing. It checks `core.hooksPath` only in a git clone.
+The hook passes on all files, `sync-tools --check` passes, and the PR is open. `sync-tools --check` also fails when a way to turn on the hook is missing. It checks `core.hooksPath` only in a git clone. With husky, it checks only the line in `.husky/pre-commit`.
