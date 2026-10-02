@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.6.0 (2026-10-03)
+
+- `build-feature` 0.2.0: the stage references and the templates come from the Roomsie T-02 POC, and lose the "Draft" mark. `tickets.md` stays a draft: the POC did not use the ticket stage. [ADR-0006](docs/decisions/0006-poc-first-stage-references-are-drafts.md) has the status Accepted.
+  - Grill: check the Read-first files and the done items against the current docs. Ask the user about a stale product decision.
+  - Spec: a scaffold ticket can name its packages. Apply the before → after text of a done item to the task note before the plan generator runs.
+  - Implement: an environment preflight, staged files by path, and tool-written agent files off.
+  - Review: all reviewers get the spec decisions and the out-of-scope list. One more round on a change after the last round.
+  - New `references/pr.md`: the learn pages, the predicted PR number, and the PR gate.
+- Each question ends with "Explain this question" (`CONVENTIONS.md`, [ADR-0024](docs/decisions/0024-explain-this-question.md)).
+- Learn pages ([ADR-0025](docs/decisions/0025-learn-pages.md)): `doc-architecture` 0.2.0 adds the doc type and `templates/learn.md`. `build-decision-ledger` 0.2.0 writes the Learn index. `render-docs` 0.2.0 accepts a glob in `renderPages`. `doc-management` 0.2.0 sets up `docs/learn/`. The defaults add `learnPath`, `learnIndex`, and `parts.learn`. Run `/doc-management check --sync` in each project.
+
 ## 0.5.2 (2026-10-02)
 
 - `build-feature` 0.1.3: at the spec gate, print the complete text of the spec, then ask for approval. At the PR gate, print the complete text of the PR draft. Do not give a summary. Why: [ADR-0023](docs/decisions/0023-print-the-complete-text-at-a-gate.md).
