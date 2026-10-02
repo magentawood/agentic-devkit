@@ -10,7 +10,7 @@ The hook and CI run only these checks. Run them first:
 |---|---|---|
 | Limits | `python3 tools/doc-budget.py --report` | No file is `OVER` |
 | Links | `python3 tools/doc-links.py .` | 0 broken links |
-| Ledger drift | `python3 tools/build-decision-ledger.py --check` | 0 stale ledgers |
+| Ledger drift | `python3 tools/build-decision-ledger.py --check` | 0 stale ledgers, and the Learn index lists each learn page |
 | Render drift | `python3 tools/render-docs.py --check` | 0 stale pages |
 | Tool copies | `${CLAUDE_SKILL_DIR}/scripts/sync-tools --check <project root>` | Each copy is the same as the master |
 | Hook activation | `git config core.hooksPath` | It gives `.githooks` in this clone |
@@ -38,6 +38,10 @@ Report these items:
 8. **Copied plan:** a task list, a date, or an owner that a doc copies from the plan.
 9. **Near the limit:** each file above 90% of its limit.
 10. **Index links to history:** each index link to the journal or the archive.
+11. **Learn pages:**
+    - A page above its limit, or with no `**In one line:**` line.
+    - Two pages on one topic.
+    - A page that gives the reasons of a decision. It must link the record.
 
 ## Report
 
