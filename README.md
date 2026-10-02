@@ -86,7 +86,7 @@ node publish.mjs ~/blog-posts/2026-09-19-my-post.md [--dry-run] [--assist] [--pl
 node doctor.mjs --logins
 ```
 
-Post file format: see `skills/blog/reference/post-format.md`.
+Post file format: see `skills/blog/references/post-format.md`.
 
 ### Caveats
 
