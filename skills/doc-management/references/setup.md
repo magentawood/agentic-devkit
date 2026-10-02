@@ -8,7 +8,7 @@
 
 2. **Parts.** All parts are on by default: `index`, `records`, `productRecords`, `ledgers`, `specs`, `journal`, `archive`, `html`, `hook`, `ci`. Ask the user one question with `AskUserQuestion`: "Which parts do you want off?" Put "Keep all parts on (Recommended)" first. Write each part that the user turns off to `docArchitecture.parts` in the project `devkit.config.json`. Do not write the parts that stay on.
 
-3. **Paths and plan.** Use the default paths. If the project already uses a different path, write it to the project config, for example `decisionsPath`. Find the one home of the plan. If you cannot find it, ask the user. Write it to `plan` in the project config.
+3. **Paths and plan.** Use the default paths. If the project already uses a different path, write it to the project config, for example `decisionsPath`. Find the one home of the plan. If you cannot find it, ask the user. Write it to `plan` in the project config. If the project has no plan system, write `"plan": null`.
 
 4. **Folders.** Make each folder of a part that is on. Put a `.gitkeep` in each empty folder.
    - `decisionsPath` (default `docs/decisions/`)
