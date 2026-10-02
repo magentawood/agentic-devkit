@@ -27,7 +27,7 @@
 
 ### 2. Moves and renames
 
-1. Move each file to its home in the architecture.
+1. Move each file to its home in the architecture. If the index file holds a glossary, first `git mv` it to a glossary doc. Then the history follows the glossary. Then write the new index, with a routing row for the terms.
 2. Rename each ID that clashes with a different scheme. Roomsie renamed `D0`–`D13` to `PD0`–`PD13`, because `D-` was also used for design tasks.
 3. Fix each link. `doc-links` must show 0 broken links.
 
