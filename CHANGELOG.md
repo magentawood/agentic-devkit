@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.2 (2026-10-02)
+
+- `build-feature` 0.1.3: at the spec gate, print the complete text of the spec, then ask for approval. At the PR gate, print the complete text of the PR draft. Do not give a summary. Why: [ADR-0023](docs/decisions/0023-print-the-complete-text-at-a-gate.md).
+
 ## 0.5.1 (2026-10-02)
 
 - The plugin repo uses its own docs architecture. `/doc-management migrate` ran by hand on this repo, in three stacked PRs (#7–#9):
