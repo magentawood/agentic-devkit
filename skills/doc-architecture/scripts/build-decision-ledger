@@ -114,11 +114,11 @@ def learn_block(root, folder, index):
     """One line for each learn page: its title, a link, and its "In one line" summary."""
     lines = []
     for name in sorted(os.listdir(os.path.join(root, folder))):
-        if not name.endswith(".md") or name == "README.md":
+        if not name.endswith(".md") or name == "README.md" or not os.path.isfile(os.path.join(root, folder, name)):
             continue
         text = open(os.path.join(root, folder, name), encoding="utf-8").read()
         heading = re.search(r"^# (.+)$", text, re.M)
-        oneline = re.search(r"^\*\*In one line:\*\*\s*(.+)$", text, re.M)
+        oneline = re.search(r"^\*\*In one line:\*\*[ \t]*(.+)$", text, re.M)
         link = f"[{heading.group(1).strip() if heading else name[:-3]}]({rel(posixpath.join(folder, name), index)})"
         lines.append(f"- {link}" + (f": {oneline.group(1).strip()}" if oneline else ""))
     return "\n".join(lines) or "No learn pages yet."
@@ -134,7 +134,7 @@ def fill(path, markers, body, title, text):
         sys.exit(f"build-decision-ledger: {path} does not exist")
     pat = re.compile(re.escape(start) + r".*?" + re.escape(end), re.S)
     if not pat.search(text or ""):
-        if not learn:
+        if not learn or start in (text or "") or end in (text or ""):
             sys.exit(f"build-decision-ledger: markers {start} {end} missing in {path}")
         text = (text.rstrip("\n") + "\n\n" if text else "") + f"## Learn\n\n{start}\n{end}\n"
     return pat.sub(lambda _: f"{start}\n{body}\n{end}", text)
@@ -151,15 +151,15 @@ def main(argv):
         rows = records(root, cfg["decisionsPath"], product)
         ledgers = [(k, p) for k, p in sorted(cfg.get("ledgers", {}).items(), key=lambda kv: kv[0] != "product")
                    if p and k in LEDGER_TITLES and (k == "tech" or product) and parts.get("ledgers", True)]
-        jobs = [(p, LEDGER_MARKERS, table([r for r in rows if r["kind"] == k], p), LEDGER_TITLES.get(k))
+        jobs = [(posixpath.normpath(p), LEDGER_MARKERS, table([r for r in rows if r["kind"] == k], p), LEDGER_TITLES.get(k))
                 for k, p in ledgers]
         if parts.get("index", True):
             settled = cfg.get("settledStatuses", ["Settled", "Accepted", "Superseded"])
-            jobs.insert(0, (index, INDEX_MARKERS, index_block(rows, index, ledgers, settled, cfg["decisionsPath"]), None))
+            jobs.insert(0, (posixpath.normpath(index), INDEX_MARKERS, index_block(rows, index, ledgers, settled, cfg["decisionsPath"]), None))
     learn = cfg.get("learnPath", "docs/learn")
     if parts.get("learn", True) and os.path.isdir(os.path.join(root, learn)):
         tech = dict(ledgers).get("tech")  # only a ledger that this run writes
-        target = cfg.get("learnIndex") or tech or index
+        target = posixpath.normpath(cfg.get("learnIndex") or tech or index)
         jobs.append((target, LEARN_MARKERS, learn_block(root, learn, target), None))
     if not jobs:
         print("build-decision-ledger: the records, the ledgers, the index, and the learn pages are off or missing")
