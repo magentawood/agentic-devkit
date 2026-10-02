@@ -8,14 +8,14 @@ Each agent session loads this file. It is an index: it tells you what agentic-de
 
 - A Claude Code plugin with skills to build and ship products: `/build-feature`, `ste-writing`, `doc-architecture`, `/doc-management`, and `/blog`.
 - This repo is also a project. Its docs obey the docs architecture. It holds the master copy of each docs tool, so it has no tool copies.
-- The next milestone: the `/build-feature` POC on one Roomsie ticket. The POC finalizes the stage references.
+- The `/build-feature` POC on Roomsie T-02 finalized the stage references. The ticket stage stays a draft. The next milestone: a run on a new feature, which proves the ticket stage.
 
 ## Decisions
 
 Each decision has one record in `docs/decisions/`: ADRs (`NNNN-slug.md`). This repo has no product records. The record is the only home of the decision and its reasons. Cite it as `ADR-0006`.
 
 <!-- decisions:start -->
-**Not settled yet:** [ADR-0006](docs/decisions/0006-poc-first-stage-references-are-drafts.md) POC first: the stage references of build-feature are drafts (proposed).
+**Not settled yet:** none.
 
 **All decisions:** architecture in [tech-ledger.md](docs/tech-ledger.md). Each links its record.
 <!-- decisions:end -->
