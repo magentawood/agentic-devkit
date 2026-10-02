@@ -169,8 +169,9 @@ def activate(project):
     settings_path = os.path.join(project, ".claude", "settings.json")
     settings = strict_load(settings_path)
     if SESSION_CMD not in session_hooks(settings, settings_path):
-        hooks = settings.setdefault("hooks", OrderedDict())
-        hooks.setdefault("SessionStart", []).append(
+        hooks = settings["hooks"] = shape(settings_path, settings, "hooks", OrderedDict)
+        hooks["SessionStart"] = shape(settings_path, hooks, "SessionStart", list)
+        hooks["SessionStart"].append(
             OrderedDict([("hooks", [OrderedDict([("type", "command"), ("command", SESSION_CMD)])])]))
         write_json(settings_path, settings)
         print("updated    .claude/settings.json: SessionStart hook")
