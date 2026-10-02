@@ -2,7 +2,7 @@
 name: ste-writing
 description: Write and rewrite Markdown in ASD-STE100 Simplified Technical English (STE). Use when you create or edit any .md file (spec, ticket, task note, standards file, README, CONVENTIONS, SKILL.md body, PR description), or when the user asks to rewrite, compact, or clean up docs into STE.
 metadata:
-  version: 0.3.0
+  version: 0.3.1
 ---
 
 # STE writing
@@ -29,7 +29,7 @@ Do not apply STE to these parts of a file:
 ## Inputs
 
 - The file to write or rewrite.
-- The project glossary, `CONTEXT.md`. Use its technical names with no change.
+- The project glossary. The routing table of the index (`CONTEXT.md`) gives it, for example `docs/glossary.md`. Use its technical names with no change.
 - The project `devkit.config.json`, key `ste`. It gives the spelling directive (`british` or `american`) and the approved technical names (`allowWords`).
 
 ## Outputs
