@@ -6,7 +6,7 @@ The grill asks the user questions until each branch of the decision tree has a d
 
 ## Before the first question
 
-1. Read the project `CONTEXT.md`, the task note, the files in its `## Read first` section, and the decision records for the area.
+1. Read the project `CONTEXT.md` and the project glossary. Then read the task note, the files in its `## Read first` section, and the decision records for the area.
 2. Read the code that the change touches. Trace the flow of the code from the start to the end.
 3. Make the decision tree. Each decision has branches: the decisions that come after it.
 4. Find the frontier: the decisions that have all their prerequisites. Ask only the questions on the frontier.
@@ -25,7 +25,7 @@ The grill asks the user questions until each branch of the decision tree has a d
 
 ## Record as you go
 
-- **Terms:** when the user uses a term that is not the same as `CONTEXT.md`, tell the user immediately. When a term is clear, update `CONTEXT.md` immediately. Keep `CONTEXT.md` an index. Do not go above its token limit.
+- **Terms:** when the user uses a term that is not the same as the project glossary, tell the user immediately. When a term is clear, update the glossary immediately. The routing table of `CONTEXT.md` gives the glossary. Do not put terms in `CONTEXT.md`: it is an index, and it must stay inside its token limit.
 - **Decisions:** write a decision record only for a decision with these three properties:
   - It is hard to change subsequently.
   - A subsequent reader cannot understand it without the reason.
