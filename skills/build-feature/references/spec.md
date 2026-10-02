@@ -24,6 +24,12 @@ The spec tells what to build and which modules change. Adapted from `to-spec` an
 - **Ticket that exists:** write the short spec into the task note, below `## Read first`. Use [../templates/task-note-section.md](../templates/task-note-section.md). The `## Done when` list stays the acceptance criteria. Do not change or copy it. If an item is not correct, ask the user, then change `plan.source` and run `plan.build`.
 - **New feature:** write the full spec with the template of `doc-architecture`: `${CLAUDE_PLUGIN_ROOT}/skills/doc-architecture/templates/spec.md`. Put it in `docArchitecture.specPath` (default `docs/specs/<feature>.md`). The spec is at most 1,200 words. After the merge of the feature, move the spec to `docArchitecture.archivePath`.
 
+## Spec gate
+
+1. Print the complete text of the spec in your reply, in one fenced Markdown block. Copy it word for word from the file. Do not give a summary.
+2. Then ask the user for approval.
+3. If you change the spec after the user reads it, print the new text again before you ask.
+
 ## Exit condition
 
 The user approves the spec. This stage is a gate by default (`spec` in `approvalGates`).
