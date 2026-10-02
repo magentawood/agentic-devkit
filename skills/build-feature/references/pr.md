@@ -1,6 +1,6 @@
 # PR
 
-This stage writes the learn pages, the ticks, the log, and the journal entry, then opens the PR. The Roomsie T-02 POC confirmed these rules (2026-10-03).
+This stage writes the learn pages, the ticks, the generated plan files, the log, and the journal entry. Then it opens the PR. The Roomsie T-02 POC confirmed these rules (2026-10-03).
 
 ## Learn pages
 
@@ -19,12 +19,15 @@ If `docArchitecture.parts.learn` is off, do not do this section.
 1. Tick the done items with `${CLAUDE_SKILL_DIR}/scripts/tick`.
 2. Add the `## Log` entry to the task note with [../templates/task-note-section.md](../templates/task-note-section.md).
 3. Add the journal entry at the end of the file that `journalPath` gives.
+4. If the project config has `plan.build`, run it. The generator updates the counts and the status marks in `plan.progressNote` and the other generated plan files. Why: [ADR-0026](../../../docs/decisions/0026-rebuild-the-plan-in-the-pr.md).
 
-These three need the PR number. You can predict it before the PR exists, so that one commit has all of them:
+These steps need the PR number. You can predict it before the PR exists, so that one commit has all of them:
 
 1. Get the highest number: `gh issue list --state all --limit 1 --json number` and `gh pr list --state all --limit 1 --json number`. Issues and PRs use one sequence. The PR number is the highest number plus 1. A discussion also uses the sequence, so verify the number in step 3.
-2. Use the predicted number in the ticks, the log, and the journal. Commit them.
-3. After `gh pr create`, compare the real number with the prediction. If they are different, fix each link and number, and push one more commit.
+2. Use the predicted number in the ticks, the log, and the journal. Commit them together with the generated plan files.
+3. After `gh pr create`, compare the number of the PR with the prediction. If they are different, fix each link and number. Then run `plan.build` again, and push one more commit.
+
+The hook runs `<plan.build> --check`. It fails when a generated plan file is stale.
 
 ## PR draft
 
@@ -36,4 +39,4 @@ These three need the PR number. You can predict it before the PR exists, so that
 
 ## Exit condition
 
-The PR is open, and its number agrees with each link. The learn pages, the ticks, the log, and the journal entry are in the PR.
+The PR is open, and its number agrees with each link. The learn pages, the ticks, the generated plan files, the log, and the journal entry are in the PR.
