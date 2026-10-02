@@ -1,6 +1,6 @@
 # 0006 — POC first: the stage references of build-feature are drafts
 
-**Status:** Proposed · **Date:** 2026-09-30 · **Deciders:** Yash Mangal
+**Status:** Accepted · **Date:** 2026-09-30, accepted 2026-10-03 · **Deciders:** Yash Mangal
 
 ## Context
 
@@ -17,7 +17,9 @@ The stage references of `/build-feature` (`grill.md`, `spec.md`, `tickets.md`, `
 - `lean-code.md` and `code-comments.md` are complete. They are not drafts.
 - The POC runs with the `doc-architecture` guard active.
 
-The user approved the "POC first" rule. The POC must confirm the stage rules in the draft files. Thus this record has the status **Proposed**.
+The user approved the "POC first" rule on 2026-09-30.
+
+**2026-10-03, the POC is complete.** `/build-feature` ran on Roomsie T-02, from the grill to the merged [Roomsie PR #94](https://github.com/magentawood/roomsie/pull/94), with the guard active. The lessons went into the stage references and the templates, which are no longer drafts. One part is not proven: T-02 was a ticket that exists, so the POC did not use the ticket stage. `tickets.md` keeps its "Draft" mark until the first run on a new feature.
 
 ## Rationale
 
@@ -31,14 +33,16 @@ The user approved the "POC first" rule. The POC must confirm the stage rules in 
 
 ## Consequences
 
-- Version 0.1.x of `/build-feature` is a skeleton.
+- Version 0.1.x of `/build-feature` is a skeleton. Version 0.2.0 has the stage references from the POC.
+- The ticket stage stays a draft until a run on a new feature.
 
 ## Revisit when
 
-- The POC on the first Roomsie ticket is complete.
+- The first `/build-feature` run on a new feature is complete. Then finalize `tickets.md`.
 
 ## Sources
 
 - [build-feature PRD](https://github.com/magentawood/agentic-devkit/blob/a88b115/docs/prd/build-feature.md), Part A §1 "POC first, then extract", "First task" step 4, and "Next steps" step 3 (2026-09-30).
 - [doc-management PRD](https://github.com/magentawood/agentic-devkit/blob/a88b115/docs/prd/doc-management.md), "Order of work" step 4 (the POC with the guard active).
 - [PR #4](https://github.com/magentawood/agentic-devkit/pull/4): the skeleton, with the stage references as drafts.
+- [Roomsie PR #94](https://github.com/magentawood/roomsie/pull/94): the POC on T-02, merged 2026-10-03.
