@@ -4,7 +4,7 @@ description: Take a feature or a ticket from an idea to a merged PR through gril
 disable-model-invocation: true
 argument-hint: "[T-nn | feature idea]"
 metadata:
-  version: 0.2.0
+  version: 0.2.1
 ---
 
 # Build feature
@@ -33,7 +33,7 @@ Do not use this skill for a change to documents only. For that change, use `ste-
 
 - Code on a branch, with tests at the agreed seams.
 - A PR that uses [templates/pr-template.md](templates/pr-template.md). It closes the issue with `Closes #N`.
-- In the same PR: the ticks, a `## Log` entry in the task note, and a build journal entry (`journalPath`).
+- In the same PR: the ticks, the generated plan files (`plan.build`), the `## Log` entry, and the journal entry (`journalPath`).
 - In the same PR: a learn page for each concept that you explained or researched (`docArchitecture.learnPath`), and the Learn index.
 - New or changed decision records, and the glossary terms, from the grill.
 
@@ -46,7 +46,7 @@ Before each stage, read its reference file. At each stage change, run `${CLAUDE_
 3. **Ticket** (new feature only). Read [references/tickets.md](references/tickets.md).
 4. **Implement.** Read [references/implement.md](references/implement.md), [references/lean-code.md](references/lean-code.md), [references/code-comments.md](references/code-comments.md), and the applicable files in `standardsPath`. Do the environment preflight before the first line of code. Set `status:in-progress`.
 5. **Review.** Read [references/review.md](references/review.md). Do the review before you open the PR. Use three blind sub-agents and a maximum of `reviewRounds` rounds. Give all three the `Decisions` and `Out of scope` lists of the spec.
-6. **PR.** Read [references/pr.md](references/pr.md). Write or update the learn pages, and run `build-decision-ledger`. Tick the done items with `${CLAUDE_SKILL_DIR}/scripts/tick`. Add the `## Log` entry and the journal entry. Print the complete text of the PR draft in your reply, in one fenced Markdown block, then open the PR. Set `status:in-review`.
+6. **PR.** Read [references/pr.md](references/pr.md). Write or update the learn pages, and run `build-decision-ledger`. Tick the done items with `${CLAUDE_SKILL_DIR}/scripts/tick`. Add the `## Log` entry and the journal entry. Then run `plan.build`, and commit its files with the ticks. Print the complete text of the PR draft in your reply, in one fenced Markdown block, then open the PR. Set `status:in-review`.
 7. **Merge.** Obey `mergeMode`. For `ask`, give the user three options: the user merges, you merge after approval, or auto-merge on a clean review. Use rebase-merge. After the merge, set `status:done`.
 
 For each stage in `approvalGates` (default: `spec` and `pr`), stop and get the approval of the user before the next stage. At the spec gate, print the complete text of the spec first, in one fenced Markdown block, word for word from the file. Do not give a summary.
