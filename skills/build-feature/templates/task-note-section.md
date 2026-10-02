@@ -1,4 +1,4 @@
-<!-- Draft. Finalize after the POC. Put these two sections in the task note, below "## Read first". Write them in STE. The generator of the plan must keep both sections. Replace each <...>. -->
+<!-- Put these two sections in the task note, below "## Read first". Write them in STE. The generator of the plan must keep both sections. Replace each <...>. -->
 
 ## Spec
 
@@ -6,8 +6,8 @@
 
 - **Modules:** <each module that changes, and if its interface changes>
 - **Seams for the tests:** <the approved seams>
-- **Decisions:** <one line for each decision of the grill, with a link to the decision record>
-- **Out of scope:** <what this ticket does not do>
+- **Decisions:** <one line for each decision of the grill and each finding that the user decided, with a link to the decision record. The reviewers get this list as settled facts.>
+- **Out of scope:** <what this ticket does not do. The reviewers get this list.>
 
 ## Log
 
@@ -16,4 +16,5 @@
   - **Why:** <the reason, or a link to the decision record>
   - **Ticked:** <the text of each ticked item, or "none">
   - **Not done:** <each item that is not done, with its blocker, for example "blocked by T-02">
+  - **Learn:** <a link to each learn page that the PR adds or updates, or "none">
   - **Journal:** [<YYYY-MM>](<link to the journal entry>)
