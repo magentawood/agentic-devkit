@@ -17,7 +17,7 @@ All parts are on by default. A project turns a part off in `docArchitecture.part
   - A routing table: "When your task touches X, read Y first". Add a row when a new area appears.
   - Where things live: the plan, the ledgers, the generated pages, the history.
   - The conventions.
-- It holds no reasoning. It never links the journal or the archive.
+- It holds no reasoning and no glossary. A routing row links the glossary, for example `docs/glossary.md`. It never links the journal or the archive.
 
 ## Decision records
 
