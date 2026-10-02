@@ -1,0 +1,28 @@
+#!/bin/sh
+# Keep the docs of the plugin repo inside their limits, the links whole, and the ledger current.
+# The plugin repo holds the master tools, so this hook calls them directly. It has no tool copies.
+# Adapted from skills/doc-architecture/templates/pre-commit. Keep the two files in step.
+# The SessionStart hook in .claude/settings.json turns it on. By hand: git config core.hooksPath .githooks
+# CI runs it with DOCS_CHECK_ALL=1, which checks every Markdown file, not only the staged files.
+cd "$(git rev-parse --show-toplevel)" || exit 1
+T=skills/doc-architecture/scripts
+
+if [ -n "$DOCS_CHECK_ALL" ]; then
+  python3 "$T/doc-budget" || exit 1
+  # In a pull request, also fail on an override that grew since the base branch.
+  if [ -n "$GITHUB_BASE_REF" ]; then python3 "$T/doc-budget" --changed "origin/$GITHUB_BASE_REF" || exit 1; fi
+else
+  python3 "$T/doc-budget" --staged || exit 1
+fi
+python3 "$T/doc-links" . || exit 1
+python3 "$T/build-decision-ledger" --check || exit 1
+python3 "$T/render-docs" --check || exit 1
+
+# STE: ste-lint only reports. Its findings never block a commit.
+if [ -z "$DOCS_CHECK_ALL" ]; then
+  staged=$(git diff --cached --name-only --diff-filter=AM -- '*.md')
+  if [ -n "$staged" ]; then
+    echo "$staged" | tr '\n' '\0' | xargs -0 python3 skills/ste-writing/scripts/ste-lint || true
+  fi
+fi
+exit 0
