@@ -10,7 +10,7 @@ The full specification is the user's own copy. Its path is `steSpecPdf` in `~/.c
 - 1.2 Use an approved word only as its part of speech in the dictionary.
 - 1.3 Use an approved word only with its approved meaning.
 - 1.4 Use only the approved forms of verbs and adjectives.
-- 1.5–1.11 A technical noun is a name for a thing in your field (for example, `API`, `migration`, `issue`). Use the name from `CONTEXT.md`. Use one name for one thing. Do not use a technical noun as a verb.
+- 1.5–1.11 A technical noun is a name for a thing in your field (for example, `API`, `migration`, `issue`). Use the name from the project glossary. Use one name for one thing. Do not use a technical noun as a verb.
 - 1.12–1.13 A technical verb is a verb for an action in your field (for example, `deploy`, `commit`). Do not use a technical verb as a noun.
 - 1.14 Spelling follows the project directive, `ste.spelling` in `devkit.config.json`.
 
