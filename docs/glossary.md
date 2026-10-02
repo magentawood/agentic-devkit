@@ -13,6 +13,7 @@ These are the terms that the skills in this plugin use. Use each term only with 
 | Frontier | The open decisions that have all their prerequisites. The grill asks only about the frontier. |
 | Spec | The document that tells what to build and which modules change. |
 | Short spec | The spec of a ticket that exists. It is a `## Spec` section in the task note. |
+| Environment preflight | The checks before the first line of code: the toolchain versions, the package manager, Docker, permissions, and ports. |
 | Seam | The public interface where a test verifies behavior. The user approves the seams at the spec gate. |
 | Ticket | One unit of work. One ticket gives one PR. |
 | Blocker | A task that must be complete before a different task can start. |
@@ -25,6 +26,7 @@ These are the terms that the skills in this plugin use. Use each term only with 
 | Log | The record of a PR in the task note: the date, the PR, the change, the reason, and the ticks. |
 | Build journal | The long record of the build, one file for each month. You add entries only at the end. `journalPath` in the configuration gives it. |
 | Blind review | A review by a sub-agent that does not get the reasoning of the implementer. |
+| Settled facts | The `Decisions` and `Out of scope` lists of the approved spec. Each reviewer gets them as facts, without the reasons. |
 | Finding | One problem that a review or a lint tool reports. |
 | Rung | One level of the lean-code ladder. |
 | Standards path | The folder with the coding rules of the project. `standardsPath` in the configuration gives it. |
@@ -36,9 +38,12 @@ These are the terms that the skills in this plugin use. Use each term only with 
 | Index | The always-loaded file, `CONTEXT.md` of the project. It has what the project is, the decisions that are not settled, a routing table, where things live, and the conventions. `indexFile` in the configuration gives it. |
 | Routing table | The table in the index that tells which file to read before a task in an area. |
 | Decision record | The only home of the reasoning for a decision: an architecture record (ADR, `NNNN-slug.md`) or a product record (PD, `pd-NN[a]-slug.md`). |
-| In one line | The one-sentence summary at the start of the Decision section of a record. The ledgers show it. |
+| In one line | The one-sentence summary at the start of the Decision section of a record, or below the title of a learn page. The ledgers and the Learn index show it. |
 | Working doc | A doc that holds rules only, with a `Why:` link to the record of each rule. |
 | Ledger | A generated list of the decision records. `build-decision-ledger` writes it. |
+| Learn page | A page that explains one concept to a teammate who was not in the grill. It is in `docArchitecture.learnPath`. |
+| Learn index | The generated list of the learn pages, with the "In one line" of each page. `build-decision-ledger` writes it in `docArchitecture.learnIndex`. |
+| Explain this question | The last option of each question to the user. It gives a plain-language explanation, then the same question again. |
 | Superseded | The mark that the most recent record puts on an older statement that it replaces. |
 | Master copy | The copy of a docs tool in the plugin. |
 | Tool copy | The copy of a docs tool in a project (`tools/`, `.githooks/`, `.github/workflows/`). `sync-tools` makes it and records its plugin version. |
