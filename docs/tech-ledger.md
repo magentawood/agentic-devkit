@@ -27,4 +27,5 @@ Generated from the decision records in [decisions/](decisions/README.md). Edit t
 | [ADR-0020](decisions/0020-hook-activation-and-plugin-recommendation.md) | sync-tools turns on the hook and recommends the plugin | Accepted | `sync-tools` turns on the hook in the clone, the `prepare` script, and `SessionStart`, or only in `.husky/pre-commit`, and recommends the plugin. |
 | [ADR-0021](decisions/0021-one-spec-template.md) | One spec template, owned by doc-architecture | Accepted | The one spec template is `skills/doc-architecture/templates/spec.md`, and `build-feature` and `doc-management` use it. |
 | [ADR-0022](decisions/0022-the-migrate-pipeline.md) | The migrate pipeline | Accepted | `/doc-management migrate` runs the Roomsie pipeline with stacked PRs, one commit for each file, 0 broken links after each stage, and three stops. |
+| [ADR-0023](decisions/0023-print-the-complete-text-at-a-gate.md) | Print the complete text at a gate | Accepted | At the spec and PR gates, print the complete text word for word in a fenced block, then ask for approval. |
 <!-- ledger:end -->
