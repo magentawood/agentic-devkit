@@ -32,7 +32,7 @@ Each decision has one record in `docs/decisions/`: ADRs (`NNNN-slug.md`). This r
 | A docs tool, the hook, CI, `sync-tools` | [architecture.md](skills/doc-architecture/references/architecture.md), [setup.md](skills/doc-management/references/setup.md), [check.md](skills/doc-management/references/check.md), [ADR-0019](docs/decisions/0019-master-tools-and-tool-copies.md), [ADR-0020](docs/decisions/0020-hook-activation-and-plugin-recommendation.md) |
 | The docs architecture, limits | [architecture.md](skills/doc-architecture/references/architecture.md), [ADR-0017](docs/decisions/0017-the-docs-architecture.md), [ADR-0018](docs/decisions/0018-size-limits-and-the-context-budget.md) |
 | A `/doc-management` run | [doc-management](skills/doc-management/SKILL.md), [migrate.md](skills/doc-management/references/migrate.md), [lessons.md](skills/doc-management/references/lessons.md), [ADR-0022](docs/decisions/0022-the-migrate-pipeline.md) |
-| `/build-feature` | [build-feature](skills/build-feature/SKILL.md), [docs/prd/build-feature.md](docs/prd/build-feature.md), [ADR-0005](docs/decisions/0005-build-feature-pipeline-and-entry-points.md) to [ADR-0013](docs/decisions/0013-project-coding-standards.md) |
+| `/build-feature` | [build-feature](skills/build-feature/SKILL.md), [docs/specs/build-feature.md](docs/specs/build-feature.md), [ADR-0005](docs/decisions/0005-build-feature-pipeline-and-entry-points.md) to [ADR-0013](docs/decisions/0013-project-coding-standards.md) |
 | `/blog` | [blog](skills/blog/SKILL.md), [post-format.md](skills/blog/references/post-format.md) |
 | A release | [CONVENTIONS.md](CONVENTIONS.md#release-checklist), [CHANGELOG.md](CHANGELOG.md), [NOTICE.md](NOTICE.md) |
 
