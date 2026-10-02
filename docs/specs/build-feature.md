@@ -26,6 +26,7 @@
 - Questions one at a time with `AskUserQuestion`. Why: [ADR-0004](../decisions/0004-questions-to-the-user.md)
 - The docs duties obey `doc-architecture`. Why: [ADR-0018](../decisions/0018-size-limits-and-the-context-budget.md)
 - A new feature gets its spec from the one spec template. Why: [ADR-0021](../decisions/0021-one-spec-template.md)
+- At the spec gate and at the PR gate, print the complete text word for word, then ask for approval. Why: [ADR-0023](../decisions/0023-print-the-complete-text-at-a-gate.md)
 
 ## Rules
 
