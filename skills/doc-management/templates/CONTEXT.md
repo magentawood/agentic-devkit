@@ -24,6 +24,7 @@ Each decision has one record in `docs/decisions/`: ADRs (architecture, `NNNN-slu
 | When your task touches… | Read first |
 |---|---|
 | Any task | Its task note and its "Read first" list |
+| Terms | <the glossary, for example `docs/glossary.md`> |
 | Code: write or review | <the standards index> |
 | <an area> | <the records and the working doc of the area> |
 
