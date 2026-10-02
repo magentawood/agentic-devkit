@@ -16,7 +16,7 @@ Needs Python-Markdown: pip3 install markdown==3.9
 """
 import html, json, os, re, subprocess, sys
 
-TOOL_VERSION = "0.1.0"  # master: agentic-devkit skills/doc-architecture/scripts; sync-tools copies it to tools/
+TOOL_VERSION = "0.1.1"  # master: agentic-devkit skills/doc-architecture/scripts; sync-tools copies it to tools/
 
 try:
     import markdown
@@ -152,7 +152,7 @@ def main(argv):
                 with open(out, "w", encoding="utf-8") as f:
                     f.write(new)
     if "--check" in argv and stale:
-        print("out of date, run python3 tools/render-docs.py:", *stale, sep="\n  ")
+        print(f"out of date, run python3 {os.path.relpath(os.path.abspath(__file__), root)}:", *stale, sep="\n  ")
         return 1
     print(f"render-docs: {len(stale)} of {len(docs)} page(s) {'stale' if '--check' in argv else 'written'}")
     return 0
