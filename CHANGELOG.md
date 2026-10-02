@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.6.2 (2026-10-03)
+
+- `build-feature` 0.2.1 ([ADR-0026](docs/decisions/0026-rebuild-the-plan-in-the-pr.md)): at the PR stage, after the ticks, the log, and the journal entry, run `plan.build`. Commit the generated plan files together with the ticks, in the same PR.
+- `pre-commit` 0.2.0: if the project config has `plan.build`, the hook runs `<plan.build> --check` and fails on a non-zero exit. If not, it skips the check. `docs-check.yml` 0.1.1 names the new check. CI runs the same hook.
+- A `plan.build` command must accept `--check`. With `--check`, it writes no file. It exits 1 when a generated plan file is stale, and 0 when all files are current. Give the generator this flag before you sync.
+- `doc-architecture` 0.2.2 and `doc-management` 0.2.1 tell the new rules. Run `/doc-management check --sync` in each project.
+
 ## 0.6.1 (2026-10-03)
 
 - `build-decision-ledger` 0.3.0 ([ADR-0025](docs/decisions/0025-learn-pages.md)): the full Learn index goes to `learnIndex` (default `<learnPath>/README.md`). The tech ledger gets a teaser with a link and the 5 newest titles (`learnTeaser`). The teaser replaces a 0.2.0 Learn block in its file. Remove a 0.2.0 Learn block in a different file by hand.
