@@ -2,7 +2,7 @@
 name: doc-architecture
 description: Guard the docs architecture of a project, so that the docs stay small and easy to read. It tells where a fact lives, the size limit of a file, and the checks that must pass. Use on any Markdown create or edit, on each new decision, and on each new doc, in the plugin repo and in each project. It loads together with ste-writing.
 metadata:
-  version: 0.1.0
+  version: 0.1.1
 ---
 
 # Doc architecture
@@ -34,7 +34,7 @@ The same change, with each architecture fix in its diff.
    - Reasoning lives only in a decision record. A working doc gives the rule and a link: `Why: [PD7a](…)`.
    - Update or remove the text that a new decision replaces. Do not append.
    - When two sources conflict, the most recent record wins. The record marks the older statement "Superseded:".
-   - The index holds no reasoning. It stays at or below its token limit.
+   - The index holds no reasoning and no glossary. It stays at or below its token limit.
    - Edit the source of a generated file, never the output.
    - Docs link to the plan. They never copy task lists.
    - The index never links the journal or the archive.
