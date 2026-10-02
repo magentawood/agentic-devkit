@@ -39,14 +39,13 @@ Both kinds use one format, in this order:
 7. `## Revisit when`
 8. `## Sources`
 
-A record is at most 1,200 words. Write a record only for a decision with three properties. It is hard to change. A reader cannot understand it without the reason. It comes from a trade-off.
+Write a record only for a decision with three properties. It is hard to change. A reader cannot understand it without the reason. It comes from a trade-off.
 
 ## Working docs
 
 - A working doc holds rules only.
 - Each section that has a reason gets one link line to its record: `Why: [PD7a](decisions/pd-07a-agent-architecture.md)`.
 - If a record does not have the reasoning, move the reasoning into the record. Do not keep it in the working doc.
-- Limit: 1,200 words. Research docs: 1,500 words.
 
 ## Ledgers
 
@@ -75,7 +74,7 @@ Why: [ADR-0025](../../../docs/decisions/0025-learn-pages.md)
 
 ## Plan
 
-- The plan has one home, which the project config gives (`plan`).
+- The plan has one home, which the project config gives (`plan`). Its generator, `plan.build`, must accept `--check`. Why: [ADR-0026](../../../docs/decisions/0026-rebuild-the-plan-in-the-pr.md)
 - Docs link to the plan. They never copy task lists, dates, or owners from it.
 
 ## History
@@ -128,7 +127,7 @@ The plugin holds the master copy of each tool in `scripts/` and `templates/` of 
 | `doc-links` | `tools/doc-links.py` | 0 broken links and anchors |
 | `build-decision-ledger` | `tools/build-decision-ledger.py` | Ledger, Learn index, and teaser drift (`--check`) |
 | `render-docs` | `tools/render-docs.py` | Render drift (`--check`) |
-| `templates/pre-commit` | `.githooks/pre-commit` | Runs all checks above, and the hashes of the tool copies |
+| `templates/pre-commit` | `.githooks/pre-commit` | Runs all checks above, `<plan.build> --check`, and the hashes of the tool copies |
 | `templates/docs-check.yml` | `.github/workflows/docs-check.yml` | Runs the hook in CI |
 | `defaults/devkit.defaults.json` of the plugin | `tools/devkit-defaults.json` | The defaults for the tool copies |
 
