@@ -2,7 +2,7 @@
 name: doc-architecture
 description: Guard the docs architecture of a project, so that the docs stay small and easy to read. It tells where a fact lives, the size limit of a file, and the checks that must pass. Use on any Markdown create or edit, on each new decision, and on each new doc, in the plugin repo and in each project. It loads together with ste-writing.
 metadata:
-  version: 0.1.1
+  version: 0.2.0
 ---
 
 # Doc architecture
@@ -13,7 +13,7 @@ Keep the agent context free for work on code, and keep the docs easy to read. `s
 
 ## When to use / When NOT to use
 
-Use this skill on each change to a Markdown file, each new decision, and each new doc.
+Use this skill on each change to a Markdown file, each new decision, each new doc, and each new learn page.
 
 Do not use it to set up or migrate a project. The user starts those runs with `/doc-management`.
 
@@ -29,9 +29,10 @@ The same change, with each architecture fix in its diff.
 
 ## Steps
 
-1. Obey these rules. For the full architecture, read [references/architecture.md](references/architecture.md) when you add a doc, a record, a spec, or a routing row.
+1. Obey these rules. For the full architecture, read [references/architecture.md](references/architecture.md). Read it when you add a doc, a record, a spec, a learn page, or a routing row.
    - One fact, one home. Other docs link to it. They do not copy it.
    - Reasoning lives only in a decision record. A working doc gives the rule and a link: `Why: [PD7a](…)`.
+   - The explanation of a concept lives only in its learn page (`learnPath`), one page for each topic. A learn page links the record of a choice. It never gives the reasons as a decision.
    - Update or remove the text that a new decision replaces. Do not append.
    - When two sources conflict, the most recent record wins. The record marks the older statement "Superseded:".
    - The index holds no reasoning and no glossary. It stays at or below its token limit.
@@ -42,6 +43,7 @@ The same change, with each architecture fix in its diff.
    - Move the reasoning into its decision record. Replace each copied fact with a link.
    - Divide a file that goes above its limit.
    - For each new decision, add a record with its `**In one line:**` summary. Then run the ledger generator.
+   - For each new or changed learn page, keep its `**In one line:**` line. Then run the ledger generator, which writes the Learn index.
    - When a new area appears, add a row to the routing table of the index.
 3. Run the checks. Use the project copy (`python3 tools/<name>.py`) if it exists. Otherwise use the master copy (`${CLAUDE_SKILL_DIR}/scripts/<name>`):
    - `doc-budget <file>` for each changed file.
