@@ -42,7 +42,9 @@ Each decision has one record in `docs/decisions/`: ADRs (`NNNN-slug.md`). This r
 - **Master docs tools:** `skills/doc-architecture/scripts/` and `templates/`. `sync-tools` is in `skills/doc-management/scripts/`.
 - **Decision ledger:** `skills/doc-architecture/scripts/build-decision-ledger` writes the list in this file and [docs/tech-ledger.md](docs/tech-ledger.md) from the records.
 - **Configuration:** the plugin defaults in `defaults/devkit.defaults.json`, the project values of this repo in `devkit.config.json`, and the user values in `~/.config/agentic-devkit/config.json`.
-- **The plan:** this repo has no plan system. The open work of a skill is in its spec or PRD.
+- **Specs:** `docs/specs/`. A spec moves to `docs/archive/` when its feature is complete.
+- **The plan:** this repo has no plan system. The open work of a skill is in its spec.
+- **Hook and CI:** `.githooks/pre-commit` calls the master tools. CI runs it with `DOCS_CHECK_ALL=1`.
 - **History:** `docs/journal/` (one file for each month, append only) and `docs/archive/`.
 
 ## Conventions
@@ -52,4 +54,4 @@ Each decision has one record in `docs/decisions/`: ADRs (`NNNN-slug.md`). This r
 - Write all Markdown in STE with the `ste-writing` skill. The `doc-architecture` skill guards each doc change.
 - One fact, one home. Link to it. Do not copy it. When a decision changes, update its record and remove the replaced text.
 - Never commit the ASD-STE100 specification or the dictionary cache. ASD owns them.
-- Keep each doc inside its limit.
+- Keep each doc inside its limit. The hook turns on in each Claude Code session. If the hook does not run, run `git config core.hooksPath .githooks` one time.
