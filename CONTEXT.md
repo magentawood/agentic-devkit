@@ -15,20 +15,24 @@ Each agent session loads this file. It is an index: it tells you what agentic-de
 Each decision has one record in `docs/decisions/`: ADRs (`NNNN-slug.md`). This repo has no product records. The record is the only home of the decision and its reasons. Cite it as `ADR-0006`.
 
 <!-- decisions:start -->
+**Not settled yet:** [ADR-0006](docs/decisions/0006-poc-first-stage-references-are-drafts.md) POC first: the stage references of build-feature are drafts (proposed).
+
+**All decisions:** architecture in [tech-ledger.md](docs/tech-ledger.md). Each links its record.
 <!-- decisions:end -->
 
 ## Routing: read before you act
 
 | When your task touches… | Read first |
 |---|---|
-| Any skill: add or change | [CONVENTIONS.md](CONVENTIONS.md), then the `SKILL.md` and the references of the skill |
+| Any skill: add or change | [CONVENTIONS.md](CONVENTIONS.md), then the `SKILL.md` and the references of the skill, [ADR-0001](docs/decisions/0001-plugin-layout-and-skill-format.md), [ADR-0002](docs/decisions/0002-skill-types-and-the-call-rule.md) |
 | Terms | [docs/glossary.md](docs/glossary.md) |
 | Any Markdown | [ste-writing](skills/ste-writing/SKILL.md) and [doc-architecture](skills/doc-architecture/SKILL.md) |
-| STE rules, `ste-lint`, `ste-verify` | [ste-rules.md](skills/ste-writing/references/ste-rules.md), [rewrite.md](skills/ste-writing/references/rewrite.md) |
-| A script, the configuration, the defaults | [devkit.defaults.json](defaults/devkit.defaults.json), [devkit.config.json](devkit.config.json), [architecture.md](skills/doc-architecture/references/architecture.md) |
-| A docs tool, the hook, CI, `sync-tools` | [architecture.md](skills/doc-architecture/references/architecture.md), [setup.md](skills/doc-management/references/setup.md), [check.md](skills/doc-management/references/check.md) |
-| A `/doc-management` run | [doc-management](skills/doc-management/SKILL.md), [migrate.md](skills/doc-management/references/migrate.md), [lessons.md](skills/doc-management/references/lessons.md) |
-| `/build-feature` | [build-feature](skills/build-feature/SKILL.md), [docs/prd/build-feature.md](docs/prd/build-feature.md) |
+| STE rules, `ste-lint`, `ste-verify` | [ste-rules.md](skills/ste-writing/references/ste-rules.md), [rewrite.md](skills/ste-writing/references/rewrite.md), [ADR-0014](docs/decisions/0014-ste-for-all-markdown.md), [ADR-0015](docs/decisions/0015-ste-rewrite-keeps-each-claim.md) |
+| A script, the configuration, the defaults | [devkit.defaults.json](defaults/devkit.defaults.json), [devkit.config.json](devkit.config.json), [ADR-0003](docs/decisions/0003-three-configuration-levels.md) |
+| A docs tool, the hook, CI, `sync-tools` | [architecture.md](skills/doc-architecture/references/architecture.md), [setup.md](skills/doc-management/references/setup.md), [check.md](skills/doc-management/references/check.md), [ADR-0019](docs/decisions/0019-master-tools-and-tool-copies.md), [ADR-0020](docs/decisions/0020-hook-activation-and-plugin-recommendation.md) |
+| The docs architecture, limits | [architecture.md](skills/doc-architecture/references/architecture.md), [ADR-0017](docs/decisions/0017-the-docs-architecture.md), [ADR-0018](docs/decisions/0018-size-limits-and-the-context-budget.md) |
+| A `/doc-management` run | [doc-management](skills/doc-management/SKILL.md), [migrate.md](skills/doc-management/references/migrate.md), [lessons.md](skills/doc-management/references/lessons.md), [ADR-0022](docs/decisions/0022-the-migrate-pipeline.md) |
+| `/build-feature` | [build-feature](skills/build-feature/SKILL.md), [docs/prd/build-feature.md](docs/prd/build-feature.md), [ADR-0005](docs/decisions/0005-build-feature-pipeline-and-entry-points.md) to [ADR-0013](docs/decisions/0013-project-coding-standards.md) |
 | `/blog` | [blog](skills/blog/SKILL.md), [post-format.md](skills/blog/references/post-format.md) |
 | A release | [CONVENTIONS.md](CONVENTIONS.md#release-checklist), [CHANGELOG.md](CHANGELOG.md), [NOTICE.md](NOTICE.md) |
 
@@ -36,6 +40,7 @@ Each decision has one record in `docs/decisions/`: ADRs (`NNNN-slug.md`). This r
 
 - **Skills:** `skills/<name>/`, with `SKILL.md`, `references/`, `templates/`, and `scripts/`.
 - **Master docs tools:** `skills/doc-architecture/scripts/` and `templates/`. `sync-tools` is in `skills/doc-management/scripts/`.
+- **Decision ledger:** `skills/doc-architecture/scripts/build-decision-ledger` writes the list in this file and [docs/tech-ledger.md](docs/tech-ledger.md) from the records.
 - **Configuration:** the plugin defaults in `defaults/devkit.defaults.json`, the project values of this repo in `devkit.config.json`, and the user values in `~/.config/agentic-devkit/config.json`.
 - **The plan:** this repo has no plan system. The open work of a skill is in its spec or PRD.
 - **History:** `docs/journal/` (one file for each month, append only) and `docs/archive/`.
