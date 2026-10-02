@@ -67,7 +67,8 @@ A record is at most 1,200 words. Write a record only for a decision with three p
 - A learn page explains one concept, for example a database driver, for a teammate who was not in the grill. It is `<learnPath>/<topic>.md` (default `docs/learn/`), from [../templates/learn.md](../templates/learn.md). Limit: 1,200 words.
 - Concepts live in learn pages. Decisions and their reasons live in records. A learn page links the record of each choice. It never gives the reasons as a decision.
 - One topic, one page. When a subsequent ticket adds to a topic, update its page.
-- Each page has a `**In one line:**` line. The ledger generator writes the Learn index from these lines, between `<!-- learn:start -->` and `<!-- learn:end -->` in `learnIndex` (default the file of `ledgers.tech`, else the index). It runs when the `learnPath` folder exists, and adds missing markers at the end of the file.
+- Each page has a `**In one line:**` line. The ledger generator writes the Learn index from these lines, between `<!-- learn:start -->` and `<!-- learn:end -->` in `learnIndex` (default `<learnPath>/README.md`). It also writes a teaser with the `learnTeaser.count` newest titles, between `<!-- learn-newest:start -->` and `<!-- learn-newest:end -->` in `learnTeaser.file` (default the tech ledger).
+- Never put the full Learn index in a file with a fixed size limit.
 - To render the pages, add `<learnPath>/*.md` to `renderPages`.
 
 Why: [ADR-0025](../../../docs/decisions/0025-learn-pages.md)
@@ -125,7 +126,7 @@ The plugin holds the master copy of each tool in `scripts/` and `templates/` of 
 |---|---|---|
 | `doc-budget` | `tools/doc-budget.py` | The size limits |
 | `doc-links` | `tools/doc-links.py` | 0 broken links and anchors |
-| `build-decision-ledger` | `tools/build-decision-ledger.py` | Ledger and Learn index drift (`--check`) |
+| `build-decision-ledger` | `tools/build-decision-ledger.py` | Ledger, Learn index, and teaser drift (`--check`) |
 | `render-docs` | `tools/render-docs.py` | Render drift (`--check`) |
 | `templates/pre-commit` | `.githooks/pre-commit` | Runs all checks above, and the hashes of the tool copies |
 | `templates/docs-check.yml` | `.github/workflows/docs-check.yml` | Runs the hook in CI |
