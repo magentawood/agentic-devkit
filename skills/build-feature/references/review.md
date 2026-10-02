@@ -1,14 +1,13 @@
 # Review
 
-> **Draft.** Finalize after the POC.
-
-Do the review before you open the PR. Adapted from `code-review` and `ponytail-review` (see NOTICE.md).
+Do the review before you open the PR. Adapted from `code-review` and `ponytail-review` (see NOTICE.md). The Roomsie T-02 POC confirmed these rules (2026-10-03).
 
 ## Prepare
 
 1. Commit all the work on the branch.
 2. Get the base: `BASE=$(git merge-base <default branch> HEAD)`. Make sure that `git diff $BASE...HEAD` is not empty.
 3. Make the list of requirement files. It has the task note, the spec, and each file in the `## Read first` section of the task note.
+4. Copy the `Decisions` list and the `Out of scope` list of the approved spec, with no change. These are the settled facts. Give them as facts, not as reasons. In T-02, reviewers that did not get them raised settled items again, and asked for rules of a different ticket.
 
 ## Three blind reviewers
 
@@ -18,6 +17,7 @@ Each reviewer gets only these inputs:
 
 - The diff command: `git diff $BASE...HEAD`, and read access to the repo.
 - The paths of the requirement files.
+- The settled facts, with this instruction: "The user decided these items. Do not report them as findings. Do not ask for work that is out of scope."
 - Its rulebook (see the table).
 
 Do not give a reviewer the log, the PR draft, your notes, or your reasoning. A code comment is part of the code, so the reviewers see the comments only in the diff.
@@ -50,8 +50,20 @@ Show the three reports to the user with the headings `## Standards`, `## Spec`, 
 1. For each finding, fix it, or record why you reject it.
 2. Start three new reviewers with the same inputs on the new diff. They do not get the findings of the previous review.
 3. Do steps 1 and 2 a maximum of `reviewRounds` times (default 2).
-4. For each finding that stays open, ask the user with `AskUserQuestion`, one finding at a time.
+4. For each finding that stays open, ask the user with `AskUserQuestion`, one finding at a time. Above each question, tell in plain language what the finding is and what each option changes. In T-02, the user needed this for three of four findings.
 5. Put each rejected finding and its reason in the "Review" section of the PR.
+6. When the user decides a finding, add the decision to the spec `Decisions` list. Then a next round does not raise it again.
+
+## A change after the last round
+
+The user can ask for a code change after the last round (in T-02, the OpenAPI generation). Do not open the PR with code that no reviewer saw:
+
+1. Commit the change. Get its diff: `git diff <last reviewed commit>...HEAD`.
+2. Start the three reviewers one more time, with the same inputs, but give them only this diff. This round does not count in `reviewRounds`.
+3. Fix each finding, or ask the user about it. Do not start one more round after it.
+4. In the PR "Review" section, tell the change and this added round.
+
+The ticks, the `## Log` entry, the journal entry, and the learn pages of the PR stage are not code changes. They do not need this round.
 
 ## Rule candidates
 
