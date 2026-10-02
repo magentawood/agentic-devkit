@@ -4,7 +4,7 @@ description: Take a feature or a ticket from an idea to a merged PR through gril
 disable-model-invocation: true
 argument-hint: "[T-nn | feature idea]"
 metadata:
-  version: 0.1.2
+  version: 0.1.3
 ---
 
 # Build feature
@@ -45,10 +45,10 @@ Before each stage, read its reference file. At each stage change, run `${CLAUDE_
 3. **Ticket** (new feature only). Read [references/tickets.md](references/tickets.md).
 4. **Implement.** Read [references/implement.md](references/implement.md), [references/lean-code.md](references/lean-code.md), [references/code-comments.md](references/code-comments.md), and the applicable files in `standardsPath`. Set `status:in-progress`.
 5. **Review.** Read [references/review.md](references/review.md). Do the review before you open the PR. Use three blind sub-agents and a maximum of `reviewRounds` rounds.
-6. **PR.** Tick the done items with `${CLAUDE_SKILL_DIR}/scripts/tick`. Add the `## Log` entry and the journal entry. Show the PR draft to the user, then open the PR. Set `status:in-review`.
+6. **PR.** Tick the done items with `${CLAUDE_SKILL_DIR}/scripts/tick`. Add the `## Log` entry and the journal entry. Print the complete text of the PR draft in your reply, in one fenced Markdown block, then open the PR. Set `status:in-review`.
 7. **Merge.** Obey `mergeMode`. For `ask`, give the user three options: the user merges, you merge after approval, or auto-merge on a clean review. Use rebase-merge. After the merge, set `status:done`.
 
-For each stage in `approvalGates` (default: `spec` and `pr`), stop and get the approval of the user before the next stage.
+For each stage in `approvalGates` (default: `spec` and `pr`), stop and get the approval of the user before the next stage. At the spec gate, print the complete text of the spec first, in one fenced Markdown block, word for word from the file. Do not give a summary.
 
 Docs duties, at each stage. The `doc-architecture` skill guards each Markdown change. Its tools are in `tools/` of the project, or in `${CLAUDE_PLUGIN_ROOT}/skills/doc-architecture/scripts/` if the project has no copy.
 
