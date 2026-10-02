@@ -1,10 +1,10 @@
 # Spec: build-feature
 
-**Status:** approved (2026-09-30) · **Grill:** 2026-09-30 · **Plan:** none. This repo has no plan system. This spec holds the open work of `/build-feature`.
+**Status:** approved (2026-09-30), POC done (2026-10-03) · **Grill:** 2026-09-30 · **Plan:** none. This repo has no plan system. This spec holds the open work of `/build-feature`.
 
 ## Goal
 
-`/build-feature` takes one feature or one ticket from an idea to a merged PR, through grill, spec, ticket, implement, and review. Version 0.1.x is a skeleton: the stage references and the templates are drafts. The open work is the POC on one real Roomsie ticket, and then the last version of the stage references.
+`/build-feature` takes one feature or one ticket from an idea to a merged PR, through grill, spec, ticket, implement, and review. Version 0.2.0 has the stage references and the templates from the POC on Roomsie T-02. The open work is the ticket stage. The POC used a ticket that exists, so `tickets.md` stays a draft until a run on a new feature.
 
 ## User stories
 
@@ -27,6 +27,8 @@
 - The docs duties obey `doc-architecture`. Why: [ADR-0018](../decisions/0018-size-limits-and-the-context-budget.md)
 - A new feature gets its spec from the one spec template. Why: [ADR-0021](../decisions/0021-one-spec-template.md)
 - At the spec gate and at the PR gate, print the complete text word for word, then ask for approval. Why: [ADR-0023](../decisions/0023-print-the-complete-text-at-a-gate.md)
+- Each question ends with "Explain this question". Why: [ADR-0024](../decisions/0024-explain-this-question.md)
+- Each concept of a ticket gets a learn page at the PR stage. Why: [ADR-0025](../decisions/0025-learn-pages.md)
 
 ## Rules
 
@@ -41,7 +43,7 @@
 
 | Module | Interface changes? | Seam for the tests |
 |---|---|---|
-| Stage references (`grill`, `spec`, `tickets`, `implement`, `review`) | no | none: the POC is a manual run |
+| Stage references (`grill`, `spec`, `tickets`, `implement`, `review`, `pr`) | no | none: the POC is a manual run |
 | Templates (`task-note-section`, `pr-template`) | no | none: the POC is a manual run |
 | `issue-status` and `tick` | no | their `--dry-run` output |
 
@@ -49,11 +51,12 @@
 
 ## Acceptance criteria
 
-- [ ] The POC on one Roomsie ticket is complete, from the grill to a merged PR, with the guard active.
-- [ ] A journal entry records what worked, the prompts, and where the work went off track.
-- [ ] Each stage reference and template loses its "Draft" mark, with the changes from the POC.
-- [ ] [ADR-0006](../decisions/0006-poc-first-stage-references-are-drafts.md) has the status Accepted, or a new record replaces it.
-- [ ] The `build-feature` version and the plugin version increase, with a `CHANGELOG.md` entry.
+- [x] The POC on one Roomsie ticket is complete, from the grill to a merged PR, with the guard active. (Roomsie T-02, [PR #94](https://github.com/magentawood/roomsie/pull/94))
+- [x] A journal entry records what worked, the prompts, and where the work went off track.
+- [ ] Each stage reference and template loses its "Draft" mark, with the changes from the POC. Done for all files but `tickets.md`, because the POC did not use the ticket stage.
+- [x] [ADR-0006](../decisions/0006-poc-first-stage-references-are-drafts.md) has the status Accepted, or a new record replaces it.
+- [x] The `build-feature` version and the plugin version increase, with a `CHANGELOG.md` entry.
+- [ ] A run on a new feature uses the ticket stage. Then `tickets.md` loses its "Draft" mark.
 
 ## Out of scope
 
