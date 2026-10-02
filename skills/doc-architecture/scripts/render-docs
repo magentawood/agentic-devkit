@@ -84,7 +84,8 @@ def pages(root, entries):
     for entry in entries:
         found = [entry]
         if any(c in entry for c in "*?["):
-            found = sorted(os.path.relpath(p, root).replace(os.sep, "/") for p in glob.glob(os.path.join(root, entry)))
+            found = sorted(os.path.relpath(p, root).replace(os.sep, "/")
+                           for p in glob.glob(os.path.join(glob.escape(root), entry)) if p.endswith(".md"))
         out += [p for p in found if p not in out]
     return out
 
