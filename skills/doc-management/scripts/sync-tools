@@ -12,7 +12,8 @@ Usage:
 PROJECT defaults to the git root of the current folder. The copies (the parts
 come from "docArchitecture.parts" in devkit.config.json):
   tools/doc-budget.py, tools/doc-links.py        always
-  tools/build-decision-ledger.py                 parts.records, and parts.ledgers or parts.index
+  tools/build-decision-ledger.py                 parts.records, and parts.ledgers or parts.index;
+                                                 or parts.learn
   tools/render-docs.py                           parts.html
   .githooks/pre-commit                           parts.hook or parts.ci
   .github/workflows/docs-check.yml               parts.ci
@@ -109,7 +110,7 @@ def copies(project):
     """(destination, master bytes) for each copy that the project gets."""
     on = parts(project)
     plan = [("tools/doc-budget.py", "scripts/doc-budget"), ("tools/doc-links.py", "scripts/doc-links")]
-    if on.get("records", True) and (on.get("ledgers", True) or on.get("index", True)):
+    if on.get("records", True) and (on.get("ledgers", True) or on.get("index", True)) or on.get("learn", True):
         plan.append(("tools/build-decision-ledger.py", "scripts/build-decision-ledger"))
     if on.get("html", True):
         plan.append(("tools/render-docs.py", "scripts/render-docs"))
