@@ -6,9 +6,9 @@ A Claude Code plugin with skills for building and shipping products.
 
 | Skill | What it does |
 |---|---|
-| `/build-feature` | Takes a ticket or a new feature to a merged PR: grill, spec, ticket, implement, blind review, PR. Version 0.1.0 is a skeleton. The stage references are drafts until the POC on the first ticket. |
+| `/build-feature` | Takes a ticket or a new feature to a merged PR: grill, spec, ticket, implement, blind review, PR. It writes a learn page for each concept of the ticket. The Roomsie T-02 POC finalized the stage references. The ticket stage stays a draft until a run on a new feature. |
 | `ste-writing` | Writes and rewrites Markdown in ASD-STE100 Simplified Technical English. Claude uses it when it writes or edits a `.md` file. |
-| `doc-architecture` | Guards the docs architecture on each Markdown edit: one fact in one home, reasoning only in decision records, size limits, generated ledgers. Claude uses it with `ste-writing`. |
+| `doc-architecture` | Guards the docs architecture on each Markdown edit: one fact in one home, reasons only in records, learn pages, size limits, generated ledgers. Claude uses it with `ste-writing`. |
 | `/doc-management` | `setup` gives a project the docs architecture, its tools, the hook, and CI. `migrate` moves the docs of a project into it with stacked PRs. `check` gives the full report, and `check --sync` refreshes the tool copies. |
 | `/blog` | Draft a post with Claude, review it in the terminal, then cross-post to dev.to, Reddit, Medium, Substack, LinkedIn and Quora. |
 
@@ -50,7 +50,7 @@ The plugin holds the master copy of each docs tool. `/doc-management setup` copi
 ```
 skills/doc-architecture/scripts/doc-budget --report          # size of each doc against its limit
 skills/doc-architecture/scripts/doc-links .                  # find broken links and anchors in a repo
-skills/doc-architecture/scripts/build-decision-ledger --check  # ledgers match the decision records
+skills/doc-architecture/scripts/build-decision-ledger --check  # ledgers and the Learn index match their sources
 skills/doc-architecture/scripts/render-docs --check          # HTML pages match their Markdown
 skills/doc-management/scripts/sync-tools [--check | --recommend-plugin] <project> # copy the tools, or compare the copies
 ```
