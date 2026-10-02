@@ -1,0 +1,21 @@
+# The cheap docs checks of the plugin repo: limits, links, and ledger drift.
+# Adapted from skills/doc-architecture/templates/docs-check.yml. The plugin repo holds the master tools, so the hook calls them directly.
+name: docs-check
+on:
+  pull_request:
+  push:
+    branches: [main]
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.9"
+      - run: pip install markdown==3.9
+      - run: sh .githooks/pre-commit
+        env:
+          DOCS_CHECK_ALL: "1"
