@@ -58,10 +58,12 @@ Show the three reports to the user with the headings `## Standards`, `## Spec`, 
 
 The user can ask for a code change after the last round (in T-02, the OpenAPI generation). Do not open the PR with code that no reviewer saw:
 
+The rule: one more blind round on only that change. Disclosure in the PR alone is not sufficient.
+
 1. Commit the change. Get its diff: `git diff <last reviewed commit>...HEAD`.
-2. Start the three reviewers one more time, with the same inputs, but give them only this diff. This round does not count in `reviewRounds`.
-3. Fix each finding, or ask the user about it. Do not start one more round after it.
-4. In the PR "Review" section, tell the change and this added round.
+2. A small diff has one module and approximately 100 lines or less. For a small diff, start the three reviewers one more time with the same inputs. Give them only this diff. This round does not count in `reviewRounds`. Fix each finding, or ask the user about it. Do not start one more round after it.
+3. If the diff is larger, it is new work. Do a full round of the findings loop on the full diff. If no round stays in `reviewRounds`, ask the user before you continue.
+4. The PR "Review" section lists this round, as it lists each round.
 
 The ticks, the `## Log` entry, the journal entry, and the learn pages of the PR stage are not code changes. They do not need this round.
 
