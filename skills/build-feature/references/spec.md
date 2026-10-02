@@ -1,8 +1,6 @@
 # Spec
 
-> **Draft.** Finalize after the POC.
-
-The spec tells what to build and which modules change. Adapted from `to-spec` and `codebase-design` (see NOTICE.md).
+The spec tells what to build and which modules change. Adapted from `to-spec` and `codebase-design` (see NOTICE.md). The Roomsie T-02 POC confirmed these rules (2026-10-03).
 
 ## Rules
 
@@ -11,6 +9,8 @@ The spec tells what to build and which modules change. Adapted from `to-spec` an
 - Write the spec in STE. Use the `ste-writing` skill.
 - Do not copy reasoning into the spec. Link the decision record, for example "(why: ADR-0012)".
 - Do not write file paths or code in the spec, because they quickly become out of date. You can include a type or a schema from a prototype when it tells a decision better than words.
+- **Exception for a scaffold or an infrastructure ticket:** when the modules are packages, folders, or tool files, name them. In T-02 the modules were `apps/api`, `packages/contract`, and the workspace root.
+- Write each grill decision in `Decisions`, and each thing that the ticket does not do in `Out of scope`. The review gives these two lists to all reviewers as settled facts (see [review.md](review.md)).
 
 ## Modules and seams
 
@@ -21,8 +21,18 @@ The spec tells what to build and which modules change. Adapted from `to-spec` an
 
 ## Entry points
 
-- **Ticket that exists:** write the short spec into the task note, below `## Read first`. Use [../templates/task-note-section.md](../templates/task-note-section.md). The `## Done when` list stays the acceptance criteria. Do not change or copy it. If an item is not correct, ask the user, then change `plan.source` and run `plan.build`.
+- **Ticket that exists:** write the short spec into the task note, below `## Read first`. Use [../templates/task-note-section.md](../templates/task-note-section.md). The `## Done when` list stays the acceptance criteria. Do not copy it.
 - **New feature:** write the full spec with the template of `doc-architecture`: `${CLAUDE_PLUGIN_ROOT}/skills/doc-architecture/templates/spec.md`. Put it in `docArchitecture.specPath` (default `docs/specs/<feature>.md`). The spec is at most 1,200 words. After the merge of the feature, move the spec to `docArchitecture.archivePath`.
+
+## A done item that is not correct
+
+A done item can name a file that moved, or contradict a new decision. Change it only with the approval of the user:
+
+1. Show the user the current text and the new text. Ask for approval with `AskUserQuestion`.
+2. Change the item in `plan.source`.
+3. **Before you run the generator**, apply the same before → after change to the task note. The tick state and the lines of the task note use the text of the item as their key. If you do not, the ticks disappear and duplicate lines appear. T-02 had this bug.
+4. Run `plan.build`. Make sure that the task note has each item one time, with its tick state.
+5. Record each change in the spec `Decisions` and in the "Changed" part of the PR Progress section.
 
 ## Spec gate
 
