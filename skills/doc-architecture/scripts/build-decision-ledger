@@ -19,7 +19,7 @@ the learnTeaser.count newest pages, by title only. "Newest" is the latest YYYY-M
 date in the "## Tickets" section of a page. Pages with the same date, and pages with
 no date after the dated pages, sort by title. learnTeaser.file defaults to
 "{ledgers.tech}", the tech ledger that this run writes. A count of 0, a file of null,
-or no tech ledger for "{ledgers.tech}" turns the teaser off.
+a learnTeaser of null, or no tech ledger for "{ledgers.tech}" turns the teaser off.
 The two Learn blocks run only when the learnPath folder exists. The script always
 fills markers that are in the file. If the markers or the file are missing, it adds
 them at the end of the file, but only when learnPath has at least one learn page.
@@ -120,18 +120,19 @@ def index_block(rows, index, ledgers, settled, dec):
     return "**Not settled yet:** " + ("; ".join(items) if items else "none") + ".\n\n**All decisions:** " + every
 
 
-def learn_pages(root, folder):
-    """Each learn page: its file name, title, "In one line" summary, and latest ticket date."""
+def learn_pages(root, folder, skip):
+    """Each learn page: its path, title, "In one line" summary, and latest ticket date. skip: generated files."""
     pages = []
     for name in sorted(os.listdir(os.path.join(root, folder))):
-        if not name.endswith(".md") or name == "README.md" or not os.path.isfile(os.path.join(root, folder, name)):
+        path = posixpath.normpath(posixpath.join(folder, name))
+        if not name.endswith(".md") or name == "README.md" or path in skip or not os.path.isfile(os.path.join(root, path)):
             continue
-        text = open(os.path.join(root, folder, name), encoding="utf-8").read()
+        text = open(os.path.join(root, path), encoding="utf-8").read()
         heading = re.search(r"^# (.+)$", text, re.M)
         oneline = re.search(r"^\*\*In one line:\*\*[ \t]*(.+)$", text, re.M)
         tickets = re.search(r"^## Tickets[ \t]*$(.*?)(?=^## |\Z)", text, re.M | re.S)
         dates = re.findall(r"\b\d{4}-\d{2}-\d{2}\b", tickets.group(1)) if tickets else []
-        pages.append({"path": posixpath.join(folder, name), "date": max(dates, default=""),
+        pages.append({"path": path, "date": max(dates, default=""),
                       "title": heading.group(1).strip() if heading else name[:-3],
                       "oneline": oneline.group(1).strip() if oneline else ""})
     return pages
@@ -199,20 +200,23 @@ def main(argv):
             jobs.insert(0, (posixpath.normpath(index), INDEX_MARKERS, index_block(rows, index, ledgers, settled, cfg["decisionsPath"]), None, None, None))
     learn = cfg.get("learnPath", "docs/learn")
     if parts.get("learn", True) and os.path.isdir(os.path.join(root, learn)):
-        pages = learn_pages(root, learn)
         target = posixpath.normpath((cfg.get("learnIndex") or "{learnPath}/README.md").replace("{learnPath}", learn))
-        add = ("# Learn\n\nGenerated from the learn pages. Edit the pages, not this list.\n\n{block}\n",
-               "## Learn\n\n{block}\n") if pages else ()
-        jobs.append((target, LEARN_MARKERS, learn_block(pages, target), None, add, None))
-        teaser = cfg.get("learnTeaser") or {}
-        file, count = teaser.get("file", "{ledgers.tech}"), teaser.get("count", 5)
+        teaser = cfg.get("learnTeaser", {})  # null turns the teaser off
+        if teaser is not None and not isinstance(teaser, dict):
+            sys.exit(f"build-decision-ledger: learnTeaser must be an object or null, not {teaser!r}")
+        file, count = (teaser or {}).get("file", "{ledgers.tech}"), (teaser or {}).get("count", 5)
         if isinstance(count, bool) or not isinstance(count, int) or count < 0:
             sys.exit(f"build-decision-ledger: learnTeaser.count must be an integer of 0 or more, not {count!r}")
         tech = dict(ledgers).get("tech")  # only a ledger that this run writes
-        if file and "{ledgers.tech}" in file:
-            file = file.replace("{ledgers.tech}", tech) if tech else None
-        if file and count:
-            file = posixpath.normpath(file.replace("{learnPath}", learn))
+        if teaser is None or not file or not count or ("{ledgers.tech}" in file and not tech):
+            file = None
+        else:
+            file = posixpath.normpath(file.replace("{ledgers.tech}", tech or "").replace("{learnPath}", learn))
+        pages = learn_pages(root, learn, {target, file})
+        add = ("# Learn\n\nGenerated from the learn pages. Edit the pages, not this list.\n\n{block}\n",
+               "## Learn\n\n{block}\n") if pages else ()
+        jobs.append((target, LEARN_MARKERS, learn_block(pages, target), None, add, None))
+        if file:
             add = ("## Newest learn pages\n\n{block}\n",) * 2 if pages else ()
             jobs.append((file, TEASER_MARKERS, teaser_block(pages, file, target, count), None, add,
                          LEARN_MARKERS if file != target else None))
