@@ -36,3 +36,18 @@ These lessons come from the Roomsie cleanup (2026-09-30, PRs #74–#88). Read th
 ## Feedback loop
 
 A subsequent grill on a project can change records, standards, and docs. An example is the Roomsie design-system grill, which comes when the designs arrive. That grill updates the project docs through the `doc-architecture` skill. Add each new lesson about the architecture to this file, in a plugin PR, so that the next project gets it. Give each lesson the project, the date, and the PR.
+
+## The plugin repo migration
+
+These lessons come from the dogfood `migrate` on agentic-devkit (2026-10-02, PRs #7–#9).
+
+- **The index is not a glossary.** The plugin `CONTEXT.md` was a glossary, and the skills sent agents to `CONTEXT.md` for the terms. `git mv` the glossary to `docs/glossary.md` first, so that its history follows it. Then write the new index, with a routing row for the terms. Point each skill at the glossary that the routing table gives.
+- **A repo that holds the master tools does not copy them.** Its hook and CI call `skills/doc-architecture/scripts/*` directly, and the hook has no check of the tool copies. Keep its hook in step with `templates/pre-commit` by hand.
+- **A project with no plan system** gets `"plan": null` in its config.
+- **`ste-lint` in the hook only reports.** End the line with `|| true`, so that a finding never blocks a commit.
+- **`core.hooksPath` in a git worktree** writes the shared config of the first clone. Unset it before you remove the worktree, or set it only in the first clone.
+- **Link the sources of a record with a permalink** to a commit on the default branch. A PRD that moves to the archive, or that loses its Part B, breaks a relative link. A commit of the default branch does not change at merge. A branch hash changes.
+- **The fact checkers flag reasons with no source most frequently.** In 22 records, they flagged 17 "Revisit when" lines and some Rationale lines. When the sources give no reason, write "None recorded" or "The sources give no reason". Do not write a likely reason.
+- **A part of a decision can have a subsequent date.** Give one date for each part, for example "2026-09-30 (the three levels), 2026-10-01 (the defaults file)".
+- **The word total grows when the PRDs stay in the archive.** The records restate the decisions, and the archive keeps the initial text. In Roomsie, the reasoning moved out of the working docs, so the total stayed almost the same.
+- **The master tools printed project paths.** `build-decision-ledger --check` and `render-docs --check` told you to run `python3 tools/<name>.py`, also in the plugin repo. After the fix, they print the path of the script that runs.
