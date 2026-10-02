@@ -10,7 +10,7 @@ The hook and CI run only these checks. Run them first:
 |---|---|---|
 | Limits | `python3 tools/doc-budget.py --report` | No file is `OVER` |
 | Links | `python3 tools/doc-links.py .` | 0 broken links |
-| Ledger drift | `python3 tools/build-decision-ledger.py --check` | 0 stale ledgers, and the Learn index lists each learn page |
+| Ledger drift | `python3 tools/build-decision-ledger.py --check` | 0 stale ledgers. The Learn index lists each learn page, and the teaser gives the newest pages |
 | Render drift | `python3 tools/render-docs.py --check` | 0 stale pages |
 | Tool copies | `${CLAUDE_SKILL_DIR}/scripts/sync-tools --check <project root>` | Each copy is the same as the master |
 | Hook activation | `git config core.hooksPath` | It gives `.githooks` in this clone |
@@ -41,6 +41,8 @@ Report these items:
 11. **Learn pages:**
     - A page above its limit, or with no `**In one line:**` line.
     - Two pages on one topic.
+    - A page with no date in its `## Tickets` section. The teaser puts it after the dated pages.
+    - The full Learn index in a file with a fixed size limit, for example the tech ledger. Move it to `<learnPath>/README.md`.
     - A page that gives the reasons of a decision. It must link the record.
 
 ## Report
