@@ -4,7 +4,7 @@ description: Set up, migrate, or check the docs architecture of a project. Use w
 disable-model-invocation: true
 argument-hint: "setup | migrate | check [--sync]"
 metadata:
-  version: 0.1.0
+  version: 0.1.1
 ---
 
 # Doc management
