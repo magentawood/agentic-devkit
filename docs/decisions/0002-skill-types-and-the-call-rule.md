@@ -16,6 +16,7 @@ Some skills do a large run that the user starts. Other skills must load by thems
 | `ste-writing` | model-invoked | Each `.md` file in ASD-STE100 Simplified Technical English. |
 | `doc-architecture` | model-invoked | It loads on each Markdown edit and guards each change to the docs. |
 | `doc-management` | user-invoked | `/doc-management setup`, `migrate`, or `check`: large runs that the user starts. |
+| `next-task` | model-invoked | Lists the free tasks of the plan and the claimed tasks ([ADR-0028](0028-claim-at-the-start-and-the-next-task-skill.md)). |
 
 - A user-invoked skill has `disable-model-invocation: true` ([ADR-0001](0001-plugin-layout-and-skill-format.md)).
 - `/build-feature` gets the `doc-architecture` rules through the usual Markdown edits. It never calls `/doc-management`.

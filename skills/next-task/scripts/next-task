@@ -1,0 +1,117 @@
+#!/usr/bin/env python3
+"""List the tasks that a person can start now, and the tasks that are taken.
+
+Usage:
+  next-task [--repo OWNER/NAME]
+
+The script reads the tasks from "plan.source" in devkit.config.json: a JSON
+file with a "tasks" list, where each task has "id", "title", "deps", "issue"
+and "role". An optional "roles" map gives a name for each role. The script
+reads all issues of the repo with gh, one call.
+
+- A task is done when its issue is closed or has status:done.
+- A task is ready when it is not done and each task in its "deps" is done.
+- A ready task is taken when its issue has an assignee, or a status:* label
+  other than status:done. Otherwise it is free.
+
+Free tasks come first, grouped by role. In a role, the task that unblocks the
+most open tasks comes first.
+Exit code 1 means a bad argument, no plan source, or a gh failure.
+"""
+import json, os, subprocess, sys
+
+PREFIX = "status:"
+DONE = PREFIX + "done"
+
+
+def load(path):
+    try:
+        with open(os.path.expanduser(path)) as f:
+            return json.load(f)
+    except (OSError, ValueError):
+        return {}
+
+
+def config(root):
+    """Plugin defaults, then the project file, then the user file. One level of dict merge."""
+    here = os.path.dirname(os.path.abspath(__file__))
+    merged = {}
+    for level in (load(os.path.join(here, "..", "..", "..", "defaults", "devkit.defaults.json")),
+                  load(os.path.join(root, "devkit.config.json")),
+                  load("~/.config/agentic-devkit/config.json")):
+        for key, value in level.items():
+            merged[key] = {**merged.get(key, {}), **value} if isinstance(value, dict) and isinstance(merged.get(key), dict) else value
+    return merged
+
+
+def main(argv):
+    root = subprocess.run(["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True).stdout.strip() or os.getcwd()
+    cfg = config(root)
+    repo = cfg.get("repo")
+    if "--repo" in argv:
+        i = argv.index("--repo")
+        if i + 1 >= len(argv):
+            sys.exit(__doc__)
+        repo = argv[i + 1]
+    source = cfg.get("plan", {}).get("source")
+    if not repo or not source:
+        sys.exit("next-task: set \"repo\" and \"plan.source\" in devkit.config.json.")
+    plan = load(os.path.join(root, source))
+    tasks, roles = plan.get("tasks"), plan.get("roles") or {}
+    if not tasks:
+        sys.exit(f"next-task: no \"tasks\" list in {source}.")
+
+    out = subprocess.run(["gh", "issue", "list", "--repo", repo, "--state", "all", "--limit", "1000",
+                          "--json", "number,state,labels,assignees"], capture_output=True, text=True)
+    if out.returncode:
+        sys.exit(f"next-task: gh failed: {out.stderr.strip()}")
+    issues = {i["number"]: i for i in json.loads(out.stdout)}
+
+    def labels(t):
+        return [l["name"] for l in issues.get(t.get("issue"), {}).get("labels", [])]
+
+    def is_done(t):
+        issue = issues.get(t.get("issue"))
+        return bool(issue) and (issue["state"] == "CLOSED" or DONE in labels(t))
+
+    done = {t["id"] for t in tasks if is_done(t)}
+    waiting_on = {}
+    for t in tasks:
+        for d in t.get("deps", []):
+            waiting_on.setdefault(d, []).append(t["id"])
+
+    def unblocks(tid, seen=None):
+        seen = set() if seen is None else seen
+        for child in waiting_on.get(tid, []):
+            if child not in seen and child not in done:
+                seen.add(child)
+                unblocks(child, seen)
+        return seen
+
+    ready = [t for t in tasks if t["id"] not in done and all(d in done for d in t.get("deps", []))]
+    free, taken = [], []
+    for t in ready:
+        who = [a["login"] for a in issues.get(t.get("issue"), {}).get("assignees", [])]
+        status = [l for l in labels(t) if l.startswith(PREFIX) and l != DONE]
+        (taken if who or status else free).append((t, who, status))
+    free.sort(key=lambda x: -len(unblocks(x[0]["id"])))
+
+    def line(t):
+        issue = f"#{t['issue']}" if t.get("issue") else "no issue"
+        return f"- {t['id']} · {t['title']} · {issue}"
+
+    print(f"Free to start ({len(free)}):")
+    for role in dict.fromkeys(t.get("role", "") for t, _, _ in free):
+        print(f"{roles.get(role, role) or 'No role'}:")
+        for t, _, _ in free:
+            if t.get("role", "") == role:
+                print(f"{line(t)} · unblocks {len(unblocks(t['id']))}")
+    print(f"\nTaken ({len(taken)}):")
+    for t, who, status in taken:
+        print(f"{line(t)} · {roles.get(t.get('role'), t.get('role', ''))} · {', '.join('@' + w for w in who) or 'no assignee'} · {', '.join(status) or 'no status'}")
+    print(f"\nDone: {len(done)} of {len(tasks)}. Waiting on an open task: {len(tasks) - len(done) - len(ready)}.")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))

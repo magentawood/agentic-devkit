@@ -27,7 +27,6 @@ The skills ask the user for decisions with `AskUserQuestion` ([ADR-0004](0004-qu
 | Alternative | Why we rejected it |
 |---|---|
 | The user types "explain" in the free-text answer | The user must know that this works, and must type it each time. |
-| A long explanation above each question | Most questions do not need it, and it makes each question slow to read. |
 | The rule only in the grill | Review findings, gates, and `doc-management` questions also need explanations. |
 
 ## Consequences
@@ -43,3 +42,5 @@ The skills ask the user for decisions with `AskUserQuestion` ([ADR-0004](0004-qu
 
 - User decision, 2026-10-03.
 - [Roomsie PR #94](https://github.com/magentawood/roomsie/pull/94): the T-02 POC, "Review" section.
+
+Superseded (2026-10-08): the rejected alternative "A long explanation above each question". Each question now has its context in the question text ([ADR-0027](0027-the-shape-of-a-question.md)).

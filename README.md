@@ -10,6 +10,7 @@ A Claude Code plugin with skills for building and shipping products.
 | `ste-writing` | Writes and rewrites Markdown in ASD-STE100 Simplified Technical English. Claude uses it when it writes or edits a `.md` file. |
 | `doc-architecture` | Guards the docs architecture on each Markdown edit: one fact in one home, reasons only in records, learn pages, size limits, generated ledgers. Claude uses it with `ste-writing`. |
 | `/doc-management` | `setup` gives a project the docs architecture, its tools, the hook, and CI. `migrate` moves the docs of a project into it with stacked PRs. `check` gives the full report, and `check --sync` refreshes the tool copies. |
+| `next-task` | Lists the tasks of the plan that a person can start at this time, by role, without the tasks that a different person has claimed. Claude uses it when someone asks what to work on next. |
 | `/blog` | Draft a post with Claude, review it in the terminal, then cross-post to dev.to, Reddit, Medium, Substack, LinkedIn and Quora. |
 
 ## Install
@@ -66,8 +67,16 @@ If the project config has `plan.build`, the hook also runs `<plan.build> --check
 The skill uses two scripts. They also work without Claude:
 
 ```
-skills/build-feature/scripts/issue-status 33 in-review --note "Review is clean." [--dry-run]
+skills/build-feature/scripts/issue-status 33 in-review --note "Review is clean." [--claim] [--dry-run]
 skills/build-feature/scripts/tick "docs/plan/tasks/T-13 Reply writer.md" "<exact item text>" 91 [--dry-run]
+```
+
+`--claim` also assigns the issue to you. It exits 2 when a different person has the issue.
+
+`next-task` lists the free tasks and the claimed tasks of the plan:
+
+```
+skills/next-task/scripts/next-task [--repo OWNER/NAME]
 ```
 
 Shared rules for all skills are in `CONVENTIONS.md`. Credits are in `NOTICE.md`.

@@ -2,7 +2,7 @@
 """Set the status label of a GitHub issue and post a stage-change comment.
 
 Usage:
-  issue-status ISSUE STATUS [--note TEXT] [--repo OWNER/NAME] [--dry-run]
+  issue-status ISSUE STATUS [--claim] [--note TEXT] [--repo OWNER/NAME] [--dry-run]
 
 ISSUE is the issue number. STATUS is one of "statusLabels" in
 devkit.config.json, with or without the "status:" prefix (for example
@@ -11,9 +11,13 @@ and posts one comment that names the old and the new status. --note adds one
 line to the comment. The script does not touch labels without the status:
 prefix, so lane and role labels stay.
 
+--claim also assigns the issue to the gh user. If a different person is an
+assignee, the script makes no change and exits 2.
+
 The repo comes from --repo, else from "repo" in the project devkit.config.json.
 --dry-run reads the issue, then prints the gh commands and makes no change.
-Exit code 1 means a bad argument or a gh failure.
+Exit code 1 means a bad argument or a gh failure. Exit code 2 means the
+issue is claimed by a different person.
 """
 import json, os, shlex, subprocess, sys
 
@@ -66,6 +70,9 @@ def main(argv):
     dry = "--dry-run" in argv
     if dry:
         argv.remove("--dry-run")
+    claim = "--claim" in argv
+    if claim:
+        argv.remove("--claim")
     cfg = config()
     note = option(argv, "--note")
     repo = option(argv, "--repo") or cfg.get("repo")
@@ -79,13 +86,24 @@ def main(argv):
     if not repo:
         sys.exit("issue-status: no repo. Give --repo OWNER/NAME or set \"repo\" in devkit.config.json.")
 
-    view = subprocess.run(["gh", "issue", "view", issue, "--repo", repo, "--json", "labels,state"],
+    view = subprocess.run(["gh", "issue", "view", issue, "--repo", repo, "--json", "labels,assignees"],
                           capture_output=True, text=True)
     if view.returncode:
         sys.exit(f"issue-status: cannot read issue #{issue} in {repo}: {view.stderr.strip()}")
-    current = [l["name"] for l in json.loads(view.stdout)["labels"]]
+    data = json.loads(view.stdout)
+    current = [l["name"] for l in data["labels"]]
     old = [l for l in current if l.startswith(PREFIX) and l != target]
-    if target in current and not old:
+    assign = False
+    if claim:
+        me = subprocess.run(["gh", "api", "user", "--jq", ".login"], capture_output=True, text=True).stdout.strip()
+        if not me:
+            sys.exit("issue-status: cannot read the gh user. Run gh auth status.")
+        others = [a["login"] for a in data["assignees"] if a["login"] != me]
+        if others:
+            print(f"issue-status: #{issue} is claimed by {', '.join(others)}. No change.")
+            return 2
+        assign = me not in [a["login"] for a in data["assignees"]]
+    if target in current and not old and not assign:
         print(f"issue-status: #{issue} already has {target}. No change.")
         return 0
 
@@ -98,10 +116,14 @@ def main(argv):
     edit = ["issue", "edit", issue, "--repo", repo, "--add-label", target]
     if old:
         edit += ["--remove-label", ",".join(old)]
+    if assign:
+        edit += ["--add-assignee", "@me"]
     gh(edit, dry)
 
     before = ", ".join(f"`{l}`" for l in old) or "no status"
     body = f"Stage change: {before} → `{target}`."
+    if assign:
+        body += " Claimed with build-feature."
     if note:
         body += f"\n\n{note}"
     gh(["issue", "comment", issue, "--repo", repo, "--body", body], dry)

@@ -31,4 +31,6 @@ Generated from the decision records in [decisions/](decisions/README.md). Edit t
 | [ADR-0024](decisions/0024-explain-this-question.md) | An "Explain this question" option on each question | Accepted | Each question to the user has at most three real options, then the last option "Explain this question". |
 | [ADR-0025](decisions/0025-learn-pages.md) | Learn pages: one page for each concept, with a generated index | Accepted | Each concept that a ticket explains gets one learn page, and the ledger generator lists the pages in a Learn index. |
 | [ADR-0026](decisions/0026-rebuild-the-plan-in-the-pr.md) | Rebuild the plan in the PR, and check that the plan is current | Accepted | `/build-feature` runs `plan.build` after the ticks in the PR, and the hook fails when `<plan.build> --check` fails. |
+| [ADR-0027](decisions/0027-the-shape-of-a-question.md) | The shape of a question to the user | Accepted | Each question text tells what the concept is, the current state, and an example of the result of each option. |
+| [ADR-0028](decisions/0028-claim-at-the-start-and-the-next-task-skill.md) | Claim a ticket at the start, and the `next-task` skill | Accepted | `/build-feature` claims the issue before the first grill question, and the `next-task` skill lists the free tasks. |
 <!-- ledger:end -->
