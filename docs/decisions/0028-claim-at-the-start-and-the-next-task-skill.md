@@ -10,8 +10,9 @@ In Roomsie, more than one person works on one wave of the plan. A person takes a
 
 **In one line:** `/build-feature` claims the issue before the first grill question, and the `next-task` skill lists the free tasks.
 
-- Before the first grill question, `/build-feature` runs `issue-status <N> spec --claim`. The script assigns the issue to the gh user and sets `status:spec`.
-- If a different person is an assignee, the script makes no change and exits 2. `/build-feature` stops and tells the user who has the ticket.
+- Before the first grill question, `/build-feature` runs `issue-status <N> spec --claim`. The script assigns the issue to the gh user. It sets `status:spec` only when the issue has no status label. Thus, a ticket does not go back to an earlier stage.
+- A new feature has no issue before the ticket stage. It claims its issues at the end of that stage.
+- If a different person is an assignee, the script makes no change and exits 2. `/build-feature` stops and tells the user who has the ticket. After the claim, the script reads the issue again. If two people claimed it at the same time, it exits 2.
 - To drop a ticket, the user removes their assignment and the status label.
 - `next-task` reads `plan.source` and all issues of the repo. A task is free when the team completed each dependency. Its issue must also have no assignee and no open status label.
 - `next-task` groups the free tasks by role, because the people of different roles do different tasks.

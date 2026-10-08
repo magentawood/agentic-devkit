@@ -11,8 +11,11 @@ reads all issues of the repo with gh, one call.
 
 - A task is done when its issue is closed or has status:done.
 - A task is ready when it is not done and each task in its "deps" is done.
-- A ready task is taken when its issue has an assignee, or a status:* label
-  other than status:done. Otherwise it is free.
+- An open task is taken when its issue has an assignee, or a status:* label
+  other than status:done. A ready task that is not taken is free.
+
+Warnings go to stderr: a dependency that is not in the plan, a task with no
+issue (it can never be done), and a list of issues at the gh limit.
 
 Free tasks come first, grouped by role. In a role, the task that unblocks the
 most open tasks comes first.
@@ -65,7 +68,23 @@ def main(argv):
                           "--json", "number,state,labels,assignees"], capture_output=True, text=True)
     if out.returncode:
         sys.exit(f"next-task: gh failed: {out.stderr.strip()}")
-    issues = {i["number"]: i for i in json.loads(out.stdout)}
+    found = json.loads(out.stdout)
+    if len(found) >= 1000:
+        print("next-task: warning: gh returned 1000 issues, the limit. Some issues are missing.", file=sys.stderr)
+    issues = {i["number"]: i for i in found}
+    ids = {t["id"] for t in tasks}
+    for t in tasks:
+        t["deps"] = t.get("deps") or []
+        t["role"] = t.get("role") or ""
+        try:
+            t["issue"] = int(t["issue"]) if t.get("issue") else None
+        except (TypeError, ValueError):
+            t["issue"] = None
+        if not t["issue"]:
+            print(f"next-task: warning: {t['id']} has no issue, so it can never be done.", file=sys.stderr)
+        for d in t["deps"]:
+            if d not in ids:
+                print(f"next-task: warning: {t['id']} waits on {d}, which is not in the plan.", file=sys.stderr)
 
     def labels(t):
         return [l["name"] for l in issues.get(t.get("issue"), {}).get("labels", [])]
@@ -77,7 +96,7 @@ def main(argv):
     done = {t["id"] for t in tasks if is_done(t)}
     waiting_on = {}
     for t in tasks:
-        for d in t.get("deps", []):
+        for d in t["deps"]:
             waiting_on.setdefault(d, []).append(t["id"])
 
     def unblocks(tid, seen=None):
@@ -88,12 +107,17 @@ def main(argv):
                 unblocks(child, seen)
         return seen
 
-    ready = [t for t in tasks if t["id"] not in done and all(d in done for d in t.get("deps", []))]
+    ready = {t["id"] for t in tasks if t["id"] not in done and all(d in done for d in t["deps"])}
     free, taken = [], []
-    for t in ready:
-        who = [a["login"] for a in issues.get(t.get("issue"), {}).get("assignees", [])]
+    for t in tasks:
+        if t["id"] in done:
+            continue
+        who = [a["login"] for a in issues.get(t["issue"], {}).get("assignees", [])]
         status = [l for l in labels(t) if l.startswith(PREFIX) and l != DONE]
-        (taken if who or status else free).append((t, who, status))
+        if who or status:
+            taken.append((t, who, status))
+        elif t["id"] in ready:
+            free.append((t, who, status))
     free.sort(key=lambda x: -len(unblocks(x[0]["id"])))
 
     def line(t):
@@ -101,14 +125,15 @@ def main(argv):
         return f"- {t['id']} · {t['title']} · {issue}"
 
     print(f"Free to start ({len(free)}):")
-    for role in dict.fromkeys(t.get("role", "") for t, _, _ in free):
+    for role in dict.fromkeys(t["role"] for t, _, _ in free):
         print(f"{roles.get(role, role) or 'No role'}:")
         for t, _, _ in free:
-            if t.get("role", "") == role:
+            if t["role"] == role:
                 print(f"{line(t)} · unblocks {len(unblocks(t['id']))}")
     print(f"\nTaken ({len(taken)}):")
     for t, who, status in taken:
-        print(f"{line(t)} · {roles.get(t.get('role'), t.get('role', ''))} · {', '.join('@' + w for w in who) or 'no assignee'} · {', '.join(status) or 'no status'}")
+        blocked = "" if t["id"] in ready else " · waits on an open task"
+        print(f"{line(t)} · {roles.get(t['role'], t['role'])} · {', '.join('@' + w for w in who) or 'no assignee'} · {', '.join(status) or 'no status'}{blocked}")
     print(f"\nDone: {len(done)} of {len(tasks)}. Waiting on an open task: {len(tasks) - len(done) - len(ready)}.")
     return 0
 
