@@ -11,8 +11,10 @@ and posts one comment that names the old and the new status. --note adds one
 line to the comment. The script does not touch labels without the status:
 prefix, so lane and role labels stay.
 
---claim also assigns the issue to the gh user. If a different person is an
-assignee, the script makes no change and exits 2.
+--claim also assigns the issue to the gh user. If the issue has a status:*
+label, the claim keeps it and ignores STATUS, so a ticket never goes back to
+an earlier stage. If a different person is an assignee, the script makes no
+change and exits 2.
 
 The repo comes from --repo, else from "repo" in the project devkit.config.json.
 --dry-run reads the issue, then prints the gh commands and makes no change.
@@ -92,7 +94,6 @@ def main(argv):
         sys.exit(f"issue-status: cannot read issue #{issue} in {repo}: {view.stderr.strip()}")
     data = json.loads(view.stdout)
     current = [l["name"] for l in data["labels"]]
-    old = [l for l in current if l.startswith(PREFIX) and l != target]
     assign = False
     if claim:
         me = subprocess.run(["gh", "api", "user", "--jq", ".login"], capture_output=True, text=True).stdout.strip()
@@ -103,30 +104,50 @@ def main(argv):
             print(f"issue-status: #{issue} is claimed by {', '.join(others)}. No change.")
             return 2
         assign = me not in [a["login"] for a in data["assignees"]]
-    if target in current and not old and not assign:
+        held = [l for l in current if l.startswith(PREFIX)]
+        if held:
+            # A claim never moves a ticket back to an earlier stage.
+            target = held[0]
+    old = [l for l in current if l.startswith(PREFIX) and l != target]
+    relabel = bool(old) or target not in current
+    if not relabel and not assign:
         print(f"issue-status: #{issue} already has {target}. No change.")
         return 0
 
-    have = subprocess.run(["gh", "label", "list", "--repo", repo, "--limit", "500", "--json", "name"],
-                          capture_output=True, text=True)
-    if have.returncode == 0 and target not in {l["name"] for l in json.loads(have.stdout)}:
-        gh(["label", "create", target, "--repo", repo, "--color", "C5DEF5",
-            "--description", "Pipeline stage, set by build-feature"], dry)
+    if relabel:
+        have = subprocess.run(["gh", "label", "list", "--repo", repo, "--limit", "500", "--json", "name"],
+                              capture_output=True, text=True)
+        if have.returncode == 0 and target not in {l["name"] for l in json.loads(have.stdout)}:
+            gh(["label", "create", target, "--repo", repo, "--color", "C5DEF5",
+                "--description", "Pipeline stage, set by build-feature"], dry)
 
-    edit = ["issue", "edit", issue, "--repo", repo, "--add-label", target]
+    edit = ["issue", "edit", issue, "--repo", repo]
+    if relabel:
+        edit += ["--add-label", target]
     if old:
         edit += ["--remove-label", ",".join(old)]
     if assign:
         edit += ["--add-assignee", "@me"]
     gh(edit, dry)
 
-    before = ", ".join(f"`{l}`" for l in old) or "no status"
-    body = f"Stage change: {before} → `{target}`."
+    parts = []
+    if relabel:
+        before = ", ".join(f"`{l}`" for l in old) or "no status"
+        parts.append(f"Stage change: {before} → `{target}`.")
     if assign:
-        body += " Claimed with build-feature."
+        parts.append(f"Claimed by @{me} with build-feature.")
+    body = " ".join(parts)
     if note:
         body += f"\n\n{note}"
     gh(["issue", "comment", issue, "--repo", repo, "--body", body], dry)
+
+    if assign and not dry:
+        again = subprocess.run(["gh", "issue", "view", issue, "--repo", repo, "--json", "assignees"],
+                               capture_output=True, text=True)
+        rivals = [a["login"] for a in json.loads(again.stdout or "{}").get("assignees", []) if a["login"] != me]
+        if rivals:
+            print(f"issue-status: {', '.join(rivals)} claimed #{issue} at the same time. Agree who takes it.")
+            return 2
     if dry:
         print("issue-status: dry run. No change made.")
     return 0
