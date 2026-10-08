@@ -18,6 +18,7 @@ These are the terms that the skills in this plugin use. Use each term only with 
 | Ticket | One unit of work. One ticket gives one PR. |
 | Blocker | A task that must be complete before a different task can start. |
 | Plan source | The one file where you edit the plan. A generator makes the task notes from it. `plan.source` in the configuration gives it. |
+| Claim | The assignee of the GitHub issue of a ticket. `/build-feature` claims the issue when it starts. A claimed ticket is not free for a different person. |
 | Status label | The `status:*` label of a GitHub issue. It shows the stage of the ticket. An issue has one status label at a time. |
 | Task note | The Markdown note for one ticket in the Obsidian vault. |
 | Done-when list | The checkboxes of a task note. Each checkbox is one acceptance criterion. |

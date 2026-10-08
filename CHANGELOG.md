@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.7.0 (2026-10-08)
+
+- New model-invoked skill `next-task` 0.1.0 ([ADR-0028](docs/decisions/0028-claim-at-the-start-and-the-next-task-skill.md)). It lists the free tasks of `plan.source` by role, and the claimed tasks. A free task has complete dependencies, no assignee, and no open status label.
+- `build-feature` 0.3.0: before the first grill question, it claims the issue with `issue-status <N> spec --claim`. It stops when a different person has the issue.
+- `issue-status`: the new `--claim` flag assigns the issue to the gh user. It exits 2 when a different person is an assignee.
+- "Questions to the user" ([ADR-0027](docs/decisions/0027-the-shape-of-a-question.md)): the context goes inside the question text. It tells what the concept is, the current state, and an example of the result of each option. ADR-0024 loses its rejected alternative "A long explanation above each question".
+
 ## 0.6.2 (2026-10-03)
 
 - `build-feature` 0.2.1 ([ADR-0026](docs/decisions/0026-rebuild-the-plan-in-the-pr.md)): at the PR stage, after the ticks, the log, and the journal entry, run `plan.build`. Commit the generated plan files together with the ticks, in the same PR.

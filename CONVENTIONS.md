@@ -69,10 +69,15 @@ Why: [ADR-0016](docs/decisions/0016-two-docs-skills.md), [ADR-0017](docs/decisio
 - Ask one question at a time. Use the `AskUserQuestion` tool.
 - Put your recommended option first, and add "(Recommended)" to its label.
 - Give at most three real options. The last option is always "Explain this question", with the description "Explain the options in more detail before I decide".
-- When the user selects "Explain this question", give a plain-language explanation. Tell what the concept is, how it fits the project, and what each option changes. Then ask the same question again.
+- Put the context inside the question text, not in a message before the question. Use this shape:
+  1. What it is: two to four plain sentences.
+  2. The current state: the facts that you checked.
+  3. Each option, with one example of what changes and what it costs.
+- The user can type a question in place of an option. Then answer it in the text of the same question, and ask again.
+- When the user selects "Explain this question", give a plain-language explanation with a worked example from the project. Tell what the concept is, how it fits the project, and what each option changes. Then ask the same question again.
 - Before you ask, look for the answer in the code and the documents. Ask the user only for a decision.
 
-Why: [ADR-0004](docs/decisions/0004-questions-to-the-user.md), [ADR-0024](docs/decisions/0024-explain-this-question.md)
+Why: [ADR-0004](docs/decisions/0004-questions-to-the-user.md), [ADR-0024](docs/decisions/0024-explain-this-question.md), [ADR-0027](docs/decisions/0027-the-shape-of-a-question.md)
 
 ## Sub-agents
 

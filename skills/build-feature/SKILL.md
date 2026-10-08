@@ -4,7 +4,7 @@ description: Take a feature or a ticket from an idea to a merged PR through gril
 disable-model-invocation: true
 argument-hint: "[T-nn | feature idea]"
 metadata:
-  version: 0.2.1
+  version: 0.3.0
 ---
 
 # Build feature
@@ -41,6 +41,7 @@ Do not use this skill for a change to documents only. For that change, use `ste-
 
 Before each stage, read its reference file. At each stage change, run `${CLAUDE_SKILL_DIR}/scripts/issue-status <N> <status> --note "<one line>"`.
 
+0. **Claim.** Before the first question, run `${CLAUDE_SKILL_DIR}/scripts/issue-status <N> spec --claim --note "Claimed with build-feature."`. Exit code 2 means a different person has the issue: stop, and tell the user who. To drop a ticket, remove your assignment and its status label: `gh issue edit <N> --remove-assignee @me --remove-label status:spec`. Why: [ADR-0028](../../docs/decisions/0028-claim-at-the-start-and-the-next-task-skill.md).
 1. **Grill.** Read [references/grill.md](references/grill.md). For a ticket that exists, ask only implementation questions. First, check the Read-first files and the done items against the current docs.
 2. **Spec.** Read [references/spec.md](references/spec.md). For a ticket, write the short spec into the task note with [templates/task-note-section.md](templates/task-note-section.md). For a new feature, use `${CLAUDE_PLUGIN_ROOT}/skills/doc-architecture/templates/spec.md`. Set `status:spec`.
 3. **Ticket** (new feature only). Read [references/tickets.md](references/tickets.md).
