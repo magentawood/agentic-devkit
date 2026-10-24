@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.1 (2026-10-24)
+
+- `docs-check.yml` 0.1.2: the docs job uses Python 3.12. From 19 October 2026, the `ubuntu-latest` runners of GitHub are Ubuntu 26.04, and `actions/setup-python` has no Python 3.9 for Ubuntu 26.04. Thus, the job stopped before the first check. The `docs-check.yml` of this repo gets the same change. Run `/doc-management check --sync` in each project.
+
 ## 0.7.0 (2026-10-08)
 
 - New model-invoked skill `next-task` 0.1.0 ([ADR-0028](docs/decisions/0028-claim-at-the-start-and-the-next-task-skill.md)). It lists the free tasks of `plan.source` by role, and the claimed tasks. A free task has complete dependencies, no assignee, and no open status label.
