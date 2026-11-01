@@ -4,21 +4,21 @@ description: Run the three-reviewer blind review of /build-feature on a branch o
 disable-model-invocation: true
 argument-hint: "[branch | PR number]"
 metadata:
-  version: 0.1.0
+  version: 0.2.0
 ---
 
 # Extensive review
 
 ## Purpose
 
-Run the blind review of `/build-feature` on any branch or PR. Three blind reviewers check the diff for each round. After the last round, one more round checks only the fixes ([ADR-0029](../../docs/decisions/0029-review-the-fixes-of-the-last-round.md)). For the PR of a different person, the skill also posts the review and can merge the PR. Why: [ADR-0030](../../docs/decisions/0030-the-extensive-review-skill.md).
+Run the blind review of `/build-feature` on any branch or PR. Three blind reviewers check the diff for each round. After the last round, one more round checks only the fixes ([ADR-0029](../../docs/decisions/0029-review-the-fixes-of-the-last-round.md)). On the PR of a different person, the session of the reviewer fixes each problem. Then the skill posts the review and can merge the PR. Why: [ADR-0030](../../docs/decisions/0030-the-extensive-review-skill.md).
 
 ## When to use / When NOT to use
 
 Use this skill for these targets:
 
 - Your branch, before you open a PR, when you did not use `/build-feature`.
-- The PR of a different person: the review, then the merge.
+- The PR of a different person: the review and the fixes, then the merge.
 - Your PR that is open. The skill does the loop of fixes. A different person approves the PR.
 
 Do not use this skill inside `/build-feature`. Its review stage has the same rules. Do not use it for a document change only.
@@ -40,7 +40,7 @@ Do not use this skill inside `/build-feature`. Its review stage has the same rul
 
 - The three reports of each round, in the chat.
 - For your work: the fixes, in commits on the branch.
-- For the PR of a different person: one PR review for each round, and the merge if the person approves.
+- For the PR of a different person: the fixes on the PR branch, one PR review, and the merge if the person approves.
 
 ## Steps
 
@@ -69,10 +69,11 @@ Obey [CONVENTIONS.md](../../CONVENTIONS.md). The terms are in [docs/glossary.md]
 
 ## Example
 
-`/extensive-review 185`
+`/extensive-review 187`
 
-1. PR #185 has the author `pulkitshringi`. The gh user is `n3rxv`. Thus, the mode is "a different person".
-2. The PR has no review of this skill. Thus, this run is round 1 on the full diff.
-3. The three reviewers give two findings. The check shows that both are correct, and that neither blocks.
-4. The person selects "Approve". The skill posts one review with the two findings and the line `extensive-review: round 1, commit 73eee1a`.
-5. The person selects "Merge now". The checks pass, the PR merges with rebase-merge, and the deploy passes. Issue #64 gets `status:done`.
+1. PR #187 has the author `pulkitshringi`. The gh user is `n3rxv`. Thus, the mode is "a different person".
+2. The PR conflicts with `main`. The skill rebases it, keeps the settings of both sides, and builds the generated files again.
+3. Round 1 finds a bug: a couple-friendly dealbreaker hides each room. The skill writes a test that fails, then fixes the bug.
+4. Round 2 and the round on the fixes find smaller items. The skill fixes them, and asks the person about one optional finding.
+5. The person agrees to the push. The checks pass, and the skill posts one review, an approval, with the commits and the line `extensive-review: round 3, commit 3994204`.
+6. The person selects "Merge now". The PR merges with rebase-merge, the deploy passes, and issue #27 gets `status:done`.

@@ -1,21 +1,23 @@
 <!-- Write the review in STE. Replace each <...>. Keep the last line exactly: the next run reads it. -->
 
-## Extensive review, round <R>
+## Extensive review: fixed in the review
 
-**Result:** <approve | comment | request changes>. <one sentence: what blocks, or why nothing blocks>.
+**Result:** <approve | comment>. <one sentence: what the review found, and that the fixes passed the rounds and the checks>.
 
-### Standards
+**@<author>, before you work on this branch again:** <if the push replaced the history> run `git fetch origin && git reset --hard origin/<head branch>`.
 
-- `<file>:L<line>`: <the finding>. <the fix>.
+### What changed
 
-### Spec
+- **<the change>:** <what it fixes, and why> (`<commit>`).
 
-- <the requirement line>: <missing / not complete / incorrect / not asked for>. <the evidence>.
+### Rejected findings
 
-### Lean
+- <the finding>. <the reason>.
 
-- `<file>:L<line>`: <tag> <the finding>. <the replacement>.
+### Decisions of the person
 
-<Write "No finding." under a heading that has no correct finding.>
+- <the question>: <the answer>. <Write "None." if the person decided nothing.>
 
-extensive-review: round <R>, commit <head commit>
+<!-- With no push access, replace the three parts above with the correct findings under "### Standards", "### Spec" and "### Lean". -->
+
+extensive-review: round <R>, commit <head commit after the push>

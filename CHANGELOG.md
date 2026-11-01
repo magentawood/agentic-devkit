@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.8.1 (2026-11-02)
+
+- `extensive-review` 0.2.0 ([ADR-0030](docs/decisions/0030-the-extensive-review-skill.md)): on the PR of a different person, the session of the reviewer fixes each problem.
+  - It rebases a PR that conflicts with its base.
+  - It does the loop of own work: the rounds of `reviewRounds`, then the round on the fixes.
+  - It pushes after the person agrees, with a lease on the head commit that it read.
+  - It posts one review with the commits, the rejected findings and the decisions of the person.
+  - With no push access, the author fixes the findings, and each run does one round, as in 0.1.0.
+
 ## 0.8.0 (2026-11-02)
 
 - New user-invoked skill `extensive-review` 0.1.0 ([ADR-0030](docs/decisions/0030-the-extensive-review-skill.md)). Type `/extensive-review` or `/agentic-devkit:extensive-review`, with no argument, a branch, or a PR number.
