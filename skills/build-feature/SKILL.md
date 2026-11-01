@@ -4,7 +4,7 @@ description: Take a feature or a ticket from an idea to a merged PR through gril
 disable-model-invocation: true
 argument-hint: "[T-nn | feature idea]"
 metadata:
-  version: 0.3.1
+  version: 0.3.2
 ---
 
 # Build feature
@@ -41,12 +41,12 @@ Do not use this skill for a change to documents only. For that change, use `ste-
 
 Before each stage, read its reference file. At each stage change, run `${CLAUDE_SKILL_DIR}/scripts/issue-status <N> <status> --note "<one line>"`.
 
-0. **Claim** (ticket that exists). Before the first question, run `${CLAUDE_SKILL_DIR}/scripts/issue-status <N> spec --claim`. A status label that the issue has stays. Exit code 2 means a different person has the issue: stop, and tell the user who. A new feature claims its issues at the end of the ticket stage. To drop a ticket, remove your assignment and its status label: `gh issue edit <N> --remove-assignee @me --remove-label status:spec`. Why: [ADR-0028](../../docs/decisions/0028-claim-at-the-start-and-the-next-task-skill.md).
+0. **Pull and claim.** First, pull the latest default branch with [references/pull.md](references/pull.md), "At the start". Then, for a ticket that exists, run `${CLAUDE_SKILL_DIR}/scripts/issue-status <N> spec --claim`. A status label that the issue has stays. Exit code 2 means a different person has the issue: stop, and tell the user who. A new feature claims its issues at the end of the ticket stage. To drop a ticket, remove your assignment and its status label: `gh issue edit <N> --remove-assignee @me --remove-label status:spec`. Why: [ADR-0028](../../docs/decisions/0028-claim-at-the-start-and-the-next-task-skill.md).
 1. **Grill.** Read [references/grill.md](references/grill.md). For a ticket that exists, ask only implementation questions. First, check the Read-first files and the done items against the current docs.
 2. **Spec.** Read [references/spec.md](references/spec.md). For a ticket, write the short spec into the task note with [templates/task-note-section.md](templates/task-note-section.md). For a new feature, use `${CLAUDE_PLUGIN_ROOT}/skills/doc-architecture/templates/spec.md`. Set `status:spec`.
 3. **Ticket** (new feature only). Read [references/tickets.md](references/tickets.md).
 4. **Implement.** Read [references/implement.md](references/implement.md), [references/lean-code.md](references/lean-code.md), [references/code-comments.md](references/code-comments.md), and the applicable files in `standardsPath`. Do the environment preflight before the first line of code. Set `status:in-progress`.
-5. **Review.** Read [references/review.md](references/review.md). Do the review before you open the PR. Use three blind sub-agents and a maximum of `reviewRounds` rounds. Then do one more round on only the fixes of the last round. Give all three the `Decisions` and `Out of scope` lists of the spec.
+5. **Review.** Read [references/review.md](references/review.md). Do the review before you open the PR. First, rebase on the latest default branch (`pull.md`). Use three blind sub-agents and a maximum of `reviewRounds` rounds. Then do one more round on only the fixes of the last round. Give all three the `Decisions` and `Out of scope` lists of the spec.
 6. **PR.** Read [references/pr.md](references/pr.md). Write or update the learn pages, and run `build-decision-ledger`. Tick the done items with `${CLAUDE_SKILL_DIR}/scripts/tick`. Add the `## Log` entry and the journal entry. Then run `plan.build`, and commit its files with the ticks. Print the complete text of the PR draft in your reply, in one fenced Markdown block, then open the PR. Set `status:in-review`.
 7. **Merge.** Obey `mergeMode`. For `ask`, give the user three options: the user merges, you merge after approval, or auto-merge on a clean review. Use rebase-merge. After the merge, set `status:done`.
 

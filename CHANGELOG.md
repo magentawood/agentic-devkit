@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.8.2 (2026-11-02)
+
+- `build-feature` 0.3.2 ([ADR-0031](docs/decisions/0031-pull-the-latest-repo-first.md)), with the new `references/pull.md`:
+  - Before the claim, it pulls the latest default branch with `--ff-only`. It stops when the working tree has changes that are not committed.
+  - Before the review, it rebases the ticket branch on the latest default branch.
+  - Before the push of the PR, it rebases again if the default branch moved. A conflict in code gets the round on the code after the last round.
+
 ## 0.8.1 (2026-11-02)
 
 - `extensive-review` 0.2.0 ([ADR-0030](docs/decisions/0030-the-extensive-review-skill.md)): on the PR of a different person, the session of the reviewer fixes each problem.

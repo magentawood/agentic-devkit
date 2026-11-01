@@ -35,7 +35,7 @@ The hook runs `<plan.build> --check`. It fails when a generated plan file is sta
 2. Print the complete text of the PR draft in your reply, in one fenced Markdown block. Copy it word for word. Do not give a summary. Why: [ADR-0023](../../../docs/decisions/0023-print-the-complete-text-at-a-gate.md).
 3. Ask for approval. This stage is a gate by default (`pr` in `approvalGates`).
 4. If you change the text after the user reads it, print the new text again before you ask.
-5. Push the branch and run `gh pr create`. Set `status:in-review` with `issue-status`.
+5. Do "Before the push of the PR" of [pull.md](pull.md). Then push the branch, and run `gh pr create`. Set `status:in-review` with `issue-status`.
 
 ## Exit condition
 

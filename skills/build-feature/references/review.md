@@ -4,8 +4,8 @@ Do the review before you open the PR. Adapted from `code-review` and `ponytail-r
 
 ## Prepare
 
-1. Commit all the work on the branch.
-2. Get the base: `BASE=$(git merge-base <default branch> HEAD)`. Make sure that `git diff $BASE...HEAD` is not empty.
+1. Commit all the work on the branch. Then rebase it on the latest default branch: [pull.md](pull.md), "Before the review".
+2. Get the base: `BASE=$(git merge-base origin/<default branch> HEAD)`. Make sure that `git diff $BASE...HEAD` is not empty.
 3. Make the list of requirement files. It has the task note, the spec, and each file in the `## Read first` section of the task note.
 4. Copy the `Decisions` list and the `Out of scope` list of the approved spec, with no change. These are the settled facts. Give them as facts, not as reasons. In T-02, reviewers that did not get them raised settled items again, and asked for rules of a different ticket.
 
