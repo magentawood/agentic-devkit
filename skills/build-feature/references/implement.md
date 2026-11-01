@@ -7,7 +7,7 @@ Adapted from `implement` and `tdd` (see NOTICE.md). The Roomsie T-02 POC confirm
 1. Read [lean-code.md](lean-code.md) and [code-comments.md](code-comments.md).
 2. Read the files in `standardsPath` for the areas that the ticket touches. Do not enforce a rule that has the mark OPEN.
 3. Read the approved spec and the `## Done when` list.
-4. Make a branch from the default branch for this ticket. Do one ticket at a time.
+4. Make a branch for this ticket from the default branch that you pulled at the start ([pull.md](pull.md)). Do one ticket at a time.
 5. Do the environment preflight.
 
 ## Environment preflight

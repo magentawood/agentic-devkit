@@ -35,4 +35,5 @@ Generated from the decision records in [decisions/](decisions/README.md). Edit t
 | [ADR-0028](decisions/0028-claim-at-the-start-and-the-next-task-skill.md) | Claim a ticket at the start, and the `next-task` skill | Accepted | `/build-feature` claims the issue before the first grill question, and the `next-task` skill lists the free tasks. |
 | [ADR-0029](decisions/0029-review-the-fixes-of-the-last-round.md) | Review the fixes of the last round | Accepted | three blind reviewers check the fixes of the last round, and the implementer fixes each finding or asks the user. |
 | [ADR-0030](decisions/0030-the-extensive-review-skill.md) | The `extensive-review` skill | Accepted | `extensive-review` runs the blind review on any branch or PR, fixes the problems itself, and can merge the PR. |
+| [ADR-0031](decisions/0031-pull-the-latest-repo-first.md) | Pull the latest repo first | Accepted | `/build-feature` pulls the latest default branch first, and rebases on it before the review and the push. |
 <!-- ledger:end -->
