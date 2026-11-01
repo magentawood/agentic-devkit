@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.2 (2026-11-02)
+
+- `build-feature` 0.3.1 ([ADR-0029](docs/decisions/0029-review-the-fixes-of-the-last-round.md)): after the fixes of the last review round, three blind reviewers check only those fixes. In this round, fix each finding or ask the user. Do not reject a finding. When two reviewers do not agree, ask the user. No round comes after it. The PR template lists this round.
+
 ## 0.7.1 (2026-10-24)
 
 - `docs-check.yml` 0.1.2: the docs job uses Python 3.12. From 19 October 2026, the `ubuntu-latest` runners of GitHub are Ubuntu 26.04, and `actions/setup-python` has no Python 3.9 for Ubuntu 26.04. Thus, the job stopped before the first check. The `docs-check.yml` of this repo gets the same change. Run `/doc-management check --sync` in each project.

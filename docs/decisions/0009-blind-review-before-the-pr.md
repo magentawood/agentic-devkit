@@ -20,7 +20,7 @@ The review stage checks the diff of a ticket against the project standards, the 
 - Code comments are part of the code.
 - The Standards reviewer skips the rules that a tool enforces (`[tool]`) and the OPEN rules. Each reviewer writes at most 400 words. Each of the three reports has its own heading. Do not merge them.
 - A mistake that no standards rule covers becomes a rule candidate ([ADR-0013](0013-project-coding-standards.md)).
-- **Findings loop:** the implementer fixes each finding or records why it rejects it. Fresh reviewers run again. They do not get the findings of the previous review. A maximum of 2 rounds (`reviewRounds`). Then each item that stays open goes to the user through the picker. The rejected findings and their reasons go in the PR notes.
+- **Findings loop:** the implementer fixes each finding or records why it rejects it. Fresh reviewers run again. They do not get the findings of the previous review. A maximum of 2 rounds (`reviewRounds`). Then one more round checks only the fixes of the last round ([ADR-0029](0029-review-the-fixes-of-the-last-round.md)). Then each item that stays open goes to the user through the picker. The rejected findings and their reasons go in the PR notes.
 
 ## Rationale
 
