@@ -18,7 +18,7 @@
 - POC first. The stage references stay drafts until the POC. Why: [ADR-0006](../decisions/0006-poc-first-stage-references-are-drafts.md)
 - The default gates are `spec` and `pr`, `mergeMode` is `ask`, and merges use rebase-merge. Why: [ADR-0007](../decisions/0007-approval-gates-and-merge-mode.md)
 - Progress lives in the plan of the project. Ticks go in the PR. Each PR gets a log entry and a journal entry. Why: [ADR-0008](../decisions/0008-progress-in-the-project-plan.md)
-- Three blind reviewers before the PR, at most two rounds. Why: [ADR-0009](../decisions/0009-blind-review-before-the-pr.md)
+- Three blind reviewers before the PR, at most two rounds, then one round on only the fixes of the last round. Why: [ADR-0009](../decisions/0009-blind-review-before-the-pr.md), [ADR-0029](../decisions/0029-review-the-fixes-of-the-last-round.md)
 - One `status:*` label on each issue. Why: [ADR-0010](../decisions/0010-issue-status-labels.md)
 - The PR format. Why: [ADR-0011](../decisions/0011-pr-format.md)
 - The lean-code ladder and the code-comments rules. Why: [ADR-0012](../decisions/0012-lean-code-and-code-comments.md)

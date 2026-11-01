@@ -49,21 +49,27 @@ Show the three reports to the user with the headings `## Standards`, `## Spec`, 
 
 1. For each finding, fix it, or record why you reject it.
 2. Start three new reviewers with the same inputs on the new diff. They do not get the findings of the previous review.
-3. Do steps 1 and 2 a maximum of `reviewRounds` times (default 2).
+3. Stop after `reviewRounds` rounds (default 2). Fix or reject each finding of the last round, as in step 1. Then review the fixes: see [The code after the last round](#the-code-after-the-last-round).
 4. For each finding that stays open, ask the user with `AskUserQuestion`, one finding at a time. Above each question, tell in plain language what the finding is and what each option changes. In T-02, the user needed this for three of four findings.
 5. Put each rejected finding and its reason in the "Review" section of the PR.
 6. When the user decides a finding, add the decision to the spec `Decisions` list. Then a next round does not raise it again.
 
-## A change after the last round
+## The code after the last round
 
-The user can ask for a code change after the last round (in T-02, the OpenAPI generation). Do not open the PR with code that no reviewer saw:
+Do not open the PR with code that no reviewer saw. Two kinds of code come after the last round:
 
-The rule: one more blind round on only that change. Disclosure in the PR alone is not sufficient.
+- **The fixes of the last round.** In Roomsie T-11, these fixes had three new problems.
+- **A change that the user asks for** after the last round (in T-02, the OpenAPI generation).
 
-1. Commit the change. Get its diff: `git diff <last reviewed commit>...HEAD`.
-2. A small diff has one module and approximately 100 lines or less. For a small diff, start the three reviewers one more time with the same inputs. Give them only this diff. This round does not count in `reviewRounds`. Fix each finding, or ask the user about it. Do not start one more round after it.
-3. If the diff is larger, it is new work. Do a full round of the findings loop on the full diff. If no round stays in `reviewRounds`, ask the user before you continue.
-4. The PR "Review" section lists this round, as it lists each round.
+The rule: one more blind round on only that code. Disclosure in the PR alone is not sufficient. Why: [ADR-0029](../../../docs/decisions/0029-review-the-fixes-of-the-last-round.md)
+
+1. Commit the code. Get its diff: `git diff <last reviewed commit>...HEAD`.
+2. Start the three reviewers one more time with the same inputs. Give them only this diff. This round does not count in `reviewRounds`.
+3. Fix each finding of this round, or ask the user about it. Do not reject a finding. If two reviewers do not agree, ask the user.
+4. Do not start one more round after it.
+5. If the last round gave no code change, do not do this round.
+6. A change that the user asks for can be larger than one module and approximately 100 lines. Then it is new work. Do a full round of the findings loop on the full diff. If no round stays in `reviewRounds`, ask the user before you continue.
+7. The PR "Review" section lists this round, as it lists each round.
 
 The ticks, the `## Log` entry, the journal entry, and the learn pages of the PR stage are not code changes. They do not need this round.
 

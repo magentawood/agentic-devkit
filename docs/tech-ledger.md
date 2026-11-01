@@ -33,4 +33,5 @@ Generated from the decision records in [decisions/](decisions/README.md). Edit t
 | [ADR-0026](decisions/0026-rebuild-the-plan-in-the-pr.md) | Rebuild the plan in the PR, and check that the plan is current | Accepted | `/build-feature` runs `plan.build` after the ticks in the PR, and the hook fails when `<plan.build> --check` fails. |
 | [ADR-0027](decisions/0027-the-shape-of-a-question.md) | The shape of a question to the user | Accepted | Each question text tells what the concept is, the current state, and an example of the result of each option. |
 | [ADR-0028](decisions/0028-claim-at-the-start-and-the-next-task-skill.md) | Claim a ticket at the start, and the `next-task` skill | Accepted | `/build-feature` claims the issue before the first grill question, and the `next-task` skill lists the free tasks. |
+| [ADR-0029](decisions/0029-review-the-fixes-of-the-last-round.md) | Review the fixes of the last round | Accepted | three blind reviewers check the fixes of the last round, and the implementer fixes each finding or asks the user. |
 <!-- ledger:end -->

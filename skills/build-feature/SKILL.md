@@ -4,7 +4,7 @@ description: Take a feature or a ticket from an idea to a merged PR through gril
 disable-model-invocation: true
 argument-hint: "[T-nn | feature idea]"
 metadata:
-  version: 0.3.0
+  version: 0.3.1
 ---
 
 # Build feature
@@ -46,7 +46,7 @@ Before each stage, read its reference file. At each stage change, run `${CLAUDE_
 2. **Spec.** Read [references/spec.md](references/spec.md). For a ticket, write the short spec into the task note with [templates/task-note-section.md](templates/task-note-section.md). For a new feature, use `${CLAUDE_PLUGIN_ROOT}/skills/doc-architecture/templates/spec.md`. Set `status:spec`.
 3. **Ticket** (new feature only). Read [references/tickets.md](references/tickets.md).
 4. **Implement.** Read [references/implement.md](references/implement.md), [references/lean-code.md](references/lean-code.md), [references/code-comments.md](references/code-comments.md), and the applicable files in `standardsPath`. Do the environment preflight before the first line of code. Set `status:in-progress`.
-5. **Review.** Read [references/review.md](references/review.md). Do the review before you open the PR. Use three blind sub-agents and a maximum of `reviewRounds` rounds. Give all three the `Decisions` and `Out of scope` lists of the spec.
+5. **Review.** Read [references/review.md](references/review.md). Do the review before you open the PR. Use three blind sub-agents and a maximum of `reviewRounds` rounds. Then do one more round on only the fixes of the last round. Give all three the `Decisions` and `Out of scope` lists of the spec.
 6. **PR.** Read [references/pr.md](references/pr.md). Write or update the learn pages, and run `build-decision-ledger`. Tick the done items with `${CLAUDE_SKILL_DIR}/scripts/tick`. Add the `## Log` entry and the journal entry. Then run `plan.build`, and commit its files with the ticks. Print the complete text of the PR draft in your reply, in one fenced Markdown block, then open the PR. Set `status:in-review`.
 7. **Merge.** Obey `mergeMode`. For `ask`, give the user three options: the user merges, you merge after approval, or auto-merge on a clean review. Use rebase-merge. After the merge, set `status:done`.
 

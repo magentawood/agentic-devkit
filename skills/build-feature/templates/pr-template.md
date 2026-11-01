@@ -43,7 +43,7 @@ Task note: [<ID> <title>](<path of the task note>)
 ## Review
 
 - Rounds: <1 or 2>, with three blind reviewers in each round. Open findings: none.
-- <A change after the last round, and the added round on its diff, or remove this line.>
+- The round on the code after the last round: <the diff that it checked, its findings, and what you did>, or "none: the last round gave no code change".
 - Rejected findings: <each finding and the reason, or "none">
 
 ## Follow-ups / notes
