@@ -6,7 +6,7 @@ Each agent session loads this file. It is an index: it tells you what agentic-de
 
 ## What agentic-devkit is
 
-- A Claude Code plugin with skills to build and ship products: `/build-feature`, `ste-writing`, `doc-architecture`, `/doc-management`, and `/blog`.
+- A Claude Code plugin with skills to build and ship products: `/build-feature`, `/extensive-review`, `next-task`, `ste-writing`, `doc-architecture`, `/doc-management`, and `/blog`.
 - This repo is also a project. Its docs obey the docs architecture. It holds the master copy of each docs tool, so it has no tool copies.
 - The `/build-feature` POC on Roomsie T-02 finalized the stage references. The ticket stage stays a draft. The next milestone: a run on a new feature, which proves the ticket stage.
 
@@ -33,6 +33,7 @@ Each decision has one record in `docs/decisions/`: ADRs (`NNNN-slug.md`). This r
 | The docs architecture, limits | [architecture.md](skills/doc-architecture/references/architecture.md), [ADR-0017](docs/decisions/0017-the-docs-architecture.md), [ADR-0018](docs/decisions/0018-size-limits-and-the-context-budget.md) |
 | A `/doc-management` run | [doc-management](skills/doc-management/SKILL.md), [migrate.md](skills/doc-management/references/migrate.md), [lessons.md](skills/doc-management/references/lessons.md), [ADR-0022](docs/decisions/0022-the-migrate-pipeline.md) |
 | `/build-feature` | [build-feature](skills/build-feature/SKILL.md), [docs/specs/build-feature.md](docs/specs/build-feature.md), [ADR-0005](docs/decisions/0005-build-feature-pipeline-and-entry-points.md) to [ADR-0013](docs/decisions/0013-project-coding-standards.md), [ADR-0026](docs/decisions/0026-rebuild-the-plan-in-the-pr.md) |
+| `/extensive-review` | [extensive-review](skills/extensive-review/SKILL.md), [review.md](skills/build-feature/references/review.md), [ADR-0029](docs/decisions/0029-review-the-fixes-of-the-last-round.md), [ADR-0030](docs/decisions/0030-the-extensive-review-skill.md) |
 | `/blog` | [blog](skills/blog/SKILL.md), [post-format.md](skills/blog/references/post-format.md) |
 | A release | [CONVENTIONS.md](CONVENTIONS.md#release-checklist), [CHANGELOG.md](CHANGELOG.md), [NOTICE.md](NOTICE.md) |
 

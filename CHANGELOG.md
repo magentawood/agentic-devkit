@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.8.0 (2026-11-02)
+
+- New user-invoked skill `extensive-review` 0.1.0 ([ADR-0030](docs/decisions/0030-the-extensive-review-skill.md)). Type `/extensive-review` or `/agentic-devkit:extensive-review`, with no argument, a branch, or a PR number.
+  - On your work, it does the findings loop of `build-feature`: the rounds of `reviewRounds`, then the round on the fixes.
+  - On the PR of a different person, it does one round for each run, and posts one PR review with a round line. After an approval, it can merge the PR and set the linked issue to `status:done`.
+  - It reads the review references of `build-feature`, and it does not copy them.
+
 ## 0.7.2 (2026-11-02)
 
 - `build-feature` 0.3.1 ([ADR-0029](docs/decisions/0029-review-the-fixes-of-the-last-round.md)): after the fixes of the last review round, three blind reviewers check only those fixes. In this round, fix each finding or ask the user. Do not reject a finding. When two reviewers do not agree, ask the user. No round comes after it. The PR template lists this round.
