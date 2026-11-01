@@ -11,7 +11,7 @@ A Claude Code plugin with skills for building and shipping products.
 | `doc-architecture` | Guards the docs architecture on each Markdown edit: one fact in one home, reasons only in records, learn pages, size limits, generated ledgers. Claude uses it with `ste-writing`. |
 | `/doc-management` | `setup` gives a project the docs architecture, its tools, the hook, and CI. `migrate` moves the docs of a project into it with stacked PRs. `check` gives the full report, and `check --sync` refreshes the tool copies. |
 | `next-task` | Lists the tasks of the plan that a person can start at this time, by role, without the tasks that a different person has claimed. Claude uses it when someone asks what to work on next. |
-| `/extensive-review` | Runs the blind review of `/build-feature` on any branch or PR: three reviewers in each round, then one round on the fixes. On the PR of a teammate, it posts the review and can merge the PR. Type `/extensive-review` or `/agentic-devkit:extensive-review`, with no argument, a branch, or a PR number. |
+| `/extensive-review` | Runs the blind review of `/build-feature` on any branch or PR: three reviewers in each round, then one round on the fixes. On the PR of a teammate, it fixes the problems itself, pushes after you agree, posts the review and can merge the PR. Type `/extensive-review` or `/agentic-devkit:extensive-review`, with no argument, a branch, or a PR number. |
 | `/blog` | Draft a post with Claude, review it in the terminal, then cross-post to dev.to, Reddit, Medium, Substack, LinkedIn and Quora. |
 
 ## Install
