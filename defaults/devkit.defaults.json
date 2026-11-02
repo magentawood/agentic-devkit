@@ -13,6 +13,7 @@
   ],
   "mergeMode": "ask",
   "reviewRounds": 2,
+  "prePush": null,
   "statusLabels": [
     "status:spec",
     "status:in-progress",

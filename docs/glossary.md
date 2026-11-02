@@ -27,6 +27,8 @@ These are the terms that the skills in this plugin use. Use each term only with 
 | Log | The record of a PR in the task note: the date, the PR, the change, the reason, and the ticks. |
 | Build journal | The long record of the build, one file for each month. You add entries only at the end. `journalPath` in the configuration gives it. |
 | Blind review | A review by a sub-agent that does not get the reasoning of the implementer. |
+| Pre-push check | The shell command of `prePush` in the configuration. A skill runs it before each push, and does not push when it fails. |
+| Live check | A check of the live app after the deploy, which the spec names. The issue gets `status:done` only after it passes. |
 | Settled facts | The `Decisions` and `Out of scope` lists of the approved spec. Each reviewer gets them as facts, without the reasons. |
 | Finding | One problem that a review or a lint tool reports. |
 | Rung | One level of the lean-code ladder. |
