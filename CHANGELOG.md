@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.8.3 (2026-11-02)
+
+- The pre-push check and the live check ([ADR-0032](docs/decisions/0032-the-pre-push-check-and-the-live-check.md)):
+  - New configuration key `prePush`, a shell command, with no default. `build-feature` 0.3.3 and `extensive-review` 0.2.1 run it before each push, and do not push when it fails.
+  - New `build-feature/references/after-merge.md`: after a merge, the skills wait for the workflow runs, then do the live check of the spec. The issue gets `status:done` only after the check passes.
+  - Each project with a scan sets `prePush` in its `devkit.config.json`. Roomsie sets `corepack pnpm secrets`.
+
 ## 0.8.2 (2026-11-02)
 
 - `build-feature` 0.3.2 ([ADR-0031](docs/decisions/0031-pull-the-latest-repo-first.md)), with the new `references/pull.md`:

@@ -21,4 +21,6 @@ Do these steps before the claim:
 
 1. Run `git fetch origin`. If `origin/<default branch>` moved, rebase again, as before the review.
 2. If the rebase has a conflict in code, the resolved code is code after the last round. Do the round of [review.md](review.md), "The code after the last round".
-3. Run the tests again. Then push. If the branch is on the remote already, push with `--force-with-lease`.
+3. Run the tests again.
+4. If the configuration has `prePush`, run that command. If it fails, do not push. Show the output, then fix the cause or ask the user. Why: [ADR-0032](../../../docs/decisions/0032-the-pre-push-check-and-the-live-check.md).
+5. Push. If the branch is on the remote already, push with `--force-with-lease`.

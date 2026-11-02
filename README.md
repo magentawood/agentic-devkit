@@ -6,7 +6,7 @@ A Claude Code plugin with skills for building and shipping products.
 
 | Skill | What it does |
 |---|---|
-| `/build-feature` | Takes a ticket or a new feature to a merged PR: grill, spec, ticket, implement, blind review, PR. It pulls the latest default branch first, and rebases the branch on it before the review and the push. It writes a learn page for each concept of the ticket. The Roomsie T-02 POC finalized the stage references. The ticket stage stays a draft until a run on a new feature. |
+| `/build-feature` | Takes a ticket or a new feature to a merged PR: grill, spec, ticket, implement, blind review, PR. It pulls the latest default branch first, and rebases the branch on it before the review and the push. It runs the pre-push check of the project, and the live check of the spec after the deploy. It writes a learn page for each concept of the ticket. The Roomsie T-02 POC finalized the stage references. The ticket stage stays a draft until a run on a new feature. |
 | `ste-writing` | Writes and rewrites Markdown in ASD-STE100 Simplified Technical English. Claude uses it when it writes or edits a `.md` file. |
 | `doc-architecture` | Guards the docs architecture on each Markdown edit: one fact in one home, reasons only in records, learn pages, size limits, generated ledgers. Claude uses it with `ste-writing`. |
 | `/doc-management` | `setup` gives a project the docs architecture, its tools, the hook, and CI. `migrate` moves the docs of a project into it with stacked PRs. `check` gives the full report, and `check --sync` refreshes the tool copies. |

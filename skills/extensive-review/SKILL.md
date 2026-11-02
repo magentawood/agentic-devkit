@@ -4,7 +4,7 @@ description: Run the three-reviewer blind review of /build-feature on a branch o
 disable-model-invocation: true
 argument-hint: "[branch | PR number]"
 metadata:
-  version: 0.2.0
+  version: 0.2.1
 ---
 
 # Extensive review
@@ -29,7 +29,7 @@ Do not use this skill inside `/build-feature`. Its review stage has the same rul
   - No argument: the current branch, against the default branch.
   - A branch name.
   - A PR number.
-- The configuration: the plugin defaults (`${CLAUDE_PLUGIN_ROOT}/defaults/devkit.defaults.json`), then the project `devkit.config.json`. Use `reviewRounds`, `mergeMode`, `standardsPath`, `repo`, `plan`, and `statusLabels`.
+- The configuration: the plugin defaults (`${CLAUDE_PLUGIN_ROOT}/defaults/devkit.defaults.json`), then the project `devkit.config.json`. Use `reviewRounds`, `mergeMode`, `prePush`, `standardsPath`, `repo`, `plan`, and `statusLabels`.
 - The review rules of `/build-feature`. Read these files, and do not copy them:
   - `${CLAUDE_PLUGIN_ROOT}/skills/build-feature/references/review.md`
   - `${CLAUDE_PLUGIN_ROOT}/skills/build-feature/references/lean-code.md`
@@ -52,7 +52,7 @@ Do not use this skill inside `/build-feature`. Its review stage has the same rul
    - Show the three reports with the headings `## Standards`, `## Spec` and `## Lean`.
    - Fix each finding, or record why you reject it. In the round on the fixes, do not reject a finding. Fix it, or ask the person.
    - Commit each fix. Stage each file by its path.
-4. **Push** the fixes only when the person agrees.
+4. **Push** the fixes only when the person agrees. First, run the `prePush` command of the configuration, if it has one. If it fails, do not push.
 5. **Report** the result: the rounds, the fixed findings, the rejected findings with their reasons, and the decisions of the person.
 
 The person who runs the skill makes each pick. No person has a special role.

@@ -35,8 +35,9 @@ Do the findings loop of `review.md` on the worktree: `reviewRounds` rounds on th
 ## Push
 
 1. Ask the person, with `AskUserQuestion`, before the push. Tell the person if the push replaces the history of the branch.
-2. Push with a lease on the head commit that you read: `git push --force-with-lease=<head branch>:<head commit> origin review-<N>:<head branch>`. If the author pushed a new commit, the push fails. Then fetch the commit, and do its changes in a new round.
-3. Wait for the checks: `gh pr checks <N> --watch`.
+2. If the configuration has `prePush`, run that command. If it fails, do not push. Show the output, then fix the cause or ask the person.
+3. Push with a lease on the head commit that you read: `git push --force-with-lease=<head branch>:<head commit> origin review-<N>:<head branch>`. If the author pushed a new commit, the push fails. Then fetch the commit, and do its changes in a new round.
+4. Wait for the checks: `gh pr checks <N> --watch`.
 
 ## Post
 
@@ -51,8 +52,7 @@ Do these steps only after an approval. Obey `mergeMode`. For `ask`, give three o
 
 1. Wait for the checks: `gh pr checks <N> --watch`. If a check fails, stop and tell the person.
 2. Merge: `gh pr merge <N> --rebase --delete-branch`.
-3. Watch each workflow run of the merge commit: `gh run list --commit <merge commit>`, then `gh run watch <id> --exit-status`.
-4. Set each linked issue to done: `${CLAUDE_PLUGIN_ROOT}/skills/build-feature/scripts/issue-status <issue> done --note "PR #<N> merged"`.
+3. Do [after-merge.md](../../build-feature/references/after-merge.md): the workflow runs, then the live check of the spec, then `status:done`.
 
 ## No push access
 
@@ -68,5 +68,5 @@ The author fixes the findings. Thus, each run does one round:
 - The PR has the review, or the person kept it local.
 - After a merge:
   - The checks passed, and the PR is in the default branch.
-  - Each workflow run of the merge passed.
+  - Each workflow run of the merge passed, and the live check of the spec passed.
   - Each linked issue has `status:done`.
