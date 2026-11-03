@@ -6,7 +6,7 @@
 
 - **Keep all content.** Content moves. You do not delete it. The total word count stays almost the same.
 - **One commit for each file,** so that `git revert` can undo one file.
-- **Stacked PRs:** one PR for each stage, based on the PR of the stage before it. Merge with rebase-merge.
+- **Stacked PRs:** one PR for each stage, based on the PR of the stage before it. Merge each PR with squash and merge ([ADR-0033](../../../docs/decisions/0033-squash-and-merge.md)).
 - **0 broken links after each stage.** Run `doc-links` at the end of each stage.
 - **Blind sub-agents** get only the files that their task names. They do not get your reasoning. Give each parallel sub-agent disjoint files.
 - **Stops for approval.** Stop at these three points. Do not continue without the approval of the user:
@@ -84,7 +84,7 @@ Ask the user if they want the rewrite. For each file, obey the rewrite procedure
 
 Add a table to each PR: file, words before, words after, and the result of each check. For the full run, give the totals: the index tokens, the working-doc words, the record words, and all words before and after. In Roomsie, the index went from 5,829 to 1,302 tokens, and all docs went from 59,487 to 59,530 words.
 
-**Stop 3:** show the stacked PRs to the user. Merge only after approval, with rebase-merge, in the order of the stack.
+**Stop 3:** show the stacked PRs to the user. Merge only after approval, with squash and merge, in the order of the stack.
 
 ## Exit condition
 

@@ -51,7 +51,7 @@ Do the findings loop of `review.md` on the worktree: `reviewRounds` rounds on th
 Do these steps only after an approval. Obey `mergeMode`. For `ask`, give three options: merge now, the author merges, or auto-merge when the checks pass.
 
 1. Wait for the checks: `gh pr checks <N> --watch`. If a check fails, stop and tell the person.
-2. Merge: `gh pr merge <N> --rebase --delete-branch`.
+2. Merge with squash and merge: `gh pr merge <N> --squash --delete-branch` ([ADR-0033](../../../docs/decisions/0033-squash-and-merge.md)).
 3. Do [after-merge.md](../../build-feature/references/after-merge.md): the workflow runs, then the live check of the spec, then `status:done`.
 
 ## No push access

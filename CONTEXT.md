@@ -50,7 +50,7 @@ Each decision has one record in `docs/decisions/`: ADRs (`NNNN-slug.md`). This r
 
 ## Conventions
 
-- **Never push to `main`.** Each change goes in through a pull request. Merge with rebase-merge.
+- **Never push to `main`.** Each change goes in through a pull request. Merge with squash and merge ([ADR-0033](docs/decisions/0033-squash-and-merge.md)).
 - In a docs rewrite or a docs migration, make one commit for each file.
 - Write all Markdown in STE with the `ste-writing` skill. The `doc-architecture` skill guards each doc change.
 - One fact, one home. Link to it. Do not copy it. When a decision changes, update its record and remove the replaced text.

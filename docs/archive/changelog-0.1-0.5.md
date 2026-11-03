@@ -1,6 +1,19 @@
-# Changelog: 0.1.0 to 0.5.0
+# Changelog: 0.1.0 to 0.5.1
 
-These entries moved from `CHANGELOG.md` on 2026-10-03, so that the changelog stays inside its size limit. The newer entries are in [CHANGELOG.md](../../CHANGELOG.md).
+These entries moved from `CHANGELOG.md` on 2026-10-03, and 0.5.1 on 2026-11-03, so that the changelog stays inside its size limit. The newer entries are in [CHANGELOG.md](../../CHANGELOG.md).
+
+## 0.5.1 (2026-10-02)
+
+- The plugin repo uses its own docs architecture. `/doc-management migrate` ran by hand on this repo, in three stacked PRs (#7–#9):
+  - `CONTEXT.md` is an index, and `CLAUDE.md` imports it. The glossary moved to `docs/glossary.md`.
+  - 22 ADRs in `docs/decisions/` hold the decisions of the PRDs and of PR #6. `docs/tech-ledger.md` lists them.
+  - `CONVENTIONS.md` keeps the rules, with a `Why:` link for each section.
+  - `docs/specs/build-feature.md` holds the open work of `build-feature`. The PRDs are in `docs/archive/`.
+  - `.githooks/pre-commit` and CI run the docs checks with the master tools. A `SessionStart` hook turns on the hook.
+- The index holds no glossary. `ste-writing` 0.3.1, `build-feature` 0.1.2, and `doc-architecture` 0.1.1 send the agent to the project glossary that the routing table gives. The `CONTEXT.md` template has a routing row for it.
+- `doc-management` 0.1.1: `migrate` moves a glossary out of the index with `git mv` first. `setup` writes `"plan": null` for a project with no plan system. `lessons.md` has the lessons of this run.
+- `build-decision-ledger` and `render-docs` 0.1.1: the `--check` message gives the path of the script that runs. Run `/doc-management check --sync` in each project.
+- `blog`: the folder `reference/` becomes `references/`, as `CONVENTIONS.md` tells.
 
 ## 0.5.0 (2026-09-30)
 

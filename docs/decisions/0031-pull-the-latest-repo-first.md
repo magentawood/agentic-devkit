@@ -27,7 +27,7 @@
 | Alternative | Why we rejected it |
 |---|---|
 | Pull only at the start | A long ticket still falls behind, as T-11 did. |
-| Merge the default branch into the ticket branch | The repos use rebase-merge, and a merge commit in the branch stops it. |
+| Merge the default branch into the ticket branch | The branch then has the commits of the default branch, and the diff of each review round is harder to read. |
 | Rebase only before the push | The resolved conflicts then reach the PR with no review. |
 
 ## Consequences
@@ -37,7 +37,7 @@
 
 ## Revisit when
 
-- The repos change from rebase-merge to merge commits.
+- The repos change from squash and merge to merge commits.
 
 ## Sources
 

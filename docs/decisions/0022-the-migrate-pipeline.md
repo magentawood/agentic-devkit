@@ -12,7 +12,7 @@ A project with docs that do not obey the architecture needs a safe way to move i
 
 - Stages: inventory, moves and renames, formats, the optional STE rewrite (blind claim checks), compaction (CORE or SUPPORT), records (fact-checked), why to links, and splits, ledgers, and limits.
 - Keep all content. Content moves. It is not deleted.
-- One commit for each file, one stacked PR for each stage, and rebase-merge.
+- One commit for each file, and one stacked PR for each stage. Each PR merges with squash and merge ([ADR-0033](0033-squash-and-merge.md)).
 - 0 broken links after each stage.
 - Blind sub-agents get only the files of their task. Parallel sub-agents get disjoint files.
 - Compaction moves each SUPPORT claim to `<archivePath>/migrate-support-log.md`. The records stage moves its content into the records, and the why-to-links stage deletes it.
@@ -26,7 +26,7 @@ A project with docs that do not obey the architecture needs a safe way to move i
 
 ## Rationale
 
-- One commit for each file, stacked PRs, and rebase-merge let you revert one file.
+- One stacked PR for each stage lets you revert one stage. The commit for each file lets a reviewer read one file at a time.
 - In Roomsie, two fact-check agents found 9 problems in 22 records. The problems were an invented detail, an incorrect owner, stale numbers, and incorrect statuses.
 - The tags of the compaction show contradictions between docs. Roomsie found 12 or more.
 
@@ -49,3 +49,5 @@ A project with docs that do not obey the architecture needs a safe way to move i
 - [doc-management PRD](https://github.com/magentawood/agentic-devkit/blob/a88b115/docs/prd/doc-management.md), "doc-management (user-invoked)", "Feedback loop", and "Lessons the skills must carry" (2026-09-30).
 - [doc-management notes](https://github.com/magentawood/agentic-devkit/blob/a88b115/docs/prd/doc-management-notes.md), "The pipeline we ran" and "Lessons".
 - [migrate.md](../../skills/doc-management/references/migrate.md) and [lessons.md](../../skills/doc-management/references/lessons.md).
+
+Superseded (2026-11-03): "rebase-merge", and the revert of one file. A stage PR merges as one commit, so a revert removes the full stage ([ADR-0033](0033-squash-and-merge.md)).

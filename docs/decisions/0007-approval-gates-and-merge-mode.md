@@ -1,4 +1,4 @@
-# 0007 — Approval gates, merge mode, and rebase-merge
+# 0007 — Approval gates and merge mode
 
 **Status:** Accepted · **Date:** 2026-09-30 · **Deciders:** Yash Mangal
 
@@ -8,16 +8,15 @@ The user must approve some stage changes of `/build-feature`. At the end, a PR m
 
 ## Decision
 
-**In one line:** The default approval gates are after the spec and before the PR, `mergeMode` defaults to `ask`, and repo merges use rebase-merge.
+**In one line:** The default approval gates are after the spec and before the PR, and `mergeMode` defaults to `ask`.
 
 - `approvalGates` in the configuration gives the gates. The default is `spec` and `pr` (the PR draft). A project can configure other gates.
 - `mergeMode` defaults to `ask`. At the end, the skill offers three options. The user merges, the agent merges after approval, or auto-merge on a clean review.
-- Repo merges use rebase-merge.
 - Do not push to the default branch. Send each change as a PR.
 
 ## Rationale
 
-- Rebase-merge keeps a revert for each commit.
+- The grill set two default gates. A project can configure other gates.
 
 ## Alternatives rejected
 
@@ -27,7 +26,7 @@ The user must approve some stage changes of `/build-feature`. At the end, a PR m
 
 ## Consequences
 
-- With rebase-merge, the commit hashes change at merge. Do not write a branch hash into a doc ([lessons.md](../../skills/doc-management/references/lessons.md)).
+- None recorded.
 
 ## Revisit when
 
@@ -38,3 +37,5 @@ The user must approve some stage changes of `/build-feature`. At the end, a PR m
 - [build-feature PRD](https://github.com/magentawood/agentic-devkit/blob/a88b115/docs/prd/build-feature.md), Part A §3 (the last two lines), and Part B "Gates and merge" (2026-09-30).
 - [CONVENTIONS.md](../../CONVENTIONS.md), "Git".
 - Superseded: Part A §3 says "Stage transitions need my approval". Part B sets the default gates to `spec` and `pr`.
+
+Superseded (2026-11-03): "Repo merges use rebase-merge". Each PR merges with squash and merge ([ADR-0033](0033-squash-and-merge.md)).

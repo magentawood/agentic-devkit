@@ -30,8 +30,8 @@ These lessons come from the Roomsie cleanup (2026-09-30, PRs #74–#88). Read th
 
 ## Git
 
-- **Rebase-merge changes the commit hashes.** Do not write a branch hash into a doc. A `git show <hash>` pointer broke in Roomsie.
-- **One commit for each file, stacked PRs, rebase-merge.** Then you can revert one file.
+- **A merge changes the commit hashes.** Do not write a branch hash into a doc. A `git show <hash>` pointer broke in Roomsie.
+- **One commit for each file, stacked PRs, squash and merge.** A reviewer reads one file at a time, and a revert removes one stage ([ADR-0033](../../../docs/decisions/0033-squash-and-merge.md)).
 - **Parallel agents on one working tree:** give each agent disjoint files. An agent that must not edit a shared file writes to a log. One step merges the logs after all agents finish.
 
 ## Feedback loop
