@@ -17,7 +17,7 @@ The blind review of [ADR-0009](0009-blind-review-before-the-pr.md) and [ADR-0029
 - **Own work:** the findings loop of `review.md`, with the fixes in commits.
 - **The PR of a different person:** the session of the reviewer fixes each problem, in a worktree with a branch at the head commit. It does the loop of own work: `reviewRounds` rounds, then the round on the fixes. If the PR conflicts with its base, the skill rebases it first. After the person agrees, it pushes with a lease on the head commit that it read. Then it posts one review with the commits, the rejected findings and the decisions of the person. The review ends with the line `extensive-review: round <N>, commit <sha>`.
 - **No push access** (a fork that does not allow edits by maintainers): the author fixes the findings. Each run then does one round, and the round line gives the next run its round.
-- **The merge:** after an approval, the skill obeys `mergeMode`. It waits for the checks, merges with rebase-merge, watches the workflow runs, and sets the linked issue to `status:done`.
+- **The merge:** after an approval, the skill obeys `mergeMode`. It waits for the checks, merges with squash and merge ([ADR-0033](0033-squash-and-merge.md)), watches the workflow runs, and sets the linked issue to `status:done`.
 
 ## Rationale
 

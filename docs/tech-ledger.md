@@ -11,7 +11,7 @@ Generated from the decision records in [decisions/](decisions/README.md). Edit t
 | [ADR-0004](decisions/0004-questions-to-the-user.md) | Questions to the user | Accepted | Ask the user one question at a time with `AskUserQuestion`, with the recommended option first. |
 | [ADR-0005](decisions/0005-build-feature-pipeline-and-entry-points.md) | The build-feature pipeline and its two entry points | Accepted | `/build-feature` runs grill, spec, ticket, implement, review, and PR, and a ticket that exists skips the ticket stage. |
 | [ADR-0006](decisions/0006-poc-first-stage-references-are-drafts.md) | POC first: the stage references of build-feature are drafts | Accepted | The stage references and the templates of `/build-feature` stay drafts until a POC on one real Roomsie ticket. |
-| [ADR-0007](decisions/0007-approval-gates-and-merge-mode.md) | Approval gates, merge mode, and rebase-merge | Accepted | The default approval gates are after the spec and before the PR, `mergeMode` defaults to `ask`, and repo merges use rebase-merge. |
+| [ADR-0007](decisions/0007-approval-gates-and-merge-mode.md) | Approval gates and merge mode | Accepted | The default approval gates are after the spec and before the PR, and `mergeMode` defaults to `ask`. |
 | [ADR-0008](decisions/0008-progress-in-the-project-plan.md) | Progress lives in the project plan: ticks and logs | Accepted | `/build-feature` uses the plan of the project, ticks items in the PR, and logs each PR in the task note and journal. |
 | [ADR-0009](decisions/0009-blind-review-before-the-pr.md) | Blind review before the PR | Accepted | Three blind sub-agents review the diff before the PR opens, for at most two rounds, and the user decides each open finding. |
 | [ADR-0010](decisions/0010-issue-status-labels.md) | GitHub issues show the status of each ticket | Accepted | `/build-feature` sets one `status:*` label and adds a comment at each stage change, and the PR closes the issue. |
@@ -37,4 +37,5 @@ Generated from the decision records in [decisions/](decisions/README.md). Edit t
 | [ADR-0030](decisions/0030-the-extensive-review-skill.md) | The `extensive-review` skill | Accepted | `extensive-review` runs the blind review on any branch or PR, fixes the problems itself, and can merge the PR. |
 | [ADR-0031](decisions/0031-pull-the-latest-repo-first.md) | Pull the latest repo first | Accepted | `/build-feature` pulls the latest default branch first, and rebases on it before the review and the push. |
 | [ADR-0032](decisions/0032-the-pre-push-check-and-the-live-check.md) | The pre-push check and the live check | Accepted | both skills run the pre-push check of the project before a push, and the live check of the spec after the deploy. |
+| [ADR-0033](decisions/0033-squash-and-merge.md) | Squash and merge | Accepted | each PR of a project merges with squash and merge, so one PR is one commit on the default branch. |
 <!-- ledger:end -->

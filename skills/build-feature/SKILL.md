@@ -4,7 +4,7 @@ description: Take a feature or a ticket from an idea to a merged PR through gril
 disable-model-invocation: true
 argument-hint: "[T-nn | feature idea]"
 metadata:
-  version: 0.3.3
+  version: 0.3.4
 ---
 
 # Build feature
@@ -48,7 +48,7 @@ Before each stage, read its reference file. At each stage change, run `${CLAUDE_
 4. **Implement.** Read [references/implement.md](references/implement.md), [references/lean-code.md](references/lean-code.md), [references/code-comments.md](references/code-comments.md), and the applicable files in `standardsPath`. Do the environment preflight before the first line of code. Set `status:in-progress`.
 5. **Review.** Read [references/review.md](references/review.md). Do the review before you open the PR. First, rebase on the latest default branch (`pull.md`). Use three blind sub-agents and a maximum of `reviewRounds` rounds. Then do one more round on only the fixes of the last round. Give all three the `Decisions` and `Out of scope` lists of the spec.
 6. **PR.** Read [references/pr.md](references/pr.md). Write or update the learn pages, and run `build-decision-ledger`. Tick the done items with `${CLAUDE_SKILL_DIR}/scripts/tick`. Add the `## Log` entry and the journal entry. Then run `plan.build`, and commit its files with the ticks. Print the complete text of the PR draft in your reply, in one fenced Markdown block, then open the PR. Set `status:in-review`.
-7. **Merge.** Obey `mergeMode`. For `ask`, give the user three options: the user merges, you merge after approval, or auto-merge on a clean review. Use rebase-merge. After the merge, do [references/after-merge.md](references/after-merge.md): the workflow runs, then the live check of the spec, then `status:done`.
+7. **Merge.** Obey `mergeMode`. For `ask`, give the user three options: the user merges, you merge after approval, or auto-merge on a clean review. Use squash and merge: `gh pr merge <N> --squash --delete-branch` ([ADR-0033](../../docs/decisions/0033-squash-and-merge.md)). After the merge, do [references/after-merge.md](references/after-merge.md): the workflow runs, then the live check of the spec, then `status:done`.
 
 For each stage in `approvalGates` (default: `spec` and `pr`), stop and get the approval of the user before the next stage. At the spec gate, print the complete text of the spec first, in one fenced Markdown block, word for word from the file. Do not give a summary.
 

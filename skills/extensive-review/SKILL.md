@@ -4,7 +4,7 @@ description: Run the three-reviewer blind review of /build-feature on a branch o
 disable-model-invocation: true
 argument-hint: "[branch | PR number]"
 metadata:
-  version: 0.2.1
+  version: 0.2.2
 ---
 
 # Extensive review
@@ -76,4 +76,4 @@ Obey [CONVENTIONS.md](../../CONVENTIONS.md). The terms are in [docs/glossary.md]
 3. Round 1 finds a bug: a couple-friendly dealbreaker hides each room. The skill writes a test that fails, then fixes the bug.
 4. Round 2 and the round on the fixes find smaller items. The skill fixes them, and asks the person about one optional finding.
 5. The person agrees to the push. The checks pass, and the skill posts one review, an approval, with the commits and the line `extensive-review: round 3, commit 3994204`.
-6. The person selects "Merge now". The PR merges with rebase-merge, the deploy passes, and issue #27 gets `status:done`.
+6. The person selects "Merge now". The PR merges with squash and merge, the deploy passes, and issue #27 gets `status:done`.

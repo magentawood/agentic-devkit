@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.8.4 (2026-11-03)
+
+- Squash and merge ([ADR-0033](docs/decisions/0033-squash-and-merge.md)):
+  - `build-feature` 0.3.4 and `extensive-review` 0.2.2 merge each PR with `gh pr merge <N> --squash --delete-branch`, not rebase-merge.
+  - `doc-management` 0.2.2: the stacked PRs of `migrate` merge with squash and merge. A revert removes one stage.
+  - ADR-0007, ADR-0022, ADR-0030 and ADR-0031 mark the replaced rebase-merge text.
+
 ## 0.8.3 (2026-11-02)
 
 - The pre-push check and the live check ([ADR-0032](docs/decisions/0032-the-pre-push-check-and-the-live-check.md)):
@@ -72,17 +79,4 @@
 
 - `build-feature` 0.1.3: at the spec gate, print the complete text of the spec, then ask for approval. At the PR gate, print the complete text of the PR draft. Do not give a summary. Why: [ADR-0023](docs/decisions/0023-print-the-complete-text-at-a-gate.md).
 
-## 0.5.1 (2026-10-02)
-
-- The plugin repo uses its own docs architecture. `/doc-management migrate` ran by hand on this repo, in three stacked PRs (#7–#9):
-  - `CONTEXT.md` is an index, and `CLAUDE.md` imports it. The glossary moved to `docs/glossary.md`.
-  - 22 ADRs in `docs/decisions/` hold the decisions of the PRDs and of PR #6. `docs/tech-ledger.md` lists them.
-  - `CONVENTIONS.md` keeps the rules, with a `Why:` link for each section.
-  - `docs/specs/build-feature.md` holds the open work of `build-feature`. The PRDs are in `docs/archive/`.
-  - `.githooks/pre-commit` and CI run the docs checks with the master tools. A `SessionStart` hook turns on the hook.
-- The index holds no glossary. `ste-writing` 0.3.1, `build-feature` 0.1.2, and `doc-architecture` 0.1.1 send the agent to the project glossary that the routing table gives. The `CONTEXT.md` template has a routing row for it.
-- `doc-management` 0.1.1: `migrate` moves a glossary out of the index with `git mv` first. `setup` writes `"plan": null` for a project with no plan system. `lessons.md` has the lessons of this run.
-- `build-decision-ledger` and `render-docs` 0.1.1: the `--check` message gives the path of the script that runs. Run `/doc-management check --sync` in each project.
-- `blog`: the folder `reference/` becomes `references/`, as `CONVENTIONS.md` tells.
-
-Older versions (0.1.0 to 0.5.0) are in [docs/archive/changelog-0.1-0.5.md](docs/archive/changelog-0.1-0.5.md).
+Older versions (0.1.0 to 0.5.1) are in [docs/archive/changelog-0.1-0.5.md](docs/archive/changelog-0.1-0.5.md).
